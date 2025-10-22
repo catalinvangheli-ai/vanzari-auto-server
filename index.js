@@ -9,6 +9,9 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
+// PostgreSQL imports
+const { CarSaleAd: CarSaleAdPG, CarRentalAd: CarRentalAdPG, testConnection, syncDatabase } = require('./models');
+
 const app = express();
 
 // Asigur că folderul uploads există
@@ -92,12 +95,38 @@ async function connectToMongoDB() {
 
 // Pornește conexiunea MongoDB asincron
 connectToMongoDB().then(result => {
-  console.log(`📊 Database connection result: ${result}`);
+  console.log(`📊 MongoDB connection result: ${result}`);
+});
+
+// -------------------------
+// POSTGRESQL INITIALIZATION
+// -------------------------
+console.log('🐘 Initializing PostgreSQL connection...');
+
+// Inițializează PostgreSQL
+async function initializePostgreSQL() {
+  try {
+    const isConnected = await testConnection();
+    if (isConnected) {
+      await syncDatabase();
+      console.log('🚀 PostgreSQL initialized successfully!');
+      return true;
+    }
+    return false;
+  } catch (error) {
+    console.error('❌ PostgreSQL initialization failed:', error.message);
+    return false;
+  }
+}
+
+// Pornește PostgreSQL
+initializePostgreSQL().then(success => {
+  console.log(`📊 PostgreSQL initialization result: ${success ? 'SUCCESS' : 'FAILED'}`);
 });
   
 
 // -------------------------
-// MODELE
+// MODELE MONGOOSE (LEGACY)
 // -------------------------
 const User = mongoose.model('User', new mongoose.Schema({
   username: String,
@@ -559,44 +588,48 @@ app.post('/api/car-sales', async (req, res) => {
     
     console.log('📝 Salvez anunt nou:', JSON.stringify(adData, null, 2));
     
-    // TIMEOUT EXPLICIT pentru salvare
+    // SALVARE în PostgreSQL cu timeout explicit
     const startTime = Date.now();
-    console.log('⏱️ START save operation...');
+    console.log('⏱️ START PostgreSQL save operation...');
     
-    const ad = new CarSaleAd(adData);
-    
-    // Force immediate save cu timeout
+    // Creează anunțul în PostgreSQL
     const savedAd = await Promise.race([
-      ad.save(),
+      CarSaleAdPG.create(adData),
       new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Save timeout after 15s')), 15000)
+        setTimeout(() => reject(new Error('PostgreSQL save timeout after 15s')), 15000)
       )
     ]);
     
     const endTime = Date.now();
-    console.log(`✅ SUCCES! Anunt salvat in ${endTime - startTime}ms cu ID:`, savedAd._id);
+    console.log(`✅ SUCCES! Anunt salvat în PostgreSQL in ${endTime - startTime}ms cu ID:`, savedAd.id);
     res.status(201).json({ 
-      message: 'Anunt creat cu succes!', 
-      id: savedAd._id,
+      message: 'Anunt creat cu succes în PostgreSQL!', 
+      id: savedAd.id,
       duration: `${endTime - startTime}ms`,
+      database: 'PostgreSQL',
       success: true 
     });
   } catch (error) {
-    console.error('❌ EROARE la salvarea anunțului:', error);
+    console.error('❌ EROARE la salvarea anunțului PostgreSQL:', error);
     res.status(500).json({ 
-      error: 'Eroare la salvarea anuntului: ' + error.message,
+      error: 'Eroare la salvarea anuntului PostgreSQL: ' + error.message,
       success: false 
     });
   }
 });
 
-// Vânzări auto - Listă toate anunturile
+// Vânzări auto - Listă toate anunturile (PostgreSQL)
 app.get('/api/car-sales', async (req, res) => {
   try {
-    const ads = await CarSaleAd.find({ isActive: true }).sort({ dateCreated: -1 });
+    const ads = await CarSaleAdPG.findAll({ 
+      where: { isActive: true },
+      order: [['createdAt', 'DESC']]
+    });
+    console.log(`📋 Găsite ${ads.length} anunțuri vânzare în PostgreSQL`);
     res.json(ads);
   } catch (error) {
-    res.status(500).json({ error: 'Eroare la încărcarea anunturilor' });
+    console.error('❌ Eroare la încărcarea anunturilor PostgreSQL:', error);
+    res.status(500).json({ error: 'Eroare la încărcarea anunturilor din PostgreSQL' });
   }
 });
 
@@ -668,50 +701,54 @@ app.post('/api/car-rentals', upload.array('poze'), async (req, res) => {
     
     // Adaugă calea pozelor în DB
     if (req.files && req.files.length > 0) {
-      adData.poze = req.files.map(file => `/uploads/${file.filename}`);
+      adData.photos = req.files.map(file => `/uploads/${file.filename}`);
     }
     
-    console.log('💾 adData înainte de salvare:', adData);
+    console.log('💾 adData înainte de salvare PostgreSQL:', adData);
     
-    // TIMEOUT EXPLICIT pentru salvare rentals
+    // TIMEOUT EXPLICIT pentru salvare rentals în PostgreSQL
     const startTime = Date.now();
-    console.log('⏱️ START rental save operation...');
+    console.log('⏱️ START rental PostgreSQL save operation...');
     
-    const ad = new CarRentalAd(adData);
-    
-    // Force immediate save cu timeout pentru rentals
+    // Creează anunțul rental în PostgreSQL
     const savedAd = await Promise.race([
-      ad.save(),
+      CarRentalAdPG.create(adData),
       new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Rental save timeout after 15s')), 15000)
+        setTimeout(() => reject(new Error('PostgreSQL rental save timeout after 15s')), 15000)
       )
     ]);
     
     const endTime = Date.now();
-    console.log(`✅ SUCCES! Rental salvat in ${endTime - startTime}ms cu ID:`, savedAd._id);
+    console.log(`✅ SUCCES! Rental salvat în PostgreSQL in ${endTime - startTime}ms cu ID:`, savedAd.id);
     
     res.status(201).json({ 
-      message: 'Anunt creat cu succes!', 
-      id: savedAd._id,
+      message: 'Anunt rental creat cu succes în PostgreSQL!', 
+      id: savedAd.id,
       duration: `${endTime - startTime}ms`,
+      database: 'PostgreSQL',
       success: true 
     });
   } catch (error) {
-    console.error('❌ EROARE la salvarea anunțului rental:', error);
+    console.error('❌ EROARE la salvarea anunțului rental PostgreSQL:', error);
     res.status(500).json({ 
-      error: 'Eroare la salvarea anuntului rental: ' + error.message,
+      error: 'Eroare la salvarea anuntului rental PostgreSQL: ' + error.message,
       success: false 
     });
   }
 });
 
-// Închirieri auto - Listă toate anunturile
+// Închirieri auto - Listă toate anunturile (PostgreSQL)
 app.get('/api/car-rentals', async (req, res) => {
   try {
-    const ads = await CarRentalAd.find({ isActive: true }).sort({ dateCreated: -1 });
+    const ads = await CarRentalAdPG.findAll({ 
+      where: { isActive: true },
+      order: [['createdAt', 'DESC']]
+    });
+    console.log(`📋 Găsite ${ads.length} anunțuri închiriere în PostgreSQL`);
     res.json(ads);
   } catch (error) {
-    res.status(500).json({ error: 'Eroare la încărcarea anunturilor' });
+    console.error('❌ Eroare la încărcarea anunturilor rental PostgreSQL:', error);
+    res.status(500).json({ error: 'Eroare la încărcarea anunturilor rental din PostgreSQL' });
   }
 });
 
