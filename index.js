@@ -34,44 +34,66 @@ app.use((req, res, next) => {
   next();
 });
 
-// Conectare la MongoDB Atlas - Configurație stabilă pentru Railway
-const mongoUri = process.env.MONGODB_URI || 'mongodb+srv://catalinvangheli_db_user:eanoagDnz9LrvNgr@cluster0.qgzanu4.mongodb.net/vanzariAutoApp?retryWrites=true&w=majority&appName=VanzariAutoApp&tlsAllowInvalidCertificates=true';
+// Conectare la MongoDB Atlas - cu fallback la MongoDB local pentru testing
+const mongoAtlasUri = process.env.MONGODB_URI || 'mongodb+srv://catalinvangheli_db_user:eanoagDnz9LrvNgr@cluster0.qgzanu4.mongodb.net/vanzariAutoApp?retryWrites=true&w=majority&appName=VanzariAutoApp';
+const mongoLocalUri = 'mongodb://localhost:27017/vanzariAutoApp';
 
-// Funcție pentru a aștepta conexiunea MongoDB
+console.log('🔍 Environment check:');
+console.log('NODE_ENV:', process.env.NODE_ENV);
+console.log('MONGODB_URI exists:', !!process.env.MONGODB_URI);
+console.log('Railway ENV vars:', Object.keys(process.env).filter(k => k.includes('RAILWAY')));
+
+// Funcție pentru a încerca conectarea MongoDB
 async function connectToMongoDB() {
+  // Prima încercare: MongoDB Atlas
   try {
     console.log('🔄 Încercare conectare la MongoDB Atlas...');
-    console.log('🌐 Mongo URI (hidden password):', mongoUri.replace(/:[^@]+@/, ':***@'));
+    console.log('🌐 Mongo Atlas URI (hidden password):', mongoAtlasUri.replace(/:[^@]+@/, ':***@'));
     
-    await mongoose.connect(mongoUri, {
-      serverSelectionTimeoutMS: 30000, // 30 secunde timeout
-      socketTimeoutMS: 45000, // 45 secunde socket timeout  
-      connectTimeoutMS: 30000, // 30 secunde connect
-      bufferMaxEntries: 0, // Disable buffering
+    await mongoose.connect(mongoAtlasUri, {
+      serverSelectionTimeoutMS: 15000, // Timeout redus pentru Atlas
+      socketTimeoutMS: 30000,
+      connectTimeoutMS: 15000,
       maxPoolSize: 5,
-      minPoolSize: 1,
-      maxIdleTimeMS: 30000,
-      heartbeatFrequencyMS: 10000,
-      // Înapoi la buffering pentru a evita crash-uri
-      bufferCommands: true, // ENABLE buffering din nou
-      // Opțiuni suplimentare pentru Railway
+      bufferCommands: true,
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
     
     console.log("✅ SUCCES! Conectat la MongoDB Atlas");
     console.log("🔌 Connection state:", mongoose.connection.readyState);
-    return true;
-  } catch (err) {
-    console.error("❌ EROARE MongoDB conectare:", err.message);
-    console.log("🔍 Error details:", err);
-    console.log("⚠️ Server va continua fără MongoDB pentru debugging...");
-    return false;
+    return 'atlas';
+  } catch (atlasErr) {
+    console.error("❌ EROARE MongoDB Atlas:", atlasErr.message);
+    console.error("🔍 Atlas Error details:", atlasErr.code, atlasErr.codeName);
+    
+    // A doua încercare: MongoDB local (doar pentru development)
+    if (process.env.NODE_ENV !== 'production') {
+      try {
+        console.log('🔄 Încercare conectare la MongoDB local...');
+        await mongoose.connect(mongoLocalUri, {
+          serverSelectionTimeoutMS: 5000,
+          bufferCommands: true,
+        });
+        
+        console.log("✅ SUCCES! Conectat la MongoDB local pentru testing");
+        return 'local';
+      } catch (localErr) {
+        console.error("❌ EROARE MongoDB local:", localErr.message);
+      }
+    }
+    
+    console.log("⚠️ ATENȚIE: Server va rula fără bază de date!");
+    console.log("🔧 Pentru a rezolva: Verifică MongoDB Atlas Network Access pentru Railway IP");
+    console.log("🌐 Railway region: europe-west4");
+    return 'none';
   }
 }
 
 // Pornește conexiunea MongoDB asincron
-connectToMongoDB();
+connectToMongoDB().then(result => {
+  console.log(`📊 Database connection result: ${result}`);
+});
   
 
 // -------------------------
@@ -461,6 +483,26 @@ app.post('/test-write', async (req, res) => {
     console.error('❌ MongoDB write failed:', error.message);
     res.status(500).json({ 
       status: 'Write FAILED', 
+      error: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+// Retry MongoDB connection
+app.get('/retry-db', async (req, res) => {
+  try {
+    console.log('🔄 Manual retry MongoDB connection...');
+    const result = await connectToMongoDB();
+    res.json({ 
+      status: 'Retry completed', 
+      result: result,
+      connectionState: mongoose.connection.readyState,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      status: 'Retry failed', 
       error: error.message,
       timestamp: new Date().toISOString()
     });
