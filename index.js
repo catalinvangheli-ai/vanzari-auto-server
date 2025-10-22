@@ -12,6 +12,9 @@ const fs = require('fs');
 // PostgreSQL imports
 const { CarSaleAd: CarSaleAdPG, CarRentalAd: CarRentalAdPG, testConnection, syncDatabase } = require('./models');
 
+// Global flag pentru PostgreSQL status
+let postgresqlReady = false;
+
 const app = express();
 
 // Asigur că folderul uploads există
@@ -102,26 +105,37 @@ connectToMongoDB().then(result => {
 // POSTGRESQL INITIALIZATION
 // -------------------------
 console.log('🐘 Initializing PostgreSQL connection...');
+console.log('🔍 DATABASE_URL exists:', !!process.env.DATABASE_URL);
+console.log('🔍 NODE_ENV:', process.env.NODE_ENV);
 
 // Inițializează PostgreSQL
 async function initializePostgreSQL() {
   try {
+    console.log('🔄 Testing PostgreSQL connection...');
     const isConnected = await testConnection();
     if (isConnected) {
+      console.log('✅ PostgreSQL connected, syncing database...');
       await syncDatabase();
       console.log('🚀 PostgreSQL initialized successfully!');
       return true;
+    } else {
+      console.log('❌ PostgreSQL connection failed');
+      return false;
     }
-    return false;
   } catch (error) {
     console.error('❌ PostgreSQL initialization failed:', error.message);
+    console.error('🔍 Full error:', error);
     return false;
   }
 }
 
 // Pornește PostgreSQL
 initializePostgreSQL().then(success => {
+  postgresqlReady = success;
   console.log(`📊 PostgreSQL initialization result: ${success ? 'SUCCESS' : 'FAILED'}`);
+  if (!success) {
+    console.log('⚠️ Server will run without PostgreSQL - usando MongoDB fallback');
+  }
 });
   
 
@@ -564,7 +578,8 @@ app.post('/api/car-sales', async (req, res) => {
   try {
     console.log('🔥 CERERE PRIMITĂ pentru salvarea anunțului!');
     console.log('📡 IP client:', req.ip);
-    console.log('� MongoDB connection state:', mongoose.connection.readyState);
+    console.log('🔍 PostgreSQL ready:', postgresqlReady);
+    console.log('🔍 MongoDB connection state:', mongoose.connection.readyState);
     
     // VERIFICĂ CONEXIUNEA MONGODB ÎNAINTE DE SALVARE
     if (mongoose.connection.readyState !== 1) {
@@ -588,31 +603,46 @@ app.post('/api/car-sales', async (req, res) => {
     
     console.log('📝 Salvez anunt nou:', JSON.stringify(adData, null, 2));
     
-    // SALVARE în PostgreSQL cu timeout explicit
+    // Încearcă PostgreSQL mai întâi, apoi MongoDB fallback
     const startTime = Date.now();
-    console.log('⏱️ START PostgreSQL save operation...');
+    let savedAd, database;
     
-    // Creează anunțul în PostgreSQL
-    const savedAd = await Promise.race([
-      CarSaleAdPG.create(adData),
-      new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('PostgreSQL save timeout after 15s')), 15000)
-      )
-    ]);
-    
+    if (postgresqlReady) {
+      try {
+        console.log('⏱️ START PostgreSQL save operation...');
+        savedAd = await CarSaleAdPG.create(adData);
+        database = 'PostgreSQL';
+        console.log(`✅ SUCCES! Anunt salvat în PostgreSQL cu ID:`, savedAd.id);
+      } catch (pgError) {
+        console.error('❌ PostgreSQL failed, using MongoDB fallback:', pgError.message);
+        adData.dataCrearii = new Date();
+        const ad = new CarSaleAd(adData);
+        savedAd = await ad.save();
+        database = 'MongoDB';
+        console.log(`✅ FALLBACK! Anunt salvat în MongoDB cu ID:`, savedAd._id);
+      }
+    } else {
+      // Folosește MongoDB direct
+      console.log('⏱️ START MongoDB save operation (PostgreSQL not ready)...');
+      adData.dataCrearii = new Date();
+      const ad = new CarSaleAd(adData);
+      savedAd = await ad.save();
+      database = 'MongoDB';
+      console.log(`✅ SUCCES! Anunt salvat în MongoDB cu ID:`, savedAd._id);
+    }
     const endTime = Date.now();
-    console.log(`✅ SUCCES! Anunt salvat în PostgreSQL in ${endTime - startTime}ms cu ID:`, savedAd.id);
     res.status(201).json({ 
-      message: 'Anunt creat cu succes în PostgreSQL!', 
-      id: savedAd.id,
+      message: `Anunt creat cu succes în ${database}!`, 
+      id: savedAd.id || savedAd._id,
       duration: `${endTime - startTime}ms`,
-      database: 'PostgreSQL',
+      database: database,
       success: true 
     });
   } catch (error) {
-    console.error('❌ EROARE la salvarea anunțului PostgreSQL:', error);
+    console.error('❌ EROARE la salvarea anunțului:', error);
     res.status(500).json({ 
-      error: 'Eroare la salvarea anuntului PostgreSQL: ' + error.message,
+      error: 'Eroare la salvarea anuntului: ' + error.message,
+      postgresqlReady: postgresqlReady,
       success: false 
     });
   }

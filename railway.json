@@ -1,0 +1,14 @@
+{
+  "build": {
+    "command": "npm install"
+  },
+  "start": {
+    "command": "npm start"
+  },
+  "services": [
+    {
+      "name": "postgres",
+      "type": "postgresql"
+    }
+  ]
+}
