@@ -34,38 +34,30 @@ app.use((req, res, next) => {
   next();
 });
 
-// Conectare la MongoDB Atlas - FORȚEAZĂ CONEXIUNE DIRECTĂ fără buffering
+// Conectare la MongoDB Atlas - Configurație stabilă pentru Railway
 const mongoUri = process.env.MONGODB_URI || 'mongodb+srv://catalinvangheli_db_user:eanoagDnz9LrvNgr@cluster0.qgzanu4.mongodb.net/vanzariAutoApp?retryWrites=true&w=majority&appName=VanzariAutoApp';
 
-// Configurare Mongoose pentru a evita buffering complet
+// Configurare Mongoose moderat anti-buffering
 mongoose.set('bufferCommands', false);
-mongoose.set('bufferMaxEntries', 0);
 
 mongoose.connect(mongoUri, {
-  // Configurare agresivă anti-buffering
-  serverSelectionTimeoutMS: 5000, // 5 secunde rapid fail
-  socketTimeoutMS: 0, // Disable socket timeout  
-  connectTimeoutMS: 10000, // 10 secunde connect
-  bufferMaxEntries: 0, // DISABLE buffering
-  bufferCommands: false, // DISABLE command buffering
-  maxPoolSize: 3, // Pool foarte mic
-  minPoolSize: 0, // No minimum pool
+  // Configurare stabilă cu timeout-uri moderate
+  serverSelectionTimeoutMS: 15000, // 15 secunde 
+  socketTimeoutMS: 45000, // 45 secunde socket timeout  
+  connectTimeoutMS: 15000, // 15 secunde connect
+  bufferMaxEntries: 0, // Disable buffering
+  maxPoolSize: 5, // Pool moderat
+  minPoolSize: 1, // Pool minimum 1
   maxIdleTimeMS: 30000, // 30 secunde idle
-  heartbeatFrequencyMS: 2000, // Check connection every 2s
-  directConnection: false, // Use replica set
+  heartbeatFrequencyMS: 10000, // Check connection every 10s
 })
   .then(() => {
-    console.log("✅ Conectat la MongoDB Atlas - ANTI-BUFFERING MODE");
-    // Force connection state check
+    console.log("✅ Conectat la MongoDB Atlas - STABILIZED CONFIG");
     console.log("🔌 Connection state:", mongoose.connection.readyState);
   })
   .catch(err => {
     console.error("❌ Eroare MongoDB:", err);
-    // Încearcă reconectarea
-    setTimeout(() => {
-      console.log("🔄 Încerc reconectarea...");
-      mongoose.connect(mongoUri);
-    }, 5000);
+    // Nu încerca reconectarea automată pentru a evita crash-uri
   });
   
 
