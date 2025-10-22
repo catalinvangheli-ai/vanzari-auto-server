@@ -346,7 +346,67 @@ app.get('/users', async (req, res) => {
 
 // Healthcheck
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok' });
+  res.json({ 
+    status: 'ok',
+    mongodb: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Test MongoDB connection
+app.get('/test-db', async (req, res) => {
+  try {
+    console.log('🧪 Testing MongoDB connection...');
+    
+    // Încearcă să creeze o colecție de test simplă
+    const TestModel = mongoose.model('Test', new mongoose.Schema({ 
+      test: String, 
+      timestamp: Date 
+    }, { collection: 'test_connection' }));
+    
+    const testDoc = { test: 'connection_test', timestamp: new Date() };
+    
+    // Test cu timeout explicit
+    const result = await Promise.race([
+      TestModel.create(testDoc),
+      new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Test timeout after 10s')), 10000)
+      )
+    ]);
+    
+    console.log('✅ MongoDB test successful:', result._id);
+    res.json({ 
+      status: 'MongoDB OK', 
+      testId: result._id,
+      timestamp: new Date().toISOString(),
+      connectionState: mongoose.connection.readyState
+    });
+  } catch (error) {
+    console.error('❌ MongoDB test failed:', error.message);
+    res.status(500).json({ 
+      status: 'MongoDB FAILED', 
+      error: error.message,
+      timestamp: new Date().toISOString(),
+      connectionState: mongoose.connection.readyState
+    });
+  }
+});
+
+// Debug MongoDB info
+app.get('/db-info', (req, res) => {
+  res.json({
+    connectionState: mongoose.connection.readyState,
+    readyStates: {
+      0: 'disconnected',
+      1: 'connected', 
+      2: 'connecting',
+      3: 'disconnecting'
+    },
+    host: mongoose.connection.host,
+    port: mongoose.connection.port,
+    name: mongoose.connection.name,
+    mongoUri: process.env.MONGODB_URI ? 'Set (hidden)' : 'Not set'
+  });
 });
 
 // -------------------------
