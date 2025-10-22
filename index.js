@@ -34,21 +34,39 @@ app.use((req, res, next) => {
   next();
 });
 
-// Conectare la MongoDB Atlas - Cloud database cu opțiuni optimizate pentru Railway
-const mongoUri = process.env.MONGODB_URI || 'mongodb+srv://catalinvangheli_db_user:eanoagDnz9LrvNgr@cluster0.qgzanu4.mongodb.net/vanzariAutoApp?retryWrites=true&w=majority&appName=VanzariAutoApp&maxPoolSize=5&minPoolSize=1&maxIdleTimeMS=60000&connectTimeoutMS=30000&socketTimeoutMS=60000&serverSelectionTimeoutMS=30000';
+// Conectare la MongoDB Atlas - FORȚEAZĂ CONEXIUNE DIRECTĂ fără buffering
+const mongoUri = process.env.MONGODB_URI || 'mongodb+srv://catalinvangheli_db_user:eanoagDnz9LrvNgr@cluster0.qgzanu4.mongodb.net/vanzariAutoApp?retryWrites=true&w=majority&appName=VanzariAutoApp';
+
+// Configurare Mongoose pentru a evita buffering complet
+mongoose.set('bufferCommands', false);
+mongoose.set('bufferMaxEntries', 0);
 
 mongoose.connect(mongoUri, {
-  // Timeout-uri reduse pentru Railway
-  serverSelectionTimeoutMS: 30000, // 30 secunde
-  socketTimeoutMS: 60000, // 60 secunde  
-  connectTimeoutMS: 30000, // 30 secunde connect
-  bufferMaxEntries: 0, // Disable mongoose buffering
-  maxPoolSize: 5, // Pool mai mic pentru Railway
-  minPoolSize: 1, // Pool minimum 1
-  maxIdleTimeMS: 60000, // 60 secunde idle
+  // Configurare agresivă anti-buffering
+  serverSelectionTimeoutMS: 5000, // 5 secunde rapid fail
+  socketTimeoutMS: 0, // Disable socket timeout  
+  connectTimeoutMS: 10000, // 10 secunde connect
+  bufferMaxEntries: 0, // DISABLE buffering
+  bufferCommands: false, // DISABLE command buffering
+  maxPoolSize: 3, // Pool foarte mic
+  minPoolSize: 0, // No minimum pool
+  maxIdleTimeMS: 30000, // 30 secunde idle
+  heartbeatFrequencyMS: 2000, // Check connection every 2s
+  directConnection: false, // Use replica set
 })
-  .then(() => console.log("✅ Conectat la MongoDB Atlas - Vanzari Auto Database"))
-  .catch(err => console.error("❌ Eroare MongoDB:", err));
+  .then(() => {
+    console.log("✅ Conectat la MongoDB Atlas - ANTI-BUFFERING MODE");
+    // Force connection state check
+    console.log("🔌 Connection state:", mongoose.connection.readyState);
+  })
+  .catch(err => {
+    console.error("❌ Eroare MongoDB:", err);
+    // Încearcă reconectarea
+    setTimeout(() => {
+      console.log("🔄 Încerc reconectarea...");
+      mongoose.connect(mongoUri);
+    }, 5000);
+  });
   
 
 // -------------------------
@@ -470,7 +488,19 @@ app.post('/api/car-sales', async (req, res) => {
   try {
     console.log('🔥 CERERE PRIMITĂ pentru salvarea anunțului!');
     console.log('📡 IP client:', req.ip);
-    console.log('📡 Headers:', JSON.stringify(req.headers, null, 2));
+    console.log('� MongoDB connection state:', mongoose.connection.readyState);
+    
+    // VERIFICĂ CONEXIUNEA MONGODB ÎNAINTE DE SALVARE
+    if (mongoose.connection.readyState !== 1) {
+      console.error('❌ MongoDB nu este conectat! State:', mongoose.connection.readyState);
+      return res.status(500).json({ 
+        error: 'Database connection not ready',
+        connectionState: mongoose.connection.readyState,
+        success: false 
+      });
+    }
+    
+    console.log('�📡 Headers:', JSON.stringify(req.headers, null, 2));
     console.log('📝 Body primit:', JSON.stringify(req.body, null, 2));
     
     const adData = {
@@ -482,13 +512,26 @@ app.post('/api/car-sales', async (req, res) => {
     
     console.log('📝 Salvez anunt nou:', JSON.stringify(adData, null, 2));
     
-    const ad = new CarSaleAd(adData);
-    await ad.save();
+    // TIMEOUT EXPLICIT pentru salvare
+    const startTime = Date.now();
+    console.log('⏱️ START save operation...');
     
-    console.log('✅ SUCCES! Anunt salvat cu ID:', ad._id);
+    const ad = new CarSaleAd(adData);
+    
+    // Force immediate save cu timeout
+    const savedAd = await Promise.race([
+      ad.save(),
+      new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Save timeout after 15s')), 15000)
+      )
+    ]);
+    
+    const endTime = Date.now();
+    console.log(`✅ SUCCES! Anunt salvat in ${endTime - startTime}ms cu ID:`, savedAd._id);
     res.status(201).json({ 
       message: 'Anunt creat cu succes!', 
-      id: ad._id,
+      id: savedAd._id,
+      duration: `${endTime - startTime}ms`,
       success: true 
     });
   } catch (error) {
@@ -554,7 +597,19 @@ app.delete('/api/car-sales/:id', authMiddleware, async (req, res) => {
 app.post('/api/car-rentals', upload.array('poze'), async (req, res) => {
   try {
     console.log('🟢 POST /api/car-rentals - Începe procesarea...');
-    console.log('📋 req.body:', req.body);
+    console.log('� MongoDB connection state:', mongoose.connection.readyState);
+    
+    // VERIFICĂ CONEXIUNEA MONGODB ÎNAINTE DE SALVARE
+    if (mongoose.connection.readyState !== 1) {
+      console.error('❌ MongoDB nu este conectat pentru rentals! State:', mongoose.connection.readyState);
+      return res.status(500).json({ 
+        error: 'Database connection not ready',
+        connectionState: mongoose.connection.readyState,
+        success: false 
+      });
+    }
+    
+    console.log('�📋 req.body:', req.body);
     console.log('📋 Object.keys(req.body):', Object.keys(req.body));
     console.log('📋 req.files:', req.files);
     
@@ -571,12 +626,35 @@ app.post('/api/car-rentals', upload.array('poze'), async (req, res) => {
     
     console.log('💾 adData înainte de salvare:', adData);
     
+    // TIMEOUT EXPLICIT pentru salvare rentals
+    const startTime = Date.now();
+    console.log('⏱️ START rental save operation...');
+    
     const ad = new CarRentalAd(adData);
-    await ad.save();
-    res.status(201).json({ message: 'Anunt creat cu succes!', id: ad._id });
+    
+    // Force immediate save cu timeout pentru rentals
+    const savedAd = await Promise.race([
+      ad.save(),
+      new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Rental save timeout after 15s')), 15000)
+      )
+    ]);
+    
+    const endTime = Date.now();
+    console.log(`✅ SUCCES! Rental salvat in ${endTime - startTime}ms cu ID:`, savedAd._id);
+    
+    res.status(201).json({ 
+      message: 'Anunt creat cu succes!', 
+      id: savedAd._id,
+      duration: `${endTime - startTime}ms`,
+      success: true 
+    });
   } catch (error) {
-    console.error('Eroare salvare anunt închiriere:', error);
-    res.status(500).json({ error: 'Eroare la salvarea anuntului' });
+    console.error('❌ EROARE la salvarea anunțului rental:', error);
+    res.status(500).json({ 
+      error: 'Eroare la salvarea anuntului rental: ' + error.message,
+      success: false 
+    });
   }
 });
 
