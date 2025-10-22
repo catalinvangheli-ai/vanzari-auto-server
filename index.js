@@ -394,6 +394,56 @@ app.get('/test-db', async (req, res) => {
   }
 });
 
+// Test simple MongoDB write
+app.post('/test-write', async (req, res) => {
+  try {
+    console.log('🧪 Testing MongoDB WRITE operation...');
+    
+    // Model simplu pentru test
+    const TestWrite = mongoose.model('TestWrite', new mongoose.Schema({ 
+      message: String, 
+      timestamp: Date,
+      fromIp: String
+    }, { collection: 'test_writes' }));
+    
+    const testData = { 
+      message: 'Test write from Railway', 
+      timestamp: new Date(),
+      fromIp: req.ip
+    };
+    
+    console.log('📝 Attempt to write:', testData);
+    
+    // Timeout explicit pentru write
+    const startTime = Date.now();
+    const result = await Promise.race([
+      TestWrite.create(testData),
+      new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Write timeout after 15s')), 15000)
+      )
+    ]);
+    
+    const endTime = Date.now();
+    console.log(`✅ MongoDB write successful in ${endTime - startTime}ms:`, result._id);
+    
+    res.json({ 
+      status: 'Write SUCCESS', 
+      id: result._id,
+      duration: `${endTime - startTime}ms`,
+      timestamp: new Date().toISOString()
+    });
+    
+  } catch (error) {
+    const errorTime = Date.now();
+    console.error('❌ MongoDB write failed:', error.message);
+    res.status(500).json({ 
+      status: 'Write FAILED', 
+      error: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
 // Debug MongoDB info
 app.get('/db-info', (req, res) => {
   res.json({
