@@ -34,8 +34,14 @@ app.use((req, res, next) => {
   next();
 });
 
-// Conectare la MongoDB Atlas - Cloud database
-mongoose.connect('mongodb+srv://catalinvangheli_db_user:eanoagDnz9LrvNgr@cluster0.qgzanu4.mongodb.net/vanzariAutoApp')
+// Conectare la MongoDB Atlas - Cloud database cu opțiuni de timeout
+const mongoUri = process.env.MONGODB_URI || 'mongodb+srv://catalinvangheli_db_user:eanoagDnz9LrvNgr@cluster0.qgzanu4.mongodb.net/vanzariAutoApp';
+
+mongoose.connect(mongoUri, {
+  serverSelectionTimeoutMS: 30000, // 30 secunde timeout
+  socketTimeoutMS: 45000, // 45 secunde socket timeout
+  bufferMaxEntries: 0 // Disable mongoose buffering
+})
   .then(() => console.log("✅ Conectat la MongoDB Atlas - Vanzari Auto Database"))
   .catch(err => console.error("❌ Eroare MongoDB:", err));
   
