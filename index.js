@@ -35,12 +35,15 @@ app.use((req, res, next) => {
 });
 
 // Conectare la MongoDB Atlas - Cloud database cu opțiuni de timeout
-const mongoUri = process.env.MONGODB_URI || 'mongodb+srv://catalinvangheli_db_user:eanoagDnz9LrvNgr@cluster0.qgzanu4.mongodb.net/vanzariAutoApp';
+const mongoUri = process.env.MONGODB_URI || 'mongodb+srv://catalinvangheli_db_user:eanoagDnz9LrvNgr@cluster0.qgzanu4.mongodb.net/vanzariAutoApp?retryWrites=true&w=majority&maxPoolSize=10&maxIdleTimeMS=30000';
 
 mongoose.connect(mongoUri, {
-  serverSelectionTimeoutMS: 30000, // 30 secunde timeout
-  socketTimeoutMS: 45000, // 45 secunde socket timeout
-  bufferMaxEntries: 0 // Disable mongoose buffering
+  serverSelectionTimeoutMS: 60000, // 60 secunde timeout
+  socketTimeoutMS: 60000, // 60 secunde socket timeout
+  bufferMaxEntries: 0, // Disable mongoose buffering
+  maxPoolSize: 10, // Maximum number of connections in the pool
+  minPoolSize: 5, // Minimum number of connections in the pool
+  maxIdleTimeMS: 30000, // Close connections after 30 seconds of inactivity
 })
   .then(() => console.log("✅ Conectat la MongoDB Atlas - Vanzari Auto Database"))
   .catch(err => console.error("❌ Eroare MongoDB:", err));
