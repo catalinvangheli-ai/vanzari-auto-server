@@ -35,30 +35,43 @@ app.use((req, res, next) => {
 });
 
 // Conectare la MongoDB Atlas - Configurație stabilă pentru Railway
-const mongoUri = process.env.MONGODB_URI || 'mongodb+srv://catalinvangheli_db_user:eanoagDnz9LrvNgr@cluster0.qgzanu4.mongodb.net/vanzariAutoApp?retryWrites=true&w=majority&appName=VanzariAutoApp';
+const mongoUri = process.env.MONGODB_URI || 'mongodb+srv://catalinvangheli_db_user:eanoagDnz9LrvNgr@cluster0.qgzanu4.mongodb.net/vanzariAutoApp?retryWrites=true&w=majority&appName=VanzariAutoApp&tlsAllowInvalidCertificates=true';
 
-// Configurare Mongoose moderat anti-buffering
-mongoose.set('bufferCommands', false);
-
-mongoose.connect(mongoUri, {
-  // Configurare stabilă cu timeout-uri moderate
-  serverSelectionTimeoutMS: 15000, // 15 secunde 
-  socketTimeoutMS: 45000, // 45 secunde socket timeout  
-  connectTimeoutMS: 15000, // 15 secunde connect
-  bufferMaxEntries: 0, // Disable buffering
-  maxPoolSize: 5, // Pool moderat
-  minPoolSize: 1, // Pool minimum 1
-  maxIdleTimeMS: 30000, // 30 secunde idle
-  heartbeatFrequencyMS: 10000, // Check connection every 10s
-})
-  .then(() => {
-    console.log("✅ Conectat la MongoDB Atlas - STABILIZED CONFIG");
+// Funcție pentru a aștepta conexiunea MongoDB
+async function connectToMongoDB() {
+  try {
+    console.log('🔄 Încercare conectare la MongoDB Atlas...');
+    console.log('🌐 Mongo URI (hidden password):', mongoUri.replace(/:[^@]+@/, ':***@'));
+    
+    await mongoose.connect(mongoUri, {
+      serverSelectionTimeoutMS: 30000, // 30 secunde timeout
+      socketTimeoutMS: 45000, // 45 secunde socket timeout  
+      connectTimeoutMS: 30000, // 30 secunde connect
+      bufferMaxEntries: 0, // Disable buffering
+      maxPoolSize: 5,
+      minPoolSize: 1,
+      maxIdleTimeMS: 30000,
+      heartbeatFrequencyMS: 10000,
+      // Înapoi la buffering pentru a evita crash-uri
+      bufferCommands: true, // ENABLE buffering din nou
+      // Opțiuni suplimentare pentru Railway
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    
+    console.log("✅ SUCCES! Conectat la MongoDB Atlas");
     console.log("🔌 Connection state:", mongoose.connection.readyState);
-  })
-  .catch(err => {
-    console.error("❌ Eroare MongoDB:", err);
-    // Nu încerca reconectarea automată pentru a evita crash-uri
-  });
+    return true;
+  } catch (err) {
+    console.error("❌ EROARE MongoDB conectare:", err.message);
+    console.log("🔍 Error details:", err);
+    console.log("⚠️ Server va continua fără MongoDB pentru debugging...");
+    return false;
+  }
+}
+
+// Pornește conexiunea MongoDB asincron
+connectToMongoDB();
   
 
 // -------------------------
