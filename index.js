@@ -297,7 +297,15 @@ app.post('/register', async (req, res) => {
 // Login
 app.post('/login', async (req, res) => {
   const { username, password } = req.body;
-  const user = await User.findOne({ username });
+  
+  // Caută utilizatorul după username sau email
+  const user = await User.findOne({ 
+    $or: [
+      { username: username },
+      { email: username } // dacă introduce email în câmpul username
+    ]
+  });
+  
   if (!user) return res.status(401).json({ error: "Utilizator inexistent" });
 
   const valid = await bcrypt.compare(password, user.password);
