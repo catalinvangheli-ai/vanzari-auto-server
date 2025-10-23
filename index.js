@@ -686,13 +686,41 @@ app.get('/api/car-sales', async (req, res) => {
   }
 });
 
-// Vânzări auto - Anunturile mele
-app.get('/api/my-car-sales', authMiddleware, async (req, res) => {
+// Vânzări auto - Anunturile mele (TEMP: fără autentificare, cu fallback MongoDB)
+app.get('/api/my-car-sales', async (req, res) => {
   try {
-    const ads = await CarSaleAd.find({ userId: req.user.username }).sort({ dateCreated: -1 });
+    let ads, database;
+    const userId = 'test-user'; // TEMP: user hardcoded pentru testare
+    
+    if (postgresqlReady) {
+      try {
+        console.log('📋 Încărcare anunțuri utilizator din PostgreSQL...');
+        ads = await CarSaleAdPG.findAll({ 
+          where: { userId: userId, isActive: true },
+          order: [['createdAt', 'DESC']]
+        });
+        database = 'PostgreSQL';
+        console.log(`📋 Găsite ${ads.length} anunțuri utilizator în PostgreSQL`);
+      } catch (pgError) {
+        console.error('❌ PostgreSQL my-sales failed, using MongoDB fallback:', pgError.message);
+        ads = await CarSaleAd.find({ userId: userId, isActive: true }).sort({ dateCreated: -1 });
+        database = 'MongoDB';
+        console.log(`📋 FALLBACK: Găsite ${ads.length} anunțuri utilizator în MongoDB`);
+      }
+    } else {
+      console.log('📋 Încărcare anunțuri utilizator din MongoDB...');
+      ads = await CarSaleAd.find({ userId: userId, isActive: true }).sort({ dateCreated: -1 });
+      database = 'MongoDB';
+      console.log(`📋 Găsite ${ads.length} anunțuri utilizator în MongoDB`);
+    }
+    
     res.json(ads);
   } catch (error) {
-    res.status(500).json({ error: 'Eroare la încărcarea anunturilor' });
+    console.error('❌ Eroare la încărcarea anunturilor utilizator:', error);
+    res.status(500).json({ 
+      error: 'Eroare la încărcarea anunturilor: ' + error.message,
+      success: false 
+    });
   }
 });
 
@@ -834,13 +862,41 @@ app.get('/api/car-rentals', async (req, res) => {
   }
 });
 
-// Închirieri auto - Anunturile mele
-app.get('/api/my-car-rentals', authMiddleware, async (req, res) => {
+// Închirieri auto - Anunturile mele (TEMP: fără autentificare, cu fallback MongoDB)
+app.get('/api/my-car-rentals', async (req, res) => {
   try {
-    const ads = await CarRentalAd.find({ userId: req.user.username }).sort({ dateCreated: -1 });
+    let ads, database;
+    const userId = 'test-user'; // TEMP: user hardcoded pentru testare
+    
+    if (postgresqlReady) {
+      try {
+        console.log('📋 Încărcare anunțuri rental utilizator din PostgreSQL...');
+        ads = await CarRentalAdPG.findAll({ 
+          where: { userId: userId, isActive: true },
+          order: [['createdAt', 'DESC']]
+        });
+        database = 'PostgreSQL';
+        console.log(`📋 Găsite ${ads.length} anunțuri rental utilizator în PostgreSQL`);
+      } catch (pgError) {
+        console.error('❌ PostgreSQL my-rentals failed, using MongoDB fallback:', pgError.message);
+        ads = await CarRentalAd.find({ userId: userId, isActive: true }).sort({ dateCreated: -1 });
+        database = 'MongoDB';
+        console.log(`📋 FALLBACK: Găsite ${ads.length} anunțuri rental utilizator în MongoDB`);
+      }
+    } else {
+      console.log('📋 Încărcare anunțuri rental utilizator din MongoDB...');
+      ads = await CarRentalAd.find({ userId: userId, isActive: true }).sort({ dateCreated: -1 });
+      database = 'MongoDB';
+      console.log(`📋 Găsite ${ads.length} anunțuri rental utilizator în MongoDB`);
+    }
+    
     res.json(ads);
   } catch (error) {
-    res.status(500).json({ error: 'Eroare la încărcarea anunturilor' });
+    console.error('❌ Eroare la încărcarea anunturilor rental utilizator:', error);
+    res.status(500).json({ 
+      error: 'Eroare la încărcarea anunturilor rental: ' + error.message,
+      success: false 
+    });
   }
 });
 
