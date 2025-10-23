@@ -271,9 +271,21 @@ app.post('/register', async (req, res) => {
       return res.status(400).json({ error: 'Username și parolă sunt obligatorii' });
     }
 
-    const existing = await User.findOne({ username });
-    if (existing) {
-      return res.status(409).json({ error: 'Username deja folosit' });
+    // Verifică dacă username-ul sau email-ul există deja
+    const existingUser = await User.findOne({ 
+      $or: [
+        { username: username },
+        { email: email }
+      ]
+    });
+    
+    if (existingUser) {
+      if (existingUser.username === username) {
+        return res.status(409).json({ error: 'Username deja folosit' });
+      }
+      if (existingUser.email === email) {
+        return res.status(409).json({ error: 'Email deja folosit' });
+      }
     }
 
     const hash = await bcrypt.hash(password, 10);
@@ -287,7 +299,10 @@ app.post('/register', async (req, res) => {
       photo: "",
     });
     await user.save();
-    res.sendStatus(201);
+    
+    // Returnează token pentru autentificare automată
+    const token = jwt.sign({ username: user.username }, 'secret');
+    res.status(201).json({ token, username: user.username });
   } catch (e) {
     console.error('Register error:', e);
     res.status(500).json({ error: 'Eroare server la înregistrare' });
