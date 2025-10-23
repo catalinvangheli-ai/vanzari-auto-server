@@ -648,18 +648,41 @@ app.post('/api/car-sales', async (req, res) => {
   }
 });
 
-// Vânzări auto - Listă toate anunturile (PostgreSQL)
+// Vânzări auto - Listă toate anunturile (PostgreSQL cu MongoDB fallback)
 app.get('/api/car-sales', async (req, res) => {
   try {
-    const ads = await CarSaleAdPG.findAll({ 
-      where: { isActive: true },
-      order: [['createdAt', 'DESC']]
-    });
-    console.log(`📋 Găsite ${ads.length} anunțuri vânzare în PostgreSQL`);
-    res.json(ads);
+    let ads, database;
+    
+    if (postgresqlReady) {
+      try {
+        console.log('📋 Încărcare anunțuri din PostgreSQL...');
+        ads = await CarSaleAdPG.findAll({ 
+          where: { isActive: true },
+          order: [['createdAt', 'DESC']]
+        });
+        database = 'PostgreSQL';
+        console.log(`📋 Găsite ${ads.length} anunțuri vânzare în PostgreSQL`);
+      } catch (pgError) {
+        console.error('❌ PostgreSQL GET failed, using MongoDB fallback:', pgError.message);
+        ads = await CarSaleAd.find({ isActive: true }).sort({ dateCreated: -1 });
+        database = 'MongoDB';
+        console.log(`📋 FALLBACK: Găsite ${ads.length} anunțuri vânzare în MongoDB`);
+      }
+    } else {
+      console.log('📋 Încărcare anunțuri din MongoDB (PostgreSQL not ready)...');
+      ads = await CarSaleAd.find({ isActive: true }).sort({ dateCreated: -1 });
+      database = 'MongoDB';
+      console.log(`📋 Găsite ${ads.length} anunțuri vânzare în MongoDB`);
+    }
+    
+    res.json(ads); // Returnează direct array-ul pentru compatibilitate cu aplicația mobilă
   } catch (error) {
-    console.error('❌ Eroare la încărcarea anunturilor PostgreSQL:', error);
-    res.status(500).json({ error: 'Eroare la încărcarea anunturilor din PostgreSQL' });
+    console.error('❌ Eroare la încărcarea anunturilor:', error);
+    res.status(500).json({ 
+      error: 'Eroare la încărcarea anunturilor: ' + error.message,
+      postgresqlReady: postgresqlReady,
+      success: false 
+    });
   }
 });
 
@@ -703,24 +726,12 @@ app.delete('/api/car-sales/:id', authMiddleware, async (req, res) => {
   }
 });
 
-// Închirieri auto - Creare anunt (TEMP: fără autentificare pentru testare)
+// Închirieri auto - Creare anunt (PostgreSQL cu MongoDB fallback)
 app.post('/api/car-rentals', upload.array('poze'), async (req, res) => {
   try {
     console.log('🟢 POST /api/car-rentals - Începe procesarea...');
-    console.log('� MongoDB connection state:', mongoose.connection.readyState);
-    
-    // VERIFICĂ CONEXIUNEA MONGODB ÎNAINTE DE SALVARE
-    if (mongoose.connection.readyState !== 1) {
-      console.error('❌ MongoDB nu este conectat pentru rentals! State:', mongoose.connection.readyState);
-      return res.status(500).json({ 
-        error: 'Database connection not ready',
-        connectionState: mongoose.connection.readyState,
-        success: false 
-      });
-    }
-    
-    console.log('�📋 req.body:', req.body);
-    console.log('📋 Object.keys(req.body):', Object.keys(req.body));
+    console.log('🔍 PostgreSQL ready:', postgresqlReady);
+    console.log('📋 req.body:', req.body);
     console.log('📋 req.files:', req.files);
     
     const adData = {
@@ -732,53 +743,94 @@ app.post('/api/car-rentals', upload.array('poze'), async (req, res) => {
     // Adaugă calea pozelor în DB
     if (req.files && req.files.length > 0) {
       adData.photos = req.files.map(file => `/uploads/${file.filename}`);
+      // Pentru MongoDB, folosește 'poze' în loc de 'photos'
+      adData.poze = req.files.map(file => `/uploads/${file.filename}`);
     }
     
-    console.log('💾 adData înainte de salvare PostgreSQL:', adData);
+    console.log('💾 adData înainte de salvare:', adData);
     
-    // TIMEOUT EXPLICIT pentru salvare rentals în PostgreSQL
+    // Încearcă PostgreSQL mai întâi, apoi MongoDB fallback
     const startTime = Date.now();
-    console.log('⏱️ START rental PostgreSQL save operation...');
+    let savedAd, database;
     
-    // Creează anunțul rental în PostgreSQL
-    const savedAd = await Promise.race([
-      CarRentalAdPG.create(adData),
-      new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('PostgreSQL rental save timeout after 15s')), 15000)
-      )
-    ]);
+    if (postgresqlReady) {
+      try {
+        console.log('⏱️ START rental PostgreSQL save operation...');
+        savedAd = await CarRentalAdPG.create(adData);
+        database = 'PostgreSQL';
+        console.log(`✅ SUCCES! Rental salvat în PostgreSQL cu ID:`, savedAd.id);
+      } catch (pgError) {
+        console.error('❌ PostgreSQL rental failed, using MongoDB fallback:', pgError.message);
+        adData.dateCreated = new Date();
+        const ad = new CarRentalAd(adData);
+        savedAd = await ad.save();
+        database = 'MongoDB';
+        console.log(`✅ FALLBACK! Rental salvat în MongoDB cu ID:`, savedAd._id);
+      }
+    } else {
+      // Folosește MongoDB direct pentru rentals
+      console.log('⏱️ START rental MongoDB save operation (PostgreSQL not ready)...');
+      adData.dateCreated = new Date();
+      const ad = new CarRentalAd(adData);
+      savedAd = await ad.save();
+      database = 'MongoDB';
+      console.log(`✅ SUCCES! Rental salvat în MongoDB cu ID:`, savedAd._id);
+    }
     
     const endTime = Date.now();
-    console.log(`✅ SUCCES! Rental salvat în PostgreSQL in ${endTime - startTime}ms cu ID:`, savedAd.id);
     
     res.status(201).json({ 
-      message: 'Anunt rental creat cu succes în PostgreSQL!', 
-      id: savedAd.id,
+      message: `Anunt rental creat cu succes în ${database}!`, 
+      id: savedAd.id || savedAd._id,
       duration: `${endTime - startTime}ms`,
-      database: 'PostgreSQL',
+      database: database,
       success: true 
     });
   } catch (error) {
-    console.error('❌ EROARE la salvarea anunțului rental PostgreSQL:', error);
+    console.error('❌ EROARE la salvarea anunțului rental:', error);
     res.status(500).json({ 
-      error: 'Eroare la salvarea anuntului rental PostgreSQL: ' + error.message,
+      error: 'Eroare la salvarea anuntului rental: ' + error.message,
+      postgresqlReady: postgresqlReady,
       success: false 
     });
   }
 });
 
-// Închirieri auto - Listă toate anunturile (PostgreSQL)
+// Închirieri auto - Listă toate anunturile (PostgreSQL cu MongoDB fallback)
 app.get('/api/car-rentals', async (req, res) => {
   try {
-    const ads = await CarRentalAdPG.findAll({ 
-      where: { isActive: true },
-      order: [['createdAt', 'DESC']]
-    });
-    console.log(`📋 Găsite ${ads.length} anunțuri închiriere în PostgreSQL`);
-    res.json(ads);
+    let ads, database;
+    
+    if (postgresqlReady) {
+      try {
+        console.log('📋 Încărcare anunțuri rental din PostgreSQL...');
+        ads = await CarRentalAdPG.findAll({ 
+          where: { isActive: true },
+          order: [['createdAt', 'DESC']]
+        });
+        database = 'PostgreSQL';
+        console.log(`📋 Găsite ${ads.length} anunțuri închiriere în PostgreSQL`);
+      } catch (pgError) {
+        console.error('❌ PostgreSQL rental GET failed, using MongoDB fallback:', pgError.message);
+        ads = await CarRentalAd.find({ isActive: true }).sort({ dateCreated: -1 });
+        database = 'MongoDB';
+        console.log(`📋 FALLBACK: Găsite ${ads.length} anunțuri închiriere în MongoDB`);
+      }
+    } else {
+      console.log('📋 Încărcare anunțuri rental din MongoDB (PostgreSQL not ready)...');
+      ads = await CarRentalAd.find({ isActive: true }).sort({ dateCreated: -1 });
+      database = 'MongoDB';
+      console.log(`📋 Găsite ${ads.length} anunțuri închiriere în MongoDB`);
+    }
+    
+    res.json(ads); // Returnează direct array-ul pentru compatibilitate cu aplicația mobilă
   } catch (error) {
-    console.error('❌ Eroare la încărcarea anunturilor rental PostgreSQL:', error);
-    res.status(500).json({ error: 'Eroare la încărcarea anunturilor rental din PostgreSQL' });
+    console.error('❌ Eroare la încărcarea anunturilor rental:', error);
+    res.status(500).json({ 
+      error: 'Eroare la încărcarea anunturilor rental: ' + error.message,
+      postgresqlReady: postgresqlReady,
+      success: false 
+    });
   }
 });
 
