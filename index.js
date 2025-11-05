@@ -34,6 +34,9 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Servire fișiere statice (politică de confidențialitate, etc.)
+app.use('/public', express.static(path.join(__dirname, 'public')));
+
 // Logging middleware
 app.use((req, res, next) => {
   console.log(`📥 ${req.method} ${req.url} de la ${req.ip}`);
@@ -266,43 +269,58 @@ function authMiddleware(req, res, next) {
 // Înregistrare
 app.post('/register', async (req, res) => {
   try {
-    const { username, password, email, fullName, role, skills } = req.body;
-    if (!username || !password) {
-      return res.status(400).json({ error: 'Username și parolă sunt obligatorii' });
+    const { email, password, fullName, role, skills } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email și parolă sunt obligatorii' });
     }
 
-    // Verifică dacă username-ul sau email-ul există deja
-    const existingUser = await User.findOne({ 
-      $or: [
-        { username: username },
-        { email: email }
-      ]
-    });
-    
-    if (existingUser) {
-      if (existingUser.username === username) {
-        return res.status(409).json({ error: 'Username deja folosit' });
-      }
-      if (existingUser.email === email) {
-        return res.status(409).json({ error: 'Email deja folosit' });
+    const normalizedEmail = email.trim().toLowerCase();
+    const nameValue = typeof fullName === 'string' ? fullName.trim() : '';
+    const requestedUsername = typeof req.body.username === 'string' ? req.body.username.trim().toLowerCase() : '';
+    const baseFromEmail = normalizedEmail.split('@')[0]?.replace(/[^a-z0-9]/gi, '') || '';
+    let baseUsername = (requestedUsername || baseFromEmail || 'utilizator').toLowerCase();
+
+    if (!baseUsername) {
+      baseUsername = 'utilizator';
+    }
+
+    const existingEmailUser = await User.findOne({ email: normalizedEmail });
+    if (existingEmailUser) {
+      return res.status(409).json({ error: 'Email deja folosit' });
+    }
+
+    let uniqueUsername = baseUsername;
+    let suffix = 1;
+    while (await User.findOne({ username: uniqueUsername })) {
+      uniqueUsername = `${baseUsername}${suffix}`;
+      suffix += 1;
+      if (suffix > 999) {
+        uniqueUsername = `${baseUsername}${Date.now()}`;
+        break;
       }
     }
 
     const hash = await bcrypt.hash(password, 10);
     const user = new User({
-      username,
+      username: uniqueUsername,
       password: hash,
-      email: email || "",
-      fullName: fullName || "",
-      role: role || "beneficiar",
+      email: normalizedEmail,
+      fullName: nameValue,
+      role: role || 'beneficiar',
       skills: skills || [],
-      photo: "",
+      photo: '',
+      telefon: req.body.telefon || ''
     });
     await user.save();
     
-    // Returnează token pentru autentificare automată
     const token = jwt.sign({ username: user.username }, 'secret');
-    res.status(201).json({ token, username: user.username });
+    res.status(201).json({ 
+      token, 
+      username: user.username,
+      email: user.email,
+      fullName: user.fullName
+    });
   } catch (e) {
     console.error('Register error:', e);
     res.status(500).json({ error: 'Eroare server la înregistrare' });
@@ -311,23 +329,120 @@ app.post('/register', async (req, res) => {
 
 // Login
 app.post('/login', async (req, res) => {
-  const { username, password } = req.body;
-  
-  // Caută utilizatorul după username sau email
-  const user = await User.findOne({ 
+  const { email, username, password } = req.body;
+
+  if (!password || !(email || username)) {
+    return res.status(400).json({ error: 'Email și parolă sunt obligatorii' });
+  }
+
+  const identifierRaw = (email || username || '').trim();
+  const identifierLower = identifierRaw.toLowerCase();
+
+  const usernameQueries = [{ username: identifierLower }];
+  if (identifierRaw !== identifierLower) {
+    usernameQueries.push({ username: identifierRaw });
+  }
+
+  const user = await User.findOne({
     $or: [
-      { username: username },
-      { email: username } // dacă introduce email în câmpul username
+      { email: identifierLower },
+      ...usernameQueries
     ]
   });
-  
-  if (!user) return res.status(401).json({ error: "Utilizator inexistent" });
+
+  if (!user) {
+    return res.status(401).json({ error: 'Email sau parolă incorecte' });
+  }
 
   const valid = await bcrypt.compare(password, user.password);
-  if (!valid) return res.status(401).json({ error: "Parolă greșită" });
+  if (!valid) {
+    return res.status(401).json({ error: 'Email sau parolă incorecte' });
+  }
 
   const token = jwt.sign({ username: user.username }, 'secret');
-  res.json({ token, username: user.username });
+  res.json({ 
+    token, 
+    username: user.username,
+    email: user.email,
+    fullName: user.fullName
+  });
+});
+
+// Resetare parolă - cere resetare
+app.post('/reset-password-request', async (req, res) => {
+  try {
+    const { email } = req.body;
+    
+    if (!email) {
+      return res.status(400).json({ error: 'Email-ul este obligatoriu' });
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+
+    const user = await User.findOne({ email: normalizedEmail });
+    if (!user) {
+      return res.status(404).json({ error: 'Nu există un cont cu acest email' });
+    }
+
+    // Generează un token temporar pentru resetare (valabil 1 oră)
+    const resetToken = jwt.sign(
+      { username: user.username, purpose: 'reset-password' }, 
+      'secret', 
+      { expiresIn: '1h' }
+    );
+
+  console.log(`🔑 Token resetare parolă pentru ${normalizedEmail}: ${resetToken}`);
+    
+    // În producție, ar trebui trimis pe email
+    // Pentru dezvoltare, returnează tokenul în răspuns
+    res.json({ 
+      message: 'Token de resetare generat', 
+      resetToken: resetToken,
+      info: 'În producție, acest token ar fi trimis pe email'
+    });
+  } catch (e) {
+    console.error('Reset password request error:', e);
+    res.status(500).json({ error: 'Eroare server la cererea de resetare' });
+  }
+});
+
+// Resetare parolă - setează parola nouă
+app.post('/reset-password', async (req, res) => {
+  try {
+    const { token, newPassword } = req.body;
+    
+    if (!token || !newPassword) {
+      return res.status(400).json({ error: 'Token și parola nouă sunt obligatorii' });
+    }
+
+    // Verifică tokenul
+    let decoded;
+    try {
+      decoded = jwt.verify(token, 'secret');
+    } catch (err) {
+      return res.status(401).json({ error: 'Token invalid sau expirat' });
+    }
+
+    if (decoded.purpose !== 'reset-password') {
+      return res.status(401).json({ error: 'Token nu este pentru resetarea parolei' });
+    }
+
+    // Găsește utilizatorul
+    const user = await User.findOne({ username: decoded.username });
+    if (!user) {
+      return res.status(404).json({ error: 'Utilizator inexistent' });
+    }
+
+    // Actualizează parola
+    const hash = await bcrypt.hash(newPassword, 10);
+    user.password = hash;
+    await user.save();
+
+    res.json({ message: 'Parola a fost resetată cu succes' });
+  } catch (e) {
+    console.error('Reset password error:', e);
+    res.status(500).json({ error: 'Eroare server la resetarea parolei' });
+  }
 });
 
 // Cereri
@@ -994,7 +1109,7 @@ app.get('/api/my-conversations', authMiddleware, async (req, res) => {
 // -------------------------
 
 // Start server
-const PORT = process.env.PORT || 3000; // Railway va seta automat PORT
+const PORT = process.env.PORT || 3001; // Pentru dezvoltare locală folosește 3001
 const server = app.listen(PORT, '0.0.0.0', (err) => {
   if (err) {
     console.error('❌ Eroare la pornirea serverului:', err);
