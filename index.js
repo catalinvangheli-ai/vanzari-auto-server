@@ -824,6 +824,43 @@ app.get('/api/car-sales', async (req, res) => {
   }
 });
 
+// Vânzări auto - Obține un singur anunț după ID
+app.get('/api/car-sales/:id', async (req, res) => {
+  try {
+    let ad, database;
+    
+    if (postgresqlReady) {
+      try {
+        console.log(`📋 Încărcare anunț ${req.params.id} din PostgreSQL...`);
+        ad = await CarSaleAdPG.findByPk(req.params.id);
+        database = 'PostgreSQL';
+      } catch (pgError) {
+        console.error('❌ PostgreSQL get-one failed, using MongoDB fallback:', pgError.message);
+        ad = await CarSaleAd.findById(req.params.id);
+        database = 'MongoDB';
+      }
+    } else {
+      console.log(`📋 Încărcare anunț ${req.params.id} din MongoDB...`);
+      ad = await CarSaleAd.findById(req.params.id);
+      database = 'MongoDB';
+    }
+    
+    if (!ad) {
+      console.log(`❌ Anunț ${req.params.id} nu a fost găsit`);
+      return res.status(404).json({ error: 'Anunțul nu a fost găsit' });
+    }
+    
+    console.log(`✅ Anunț găsit în ${database}:`, ad.marca, ad.model);
+    res.json(ad);
+  } catch (error) {
+    console.error('❌ Eroare la încărcarea anuntului:', error);
+    res.status(500).json({ 
+      error: 'Eroare la încărcarea anuntului: ' + error.message,
+      success: false 
+    });
+  }
+});
+
 // Vânzări auto - Anunturile mele (TEMP: fără autentificare, cu fallback MongoDB)
 app.get('/api/my-car-sales', async (req, res) => {
   try {
@@ -995,6 +1032,43 @@ app.get('/api/car-rentals', async (req, res) => {
     res.status(500).json({ 
       error: 'Eroare la încărcarea anunturilor rental: ' + error.message,
       postgresqlReady: postgresqlReady,
+      success: false 
+    });
+  }
+});
+
+// Închirieri auto - Obține un singur anunț după ID
+app.get('/api/car-rentals/:id', async (req, res) => {
+  try {
+    let ad, database;
+    
+    if (postgresqlReady) {
+      try {
+        console.log(`📋 Încărcare anunț rental ${req.params.id} din PostgreSQL...`);
+        ad = await CarRentalAdPG.findByPk(req.params.id);
+        database = 'PostgreSQL';
+      } catch (pgError) {
+        console.error('❌ PostgreSQL get-one rental failed, using MongoDB fallback:', pgError.message);
+        ad = await CarRentalAd.findById(req.params.id);
+        database = 'MongoDB';
+      }
+    } else {
+      console.log(`📋 Încărcare anunț rental ${req.params.id} din MongoDB...`);
+      ad = await CarRentalAd.findById(req.params.id);
+      database = 'MongoDB';
+    }
+    
+    if (!ad) {
+      console.log(`❌ Anunț rental ${req.params.id} nu a fost găsit`);
+      return res.status(404).json({ error: 'Anunțul nu a fost găsit' });
+    }
+    
+    console.log(`✅ Anunț rental găsit în ${database}:`, ad.marca, ad.model);
+    res.json(ad);
+  } catch (error) {
+    console.error('❌ Eroare la încărcarea anuntului rental:', error);
+    res.status(500).json({ 
+      error: 'Eroare la încărcarea anuntului: ' + error.message,
       success: false 
     });
   }
