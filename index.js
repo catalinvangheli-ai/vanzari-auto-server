@@ -8,6 +8,8 @@ const jwt = require('jsonwebtoken');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
 // PostgreSQL imports
 const { CarSaleAd: CarSaleAdPG, CarRentalAd: CarRentalAdPG, testConnection, syncDatabase } = require('./models');
@@ -17,7 +19,18 @@ let postgresqlReady = false;
 
 const app = express();
 
-// Asigur că folderul uploads există
+// -------------------------
+// CLOUDINARY CONFIGURATION
+// -------------------------
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'db0htnrxf',
+  api_key: process.env.CLOUDINARY_API_KEY || '533557596816111',
+  api_secret: process.env.CLOUDINARY_API_SECRET || 'HXWkfZ1FStsuEqlhky1nUWwDJKA'
+});
+
+console.log('☁️ Cloudinary configured:', cloudinary.config().cloud_name);
+
+// Asigur că folderul uploads există (legacy fallback)
 const uploadsDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
@@ -234,16 +247,20 @@ const CarRentalAd = mongoose.model('CarRentalAd', new mongoose.Schema({
 }));
 
 // -------------------------
-// MULTER (upload poze)
+// MULTER (upload poze) - CLOUDINARY STORAGE
 // -------------------------
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, path.join(__dirname, 'uploads')),
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname);
-    cb(null, req.user.username + ext);
+const cloudinaryStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'carxsell', // Folder în Cloudinary
+    allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
+    transformation: [{ width: 1200, height: 900, crop: 'limit' }], // Resize automat
   }
 });
-const upload = multer({ storage });
+
+const upload = multer({ storage: cloudinaryStorage });
+
+// Legacy: servire fișiere din uploads local (fallback)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // -------------------------
@@ -711,11 +728,12 @@ app.get('/db-info', (req, res) => {
 // RUTE PENTRU ANUNTURI AUTO
 // -------------------------
 
-// Vânzări auto - Creare anunt (TEMP: fără autentificare pentru testare)
-app.post('/api/car-sales', async (req, res) => {
+// Vânzări auto - Creare anunt cu poze (PostgreSQL cu MongoDB fallback)
+app.post('/api/car-sales', upload.array('poze', 10), async (req, res) => {
   try {
     console.log('🔥 CERERE PRIMITĂ pentru salvarea anunțului!');
     console.log('📡 IP client:', req.ip);
+    console.log('📸 Fișiere primite:', req.files?.length || 0);
     console.log('🔍 PostgreSQL ready:', postgresqlReady);
     console.log('🔍 MongoDB connection state:', mongoose.connection.readyState);
     
@@ -738,6 +756,13 @@ app.post('/api/car-sales', async (req, res) => {
       username: 'test-user',
       dataCrearii: new Date()
     };
+    
+    // Adaugă URL-urile pozelor din Cloudinary
+    if (req.files && req.files.length > 0) {
+      adData.photos = req.files.map(file => file.path); // URL Cloudinary
+      adData.poze = req.files.map(file => file.path); // Pentru MongoDB
+      console.log('📸 Cloudinary URLs salvate:', adData.photos);
+    }
     
     console.log('📝 Salvez anunt nou:', JSON.stringify(adData, null, 2));
     
@@ -943,11 +968,13 @@ app.post('/api/car-rentals', upload.array('poze'), async (req, res) => {
       username: 'test-user'
     };
     
-    // Adaugă calea pozelor în DB
+    // Adaugă calea pozelor în DB - URL-uri Cloudinary
     if (req.files && req.files.length > 0) {
-      adData.photos = req.files.map(file => `/uploads/${file.filename}`);
+      // Cloudinary returnează URL-ul complet în file.path
+      adData.photos = req.files.map(file => file.path);
       // Pentru MongoDB, folosește 'poze' în loc de 'photos'
-      adData.poze = req.files.map(file => `/uploads/${file.filename}`);
+      adData.poze = req.files.map(file => file.path);
+      console.log('📸 Cloudinary URLs salvate:', adData.photos);
     }
     
     console.log('💾 adData înainte de salvare:', adData);
