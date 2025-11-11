@@ -915,14 +915,21 @@ app.get('/api/my-car-sales', authMiddleware, async (req, res) => {
       }
     } else {
       console.log('📋 Încărcare TOATE anunțurile utilizator din MongoDB...');
-      ads = await CarSaleAd.find({ userId: userId }).sort({ dateCreated: -1 }); // TOATE
+      // Caută după userId SAU email (pentru anunțuri vechi create fără email)
+      ads = await CarSaleAd.find({ 
+        $or: [
+          { userId: userId },
+          { email: userEmail },
+          { userEmail: userEmail }
+        ]
+      }).sort({ dateCreated: -1 }); // TOATE
       database = 'MongoDB';
       console.log(`📋 Găsite ${ads.length} anunțuri utilizator în MongoDB`);
       
       // DEBUG: Să vedem ce userId au anunțurile existente
       const allAds = await CarSaleAd.find({}).limit(10);
       console.log('🔍 DEBUG - Primele 10 anunțuri din DB cu userId:', 
-        allAds.map(ad => ({ id: ad._id, userId: ad.userId, marca: ad.marca, model: ad.model }))
+        allAds.map(ad => ({ id: ad._id, userId: ad.userId, email: ad.email, marca: ad.marca, model: ad.model }))
       );
     }
     
@@ -1153,8 +1160,9 @@ app.get('/api/my-car-rentals', authMiddleware, async (req, res) => {
   try {
     let ads, database;
     const userId = req.user.username; // User din JWT token, nu hardcodat
+    const userEmail = req.user.email; // Email din JWT token
     
-    console.log('📋 User autentificat (rentals):', userId);
+    console.log('📋 User autentificat (rentals) - username:', userId, ', email:', userEmail);
     
     if (postgresqlReady) {
       try {
@@ -1167,13 +1175,27 @@ app.get('/api/my-car-rentals', authMiddleware, async (req, res) => {
         console.log(`📋 Găsite ${ads.length} anunțuri rental utilizator în PostgreSQL`);
       } catch (pgError) {
         console.error('❌ PostgreSQL my-rentals failed, using MongoDB fallback:', pgError.message);
-        ads = await CarRentalAd.find({ userId: userId }).sort({ dateCreated: -1 }); // TOATE
+        // Caută după userId SAU email
+        ads = await CarRentalAd.find({ 
+          $or: [
+            { userId: userId },
+            { email: userEmail },
+            { userEmail: userEmail }
+          ]
+        }).sort({ dateCreated: -1 });
         database = 'MongoDB';
         console.log(`📋 FALLBACK: Găsite ${ads.length} anunțuri rental utilizator în MongoDB`);
       }
     } else {
       console.log('📋 Încărcare TOATE anunțurile rental utilizator din MongoDB...');
-      ads = await CarRentalAd.find({ userId: userId }).sort({ dateCreated: -1 }); // TOATE
+      // Caută după userId SAU email
+      ads = await CarRentalAd.find({ 
+        $or: [
+          { userId: userId },
+          { email: userEmail },
+          { userEmail: userEmail }
+        ]
+      }).sort({ dateCreated: -1 });
       database = 'MongoDB';
       console.log(`📋 Găsite ${ads.length} anunțuri rental utilizator în MongoDB`);
     }
