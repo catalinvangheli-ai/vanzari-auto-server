@@ -887,10 +887,12 @@ app.get('/api/car-sales/:id', async (req, res) => {
 });
 
 // Vânzări auto - Anunturile mele (TEMP: fără autentificare, cu fallback MongoDB)
-app.get('/api/my-car-sales', async (req, res) => {
+app.get('/api/my-car-sales', authMiddleware, async (req, res) => {
   try {
     let ads, database;
-    const userId = 'test-user'; // TEMP: user hardcoded pentru testare
+    const userId = req.user.username; // User din JWT token, nu hardcodat
+    
+    console.log('📋 User autentificat:', userId);
     
     if (postgresqlReady) {
       try {
@@ -1133,11 +1135,13 @@ app.get('/api/car-rentals/:id', async (req, res) => {
   }
 });
 
-// Închirieri auto - Anunturile mele (TEMP: fără autentificare, cu fallback MongoDB)
-app.get('/api/my-car-rentals', async (req, res) => {
+// Închirieri auto - Anunturile mele (cu autentificare JWT)
+app.get('/api/my-car-rentals', authMiddleware, async (req, res) => {
   try {
     let ads, database;
-    const userId = 'test-user'; // TEMP: user hardcoded pentru testare
+    const userId = req.user.username; // User din JWT token, nu hardcodat
+    
+    console.log('📋 User autentificat (rentals):', userId);
     
     if (postgresqlReady) {
       try {
