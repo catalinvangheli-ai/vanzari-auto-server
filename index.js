@@ -893,8 +893,10 @@ app.get('/api/my-car-sales', authMiddleware, async (req, res) => {
   try {
     let ads, database;
     const userId = req.user.username; // User din JWT token, nu hardcodat
+    const userEmail = req.user.email; // Email din JWT token
     
-    console.log('📋 User autentificat:', userId);
+    console.log('📋 User autentificat - username:', userId, ', email:', userEmail);
+    console.log('📋 JWT payload complet:', req.user);
     
     if (postgresqlReady) {
       try {
@@ -916,6 +918,12 @@ app.get('/api/my-car-sales', authMiddleware, async (req, res) => {
       ads = await CarSaleAd.find({ userId: userId }).sort({ dateCreated: -1 }); // TOATE
       database = 'MongoDB';
       console.log(`📋 Găsite ${ads.length} anunțuri utilizator în MongoDB`);
+      
+      // DEBUG: Să vedem ce userId au anunțurile existente
+      const allAds = await CarSaleAd.find({}).limit(10);
+      console.log('🔍 DEBUG - Primele 10 anunțuri din DB cu userId:', 
+        allAds.map(ad => ({ id: ad._id, userId: ad.userId, marca: ad.marca, model: ad.model }))
+      );
     }
     
     // Convertește isActive (boolean) → status (string) pentru frontend
