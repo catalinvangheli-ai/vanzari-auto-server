@@ -729,7 +729,7 @@ app.get('/db-info', (req, res) => {
 // -------------------------
 
 // Vânzări auto - Creare anunt cu poze (PostgreSQL cu MongoDB fallback)
-app.post('/api/car-sales', upload.array('poze', 10), async (req, res) => {
+app.post('/api/car-sales', authMiddleware, upload.array('poze', 10), async (req, res) => {
   try {
     console.log('🔥 CERERE PRIMITĂ pentru salvarea anunțului!');
     console.log('📡 IP client:', req.ip);
@@ -752,8 +752,8 @@ app.post('/api/car-sales', upload.array('poze', 10), async (req, res) => {
     
     const adData = {
       ...req.body,
-      userId: 'test-user', // Default user pentru testare
-      username: 'test-user',
+      userId: req.user.username, // User din JWT token
+      username: req.user.username, // User din JWT token
       dataCrearii: new Date()
     };
     
@@ -989,17 +989,18 @@ app.delete('/api/car-sales/:id', authMiddleware, async (req, res) => {
 });
 
 // Închirieri auto - Creare anunt (PostgreSQL cu MongoDB fallback)
-app.post('/api/car-rentals', upload.array('poze'), async (req, res) => {
+app.post('/api/car-rentals', authMiddleware, upload.array('poze'), async (req, res) => {
   try {
     console.log('🟢 POST /api/car-rentals - Începe procesarea...');
     console.log('🔍 PostgreSQL ready:', postgresqlReady);
-    console.log('📋 req.body:', req.body);
+    console.log('� User autentificat:', req.user.username);
+    console.log('�📋 req.body:', req.body);
     console.log('📋 req.files:', req.files);
     
     const adData = {
       ...req.body,
-      userId: 'test-user', // Default user pentru testare
-      username: 'test-user'
+      userId: req.user.username, // User din JWT token
+      username: req.user.username // User din JWT token
     };
     
     // Adaugă calea pozelor în DB - URL-uri Cloudinary
