@@ -894,27 +894,34 @@ app.get('/api/my-car-sales', async (req, res) => {
     
     if (postgresqlReady) {
       try {
-        console.log('📋 Încărcare anunțuri utilizator din PostgreSQL...');
+        console.log('📋 Încărcare TOATE anunțurile utilizator din PostgreSQL...');
         ads = await CarSaleAdPG.findAll({ 
-          where: { userId: userId, isActive: true },
+          where: { userId: userId }, // Fără filtru isActive - returnează TOATE
           order: [['createdAt', 'DESC']]
         });
         database = 'PostgreSQL';
         console.log(`📋 Găsite ${ads.length} anunțuri utilizator în PostgreSQL`);
       } catch (pgError) {
         console.error('❌ PostgreSQL my-sales failed, using MongoDB fallback:', pgError.message);
-        ads = await CarSaleAd.find({ userId: userId, isActive: true }).sort({ dateCreated: -1 });
+        ads = await CarSaleAd.find({ userId: userId }).sort({ dateCreated: -1 }); // TOATE
         database = 'MongoDB';
         console.log(`📋 FALLBACK: Găsite ${ads.length} anunțuri utilizator în MongoDB`);
       }
     } else {
-      console.log('📋 Încărcare anunțuri utilizator din MongoDB...');
-      ads = await CarSaleAd.find({ userId: userId, isActive: true }).sort({ dateCreated: -1 });
+      console.log('📋 Încărcare TOATE anunțurile utilizator din MongoDB...');
+      ads = await CarSaleAd.find({ userId: userId }).sort({ dateCreated: -1 }); // TOATE
       database = 'MongoDB';
       console.log(`📋 Găsite ${ads.length} anunțuri utilizator în MongoDB`);
     }
     
-    res.json(ads);
+    // Convertește isActive (boolean) → status (string) pentru frontend
+    const adsWithStatus = ads.map(ad => {
+      const adObj = ad.toJSON ? ad.toJSON() : ad.get({ plain: true });
+      adObj.status = adObj.isActive ? 'activ' : 'inactiv';
+      return adObj;
+    });
+    
+    res.json(adsWithStatus);
   } catch (error) {
     console.error('❌ Eroare la încărcarea anunturilor utilizator:', error);
     res.status(500).json({ 
@@ -927,14 +934,32 @@ app.get('/api/my-car-sales', async (req, res) => {
 // Vânzări auto - Editare anunt
 app.put('/api/car-sales/:id', authMiddleware, async (req, res) => {
   try {
+    console.log('🔄 PUT /api/car-sales/:id - Update anunt');
+    console.log('📋 req.body:', req.body);
+    
     const ad = await CarSaleAd.findOne({ _id: req.params.id, userId: req.user.username });
     if (!ad) {
       return res.status(404).json({ error: 'Anuntul nu a fost găsit sau nu ai permisiunea să îl editezi' });
     }
     
-    await CarSaleAd.findByIdAndUpdate(req.params.id, req.body);
-    res.json({ message: 'Anunt actualizat cu succes!' });
+    // Convertește status (string) în isActive (boolean)
+    const updateData = { ...req.body };
+    if (updateData.status) {
+      updateData.isActive = updateData.status === 'activ';
+      delete updateData.status; // Șterge câmpul status pentru că folosim isActive în DB
+      console.log('🔄 Status convertit:', updateData.status, '→ isActive:', updateData.isActive);
+    }
+    
+    const updatedAd = await CarSaleAd.findByIdAndUpdate(
+      req.params.id, 
+      updateData,
+      { new: true } // Returnează documentul actualizat
+    );
+    
+    console.log('✅ Anunt actualizat:', updatedAd._id, 'isActive:', updatedAd.isActive);
+    res.json({ message: 'Anunt actualizat cu succes!', ad: updatedAd });
   } catch (error) {
+    console.error('❌ Eroare PUT car-sales:', error);
     res.status(500).json({ error: 'Eroare la actualizarea anuntului' });
   }
 });
@@ -942,14 +967,21 @@ app.put('/api/car-sales/:id', authMiddleware, async (req, res) => {
 // Vânzări auto - Ștergere anunt
 app.delete('/api/car-sales/:id', authMiddleware, async (req, res) => {
   try {
+    console.log('🗑️ DELETE /api/car-sales/:id - Ștergere anunt');
+    console.log('📋 ID anunt:', req.params.id);
+    console.log('👤 User:', req.user.username);
+    
     const ad = await CarSaleAd.findOne({ _id: req.params.id, userId: req.user.username });
     if (!ad) {
+      console.log('❌ Anunt nu a fost gasit sau user fara permisiune');
       return res.status(404).json({ error: 'Anuntul nu a fost găsit sau nu ai permisiunea să îl ștergi' });
     }
     
     await CarSaleAd.findByIdAndDelete(req.params.id);
+    console.log('✅ Anunt șters cu succes:', req.params.id);
     res.json({ message: 'Anunt șters cu succes!' });
   } catch (error) {
+    console.error('❌ Eroare DELETE car-sales:', error);
     res.status(500).json({ error: 'Eroare la ștergerea anuntului' });
   }
 });
@@ -1109,27 +1141,34 @@ app.get('/api/my-car-rentals', async (req, res) => {
     
     if (postgresqlReady) {
       try {
-        console.log('📋 Încărcare anunțuri rental utilizator din PostgreSQL...');
+        console.log('📋 Încărcare TOATE anunțurile rental utilizator din PostgreSQL...');
         ads = await CarRentalAdPG.findAll({ 
-          where: { userId: userId, isActive: true },
+          where: { userId: userId }, // Fără filtru isActive - returnează TOATE
           order: [['createdAt', 'DESC']]
         });
         database = 'PostgreSQL';
         console.log(`📋 Găsite ${ads.length} anunțuri rental utilizator în PostgreSQL`);
       } catch (pgError) {
         console.error('❌ PostgreSQL my-rentals failed, using MongoDB fallback:', pgError.message);
-        ads = await CarRentalAd.find({ userId: userId, isActive: true }).sort({ dateCreated: -1 });
+        ads = await CarRentalAd.find({ userId: userId }).sort({ dateCreated: -1 }); // TOATE
         database = 'MongoDB';
         console.log(`📋 FALLBACK: Găsite ${ads.length} anunțuri rental utilizator în MongoDB`);
       }
     } else {
-      console.log('📋 Încărcare anunțuri rental utilizator din MongoDB...');
-      ads = await CarRentalAd.find({ userId: userId, isActive: true }).sort({ dateCreated: -1 });
+      console.log('📋 Încărcare TOATE anunțurile rental utilizator din MongoDB...');
+      ads = await CarRentalAd.find({ userId: userId }).sort({ dateCreated: -1 }); // TOATE
       database = 'MongoDB';
       console.log(`📋 Găsite ${ads.length} anunțuri rental utilizator în MongoDB`);
     }
     
-    res.json(ads);
+    // Convertește isActive (boolean) → status (string) pentru frontend
+    const adsWithStatus = ads.map(ad => {
+      const adObj = ad.toJSON ? ad.toJSON() : ad.get({ plain: true });
+      adObj.status = adObj.isActive ? 'activ' : 'inactiv';
+      return adObj;
+    });
+    
+    res.json(adsWithStatus);
   } catch (error) {
     console.error('❌ Eroare la încărcarea anunturilor rental utilizator:', error);
     res.status(500).json({ 
@@ -1142,14 +1181,32 @@ app.get('/api/my-car-rentals', async (req, res) => {
 // Închirieri auto - Editare anunt
 app.put('/api/car-rentals/:id', authMiddleware, async (req, res) => {
   try {
+    console.log('🔄 PUT /api/car-rentals/:id - Update anunt');
+    console.log('📋 req.body:', req.body);
+    
     const ad = await CarRentalAd.findOne({ _id: req.params.id, userId: req.user.username });
     if (!ad) {
       return res.status(404).json({ error: 'Anuntul nu a fost găsit sau nu ai permisiunea să îl editezi' });
     }
     
-    await CarRentalAd.findByIdAndUpdate(req.params.id, req.body);
-    res.json({ message: 'Anunt actualizat cu succes!' });
+    // Convertește status (string) în isActive (boolean)
+    const updateData = { ...req.body };
+    if (updateData.status) {
+      updateData.isActive = updateData.status === 'activ';
+      delete updateData.status;
+      console.log('🔄 Status convertit:', updateData.status, '→ isActive:', updateData.isActive);
+    }
+    
+    const updatedAd = await CarRentalAd.findByIdAndUpdate(
+      req.params.id,
+      updateData,
+      { new: true }
+    );
+    
+    console.log('✅ Anunt actualizat:', updatedAd._id, 'isActive:', updatedAd.isActive);
+    res.json({ message: 'Anunt actualizat cu succes!', ad: updatedAd });
   } catch (error) {
+    console.error('❌ Eroare PUT car-rentals:', error);
     res.status(500).json({ error: 'Eroare la actualizarea anuntului' });
   }
 });
@@ -1157,14 +1214,21 @@ app.put('/api/car-rentals/:id', authMiddleware, async (req, res) => {
 // Închirieri auto - Ștergere anunt
 app.delete('/api/car-rentals/:id', authMiddleware, async (req, res) => {
   try {
+    console.log('🗑️ DELETE /api/car-rentals/:id - Ștergere anunt');
+    console.log('📋 ID anunt:', req.params.id);
+    console.log('👤 User:', req.user.username);
+    
     const ad = await CarRentalAd.findOne({ _id: req.params.id, userId: req.user.username });
     if (!ad) {
+      console.log('❌ Anunt nu a fost gasit sau user fara permisiune');
       return res.status(404).json({ error: 'Anuntul nu a fost găsit sau nu ai permisiunea să îl ștergi' });
     }
     
     await CarRentalAd.findByIdAndDelete(req.params.id);
+    console.log('✅ Anunt șters cu succes:', req.params.id);
     res.json({ message: 'Anunt șters cu succes!' });
   } catch (error) {
+    console.error('❌ Eroare DELETE car-rentals:', error);
     res.status(500).json({ error: 'Eroare la ștergerea anuntului' });
   }
 });
