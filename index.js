@@ -750,12 +750,19 @@ app.post('/api/car-sales', authMiddleware, upload.array('poze', 10), async (req,
     console.log('�📡 Headers:', JSON.stringify(req.headers, null, 2));
     console.log('📝 Body primit:', JSON.stringify(req.body, null, 2));
     
+    // Caută utilizatorul pentru a obține fullName și telefon
+    const user = await User.findOne({ username: req.user.username });
+    console.log('👤 User găsit:', user?.fullName, user?.telefon);
+    
     const adData = {
       ...req.body,
-      userId: req.user.username, // User din JWT token
-      username: req.user.username, // User din JWT token
-      email: req.user.email, // Email din JWT token
-      userEmail: req.user.email, // Email din JWT token (alias pentru compatibilitate)
+      userId: req.user.username,
+      username: req.user.username,
+      email: req.user.email,
+      userEmail: req.user.email,
+      fullName: user?.fullName || req.body.fullName || req.user.username,
+      telefon: req.body.telefon || user?.telefon || '',
+      createdAt: new Date(),
       dataCrearii: new Date()
     };
     
@@ -1014,12 +1021,19 @@ app.post('/api/car-rentals', authMiddleware, upload.array('poze'), async (req, r
     console.log('�📋 req.body:', req.body);
     console.log('📋 req.files:', req.files);
     
+    // Caută utilizatorul pentru a obține fullName și telefon
+    const user = await User.findOne({ username: req.user.username });
+    console.log('👤 User găsit (rentals):', user?.fullName, user?.telefon);
+    
     const adData = {
       ...req.body,
       userId: req.user.username, // User din JWT token
       username: req.user.username, // User din JWT token
       email: req.user.email, // Email din JWT token
-      userEmail: req.user.email // Email din JWT token (alias pentru compatibilitate)
+      userEmail: req.user.email, // Email din JWT token (alias pentru compatibilitate)
+      fullName: user?.fullName || req.body.fullName || req.user.username, // Nume complet
+      telefon: req.body.telefon || user?.telefon || '', // Telefon
+      createdAt: new Date() // Data creării
     };
     
     // Adaugă calea pozelor în DB - URL-uri Cloudinary
