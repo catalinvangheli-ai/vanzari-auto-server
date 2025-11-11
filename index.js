@@ -331,7 +331,7 @@ app.post('/register', async (req, res) => {
     });
     await user.save();
     
-    const token = jwt.sign({ username: user.username }, 'secret');
+    const token = jwt.sign({ username: user.username, email: user.email }, 'secret');
     res.status(201).json({ 
       token, 
       username: user.username,
@@ -376,7 +376,7 @@ app.post('/login', async (req, res) => {
     return res.status(401).json({ error: 'Email sau parolă incorecte' });
   }
 
-  const token = jwt.sign({ username: user.username }, 'secret');
+  const token = jwt.sign({ username: user.username, email: user.email }, 'secret');
   res.json({ 
     token, 
     username: user.username,
@@ -754,6 +754,8 @@ app.post('/api/car-sales', authMiddleware, upload.array('poze', 10), async (req,
       ...req.body,
       userId: req.user.username, // User din JWT token
       username: req.user.username, // User din JWT token
+      email: req.user.email, // Email din JWT token
+      userEmail: req.user.email, // Email din JWT token (alias pentru compatibilitate)
       dataCrearii: new Date()
     };
     
@@ -1000,7 +1002,9 @@ app.post('/api/car-rentals', authMiddleware, upload.array('poze'), async (req, r
     const adData = {
       ...req.body,
       userId: req.user.username, // User din JWT token
-      username: req.user.username // User din JWT token
+      username: req.user.username, // User din JWT token
+      email: req.user.email, // Email din JWT token
+      userEmail: req.user.email // Email din JWT token (alias pentru compatibilitate)
     };
     
     // Adaugă calea pozelor în DB - URL-uri Cloudinary
