@@ -1305,12 +1305,16 @@ app.delete('/api/car-rentals/:id', authMiddleware, async (req, res) => {
 // Conversații - Listă pentru utilizatorul logat
 app.get('/api/my-conversations', authMiddleware, async (req, res) => {
   try {
+    // Folosește email SAU username pentru a fi consistent cu POST /messages
+    const userIdentifier = req.user.email || req.user.username;
+    console.log('📋 GET /api/my-conversations - User:', userIdentifier);
+    
     const conversations = await Message.aggregate([
       {
         $match: {
           $or: [
-            { from: req.user.username },
-            { to: req.user.username }
+            { from: userIdentifier },
+            { to: userIdentifier }
           ]
         }
       },
@@ -1318,7 +1322,7 @@ app.get('/api/my-conversations', authMiddleware, async (req, res) => {
         $group: {
           _id: {
             $cond: [
-              { $eq: ['$from', req.user.username] },
+              { $eq: ['$from', userIdentifier] },
               '$to',
               '$from'
             ]
@@ -1330,10 +1334,22 @@ app.get('/api/my-conversations', authMiddleware, async (req, res) => {
       },
       {
         $sort: { lastDate: -1 }
+      },
+      {
+        $project: {
+          _id: 0,
+          otherUser: '$_id',
+          lastMessage: 1,
+          lastDate: 1,
+          count: 1
+        }
       }
     ]);
+    
+    console.log(`✅ Găsite ${conversations.length} conversații`);
     res.json(conversations);
   } catch (error) {
+    console.error('❌ Eroare la încărcarea conversațiilor:', error);
     res.status(500).json({ error: 'Eroare la încărcarea conversațiilor' });
   }
 });
