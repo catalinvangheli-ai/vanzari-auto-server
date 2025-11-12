@@ -187,7 +187,9 @@ const Message = mongoose.model("Message", new mongoose.Schema({
   from: String,
   to: String,
   text: String,
-  date: { type: Date, default: Date.now }
+  date: { type: Date, default: Date.now },
+  listingId: String,  // ID-ul anunțului despre care e conversația
+  listingType: String // 'vanzari' sau 'inchirieri'
 }));
 
 const Review = mongoose.model("Review", new mongoose.Schema({
@@ -507,10 +509,12 @@ app.post('/messages', authMiddleware, async (req, res) => {
     console.log('📝 Body:', req.body);
     
     const message = new Message({
-      from: req.user.email || req.user.username, // Email sau username din JWT
+      from: req.user.email || req.user.username,
       to: req.body.to,
       text: req.body.text,
-      date: new Date()
+      date: new Date(),
+      listingId: req.body.listingId || null,  // Salvează ID anunț dacă există
+      listingType: req.body.listingType || null // Salvează tip anunț
     });
     
     await message.save();
@@ -1319,6 +1323,9 @@ app.get('/api/my-conversations', authMiddleware, async (req, res) => {
         }
       },
       {
+        $sort: { date: -1 } // Sortează descrescător pentru a lua ultimul mesaj
+      },
+      {
         $group: {
           _id: {
             $cond: [
@@ -1327,8 +1334,10 @@ app.get('/api/my-conversations', authMiddleware, async (req, res) => {
               '$from'
             ]
           },
-          lastMessage: { $last: '$text' },
-          lastDate: { $last: '$date' },
+          lastMessage: { $first: '$text' },
+          lastDate: { $first: '$date' },
+          listingId: { $first: '$listingId' },
+          listingType: { $first: '$listingType' },
           count: { $sum: 1 }
         }
       },
@@ -1341,6 +1350,8 @@ app.get('/api/my-conversations', authMiddleware, async (req, res) => {
           otherUser: '$_id',
           lastMessage: 1,
           lastDate: 1,
+          listingId: 1,
+          listingType: 1,
           count: 1
         }
       }
