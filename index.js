@@ -754,13 +754,14 @@ app.post('/api/car-sales', authMiddleware, upload.array('poze', 10), async (req,
     const user = await User.findOne({ username: req.user.username });
     console.log('👤 User găsit:', user?.fullName, user?.telefon);
     
+    // NU bloca dacă user nu e găsit - folosește datele din req.body
     const adData = {
       ...req.body,
       userId: req.user.username,
       username: req.user.username,
       email: req.user.email,
       userEmail: req.user.email,
-      fullName: user?.fullName || req.body.fullName || req.user.username,
+      fullName: user?.fullName || req.body.fullName || req.user.username || 'User',
       telefon: req.body.telefon || user?.telefon || '',
       createdAt: new Date(),
       dataCrearii: new Date()
@@ -1031,7 +1032,7 @@ app.post('/api/car-rentals', authMiddleware, upload.array('poze'), async (req, r
       username: req.user.username, // User din JWT token
       email: req.user.email, // Email din JWT token
       userEmail: req.user.email, // Email din JWT token (alias pentru compatibilitate)
-      fullName: user?.fullName || req.body.fullName || req.user.username, // Nume complet
+      fullName: user?.fullName || req.body.fullName || req.user.username || 'User', // Nume complet
       telefon: req.body.telefon || user?.telefon || '', // Telefon
       createdAt: new Date() // Data creării
     };
