@@ -502,9 +502,24 @@ app.delete('/offers/:id', authMiddleware, async (req, res) => {
 
 // Mesaje
 app.post('/messages', authMiddleware, async (req, res) => {
-  const message = new Message(req.body);
-  await message.save();
-  res.sendStatus(201);
+  try {
+    console.log('💬 POST /messages - User:', req.user.username, req.user.email);
+    console.log('📝 Body:', req.body);
+    
+    const message = new Message({
+      from: req.user.email || req.user.username, // Email sau username din JWT
+      to: req.body.to,
+      text: req.body.text,
+      date: new Date()
+    });
+    
+    await message.save();
+    console.log('✅ Mesaj salvat:', message._id);
+    res.status(201).json({ success: true, message });
+  } catch (error) {
+    console.error('❌ Eroare salvare mesaj:', error);
+    res.status(500).json({ error: error.message });
+  }
 });
 app.get('/messages/:user1/:user2', async (req, res) => {
   const { user1, user2 } = req.params;
