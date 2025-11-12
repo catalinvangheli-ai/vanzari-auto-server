@@ -527,12 +527,31 @@ app.post('/messages', authMiddleware, async (req, res) => {
 });
 app.get('/messages/:user1/:user2', async (req, res) => {
   const { user1, user2 } = req.params;
+  
+  // Verifică dacă user1/user2 sunt username-uri și convertește-le în email-uri
+  const user1Doc = await User.findOne({ 
+    $or: [{ email: user1 }, { username: user1 }] 
+  });
+  const user2Doc = await User.findOne({ 
+    $or: [{ email: user2 }, { username: user2 }] 
+  });
+  
+  const user1Email = user1Doc?.email || user1;
+  const user2Email = user2Doc?.email || user2;
+  
+  console.log('📧 Messages query:', { 
+    input: { user1, user2 },
+    emails: { user1Email, user2Email }
+  });
+  
   const messages = await Message.find({
     $or: [
-      { from: user1, to: user2 },
-      { from: user2, to: user1 }
+      { from: user1Email, to: user2Email },
+      { from: user2Email, to: user1Email }
     ]
   }).sort({ date: 1 });
+  
+  console.log('📨 Found messages:', messages.length);
   res.json(messages);
 });
 
