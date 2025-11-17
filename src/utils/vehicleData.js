@@ -878,9 +878,21 @@ export const modele = {
 
   // MINI - toate modelele disponibile
   mini: [
-    'Cooper', 'Cooper S', 'Cooper SE',
-    'Clubman', 'Countryman', 'Paceman',
-    'John Cooper Works'
+    // Compacte / Hatchback
+    'One', 'Cooper', 'Cooper S', 'Cooper SE',
+    'John Cooper Works', 'JCW',
+    
+    // SUV / Crossover
+    'Countryman', 'Countryman Plug-in Hybrid',
+    'Paceman',
+    
+    // Sport / Performanță
+    'Cooper JCW GP', 'Cooper S GP',
+    
+    // Modele retrase / clasice
+    'Classic', 'Mini Original',
+    'Clubman', 'Clubman Classic',
+    'Convertible'
   ],
 
   // MOTOCICLETE - YAMAHA
