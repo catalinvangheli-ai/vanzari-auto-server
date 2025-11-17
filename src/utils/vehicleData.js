@@ -298,11 +298,43 @@ export const modele = {
 
   // FORD - toate modelele disponibile
   ford: [
-    'Ka+', 'Fiesta', 'Focus', 'Mondeo', 'Mustang',
-    'EcoSport', 'Puma', 'Kuga', 'Explorer', 'Edge',
-    'Tourneo Connect', 'Tourneo Custom', 'Transit Connect', 'Transit Custom', 'Transit',
-    'Ranger', 'F-150',
-    'Focus ST', 'Focus RS', 'Fiesta ST', 'Mustang GT'
+    // Modele mici / Compacte
+    'Ka', 'Ka+',
+    'Fiesta', 'Fiesta ST',
+    'Puma',
+    'Focus', 'Focus ST', 'Focus RS',
+    'Escort', 'Orion',
+    
+    // Modele medii
+    'Mondeo',
+    'Fusion', 'B-Max', 'C-Max', 'S-Max', 'Galaxy',
+    
+    // Crossover & SUV
+    'EcoSport', 'Kuga', 'Edge', 'Explorer', 'Everest',
+    'Bronco', 'Bronco Sport',
+    
+    // Modele Premium / Sport
+    'Mustang', 'Mustang GT', 'Mustang Shelby',
+    'GT', 'Probe', 'Capri', 'Cougar',
+    
+    // Modele Pick-up
+    'Ranger', 'Ranger Raptor',
+    'F-150', 'F-250', 'F-350', 'F-350 Super Duty',
+    'Maverick',
+    
+    // Modele Vans / Utilitare
+    'Transit', 'Transit Custom', 'Transit Connect', 'Transit Courier',
+    'Tourneo Custom', 'Tourneo Connect', 'Tourneo Courier',
+    'Econoline', 'E-Series',
+    
+    // Modele Electrice / Hybrid
+    'Mustang Mach-E',
+    'Explorer Electric',
+    'E-Transit', 'E-Transit Custom',
+    
+    // Modele vechi/retro
+    'Taunus', 'Sierra', 'Granada', 'Scorpio',
+    'Cortina', 'Zephyr'
   ],
 
   // OPEL - toate modelele disponibile
