@@ -477,11 +477,34 @@ export const modele = {
 
   // PEUGEOT - toate modelele disponibile  
   peugeot: [
-    '108', '208', '308', '508',
-    '2008', '3008', '5008',
-    'Partner Tepee', 'Rifter', 'Traveller',
-    'e-208', 'e-2008', 'e-308',
-    '208 GTi', '308 GTi', '508 PSE'
+    // Compacte / Hatchback / Sedan
+    '108',
+    '208', '208 e', 'e-208',
+    '308', '308 SW',
+    '508', '508 SW', '508 PSE',
+    '301',
+    
+    // SUV / Crossover
+    '2008', '2008 e', 'e-2008',
+    '3008', '3008 Hybrid', '3008 Hybrid4',
+    '4008',
+    '5008', '5008 Hybrid', '5008 Hybrid4',
+    
+    // Sport / Performanță
+    'RCZ', 'RCZ R',
+    '208 GTi', '308 GTi',
+    
+    // Monovolume / MPV
+    'Rifter', 'e-Rifter',
+    'Partner', 'Partner Tepee',
+    'Traveller', 'Expert', 'e-Expert',
+    
+    // Modele retrase / clasice notabile
+    '104', '204', '205',
+    '206', '206 CC', '207',
+    '306', '307',
+    '405', '406', '407',
+    '605', '607'
   ],
 
   // DACIA - modelele disponibile
