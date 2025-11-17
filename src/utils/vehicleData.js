@@ -948,8 +948,26 @@ export const modele = {
 
   // LANCIA - italiană
   lancia: [
-    'Ypsilon', 'Delta', 'Thema',
-    'Musa', 'Phedra', 'Voyager'
+    // Modele actuale & recente
+    'Ypsilon',
+    
+    // Modele iconice & sport
+    'Delta', 'Delta Integrale', 'Stratos', 'Fulvia',
+    
+    // Sedanuri & berlina
+    'Thema', 'Thesis', 'Lybra', 'Kappa', 'Dedra',
+    
+    // Compacte & monovolum
+    'Musa', 'Phedra', 'Voyager',
+    
+    // Clasice legendare
+    'Aurelia', 'Flavia', 'Flaminia', 'Appia',
+    
+    // Anii '70-'80
+    'Beta', 'Beta Montecarlo', 'Prisma', 'Trevi', 'Zagato', 'Gamma',
+    
+    // Prewar & vintage
+    'Ardea', 'Augusta', 'Artena', 'Astura'
   ],
 
   // LAND ROVER - SUV premium britanică
