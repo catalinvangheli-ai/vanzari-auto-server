@@ -833,9 +833,41 @@ export const modele = {
 
   // LEXUS - toate modelele disponibile
   lexus: [
-    'CT', 'IS', 'ES', 'GS', 'LS',
-    'UX', 'NX', 'RX', 'GX', 'LX',
-    'LC', 'RC'
+    // Sedan / Hatchback / Coupe
+    'Lexus IS',
+    'Lexus IS F',
+    'Lexus ES',
+    'Lexus GS',
+    'Lexus GS F',
+    'Lexus LS',
+    'Lexus LC',
+    'Lexus RC',
+    'Lexus RC F',
+    
+    // SUV / Crossover
+    'Lexus UX',
+    'Lexus UX 250h',
+    'Lexus NX',
+    'Lexus NX 350h', 'Lexus NX 450h+',
+    'Lexus RX',
+    'Lexus RX 350h', 'Lexus RX 450h',
+    'Lexus GX',
+    'Lexus LX',
+    'Lexus RZ',
+    'Lexus LM',
+    
+    // Electrice & Hibride
+    'Lexus LS 500h',
+    'Lexus LC 500h',
+    'Lexus RZ 450e',
+    'Lexus HS 250h',
+    
+    // Modele retrase / clasice notabile
+    'Lexus SC',
+    'Lexus SC 430',
+    'Lexus IS 200', 'Lexus IS 250', 'Lexus IS 300',
+    'Lexus GS 300', 'Lexus GS 430', 'Lexus GS 450h',
+    'Lexus LS 400', 'Lexus LS 430', 'Lexus LS 460'
   ],
 
   // INFINITI - toate modelele disponibile
