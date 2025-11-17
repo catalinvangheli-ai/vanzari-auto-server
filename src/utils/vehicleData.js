@@ -427,9 +427,47 @@ export const modele = {
 
   // FIAT - toate modelele disponibile
   fiat: [
-    '500', '500X', '500L', 'Panda', 'Punto', 'Tipo',
-    'Doblo', 'Qubo', 'Freemont',
-    '500 Abarth', 'Punto Abarth'
+    // Modele mici / City car
+    '500', '500 Hybrid', '500 Electric', '500C', '500e',
+    'Panda', 'Panda Hybrid', 'Panda Cross',
+    
+    // Supermini / Compacte
+    '500L', '500X',
+    'Tipo', 'Tipo Hatchback', 'Tipo Sedan', 'Tipo Station Wagon', 'Tipo Cross',
+    
+    // Modele utilitare pentru pasageri
+    'Doblo', 'Doblo Combi',
+    'Fiorino Combi',
+    'Scudo', 'Scudo Combi',
+    'Ulysse',
+    
+    // Modele utilitare N1 (dube)
+    'Fiorino Cargo', 'Doblo Cargo',
+    'Talento', 'Ducato',
+    
+    // Electrice
+    'E-Doblo', 'E-Scudo', 'E-Ducato',
+    
+    // Modele iconice / clasice
+    '500 original', '600', '850',
+    '124', '125', '126', '127', '128', '131', '132',
+    'Topolino',
+    'Uno', 'Cinquecento', 'Seicento',
+    'Punto', 'Punto Evo', 'Grande Punto',
+    'Palio', 'Siena', 'Tempra',
+    'Tipo original', 'Croma', 'Regata', 'Ritmo',
+    'Stilo', 'Bravo', 'Brava', 'Linea',
+    'Marea', 'Marea Weekend',
+    'Coupe', 'Barchetta', 'X1/9',
+    'Qubo', 'Freemont',
+    
+    // Sport / Roadster
+    '124 Spider', '124 Spider Classic',
+    'Coupe Turbo',
+    
+    // Abarth (derivate sportive)
+    '500 Abarth', 'Punto Abarth',
+    'Abarth 595', 'Abarth 695', 'Abarth 750', 'Abarth 1000'
   ],
 
   // JEEP - toate modelele disponibile
