@@ -644,10 +644,33 @@ export const modele = {
 
   // VOLVO - toate modelele disponibile  
   volvo: [
-    'V40', 'V60', 'V90', 'S60', 'S90',
-    'XC40', 'XC60', 'XC90',
-    'C40 Recharge', 'XC40 Recharge',
-    'Polestar 1', 'Polestar 2'
+    // Compacte / Hatchback / Sedan
+    'S60', 'S60 Recharge',
+    'S90', 'S90 Recharge',
+    'V40', 'V40 Cross Country',
+    'V60', 'V60 Recharge',
+    'V90', 'V90 Recharge', 'V90 Cross Country',
+    
+    // SUV / Crossover
+    'XC40', 'XC40 Recharge',
+    'XC60', 'XC60 Recharge',
+    'XC90', 'XC90 Recharge',
+    
+    // Sport / Performanță
+    'C30', 'C70',
+    'Polestar 1', 'Polestar 2',
+    
+    // Electrice
+    'C40 Recharge',
+    
+    // Monovolume / MPV
+    'V70', 'V70 XC', 'V70 Cross Country',
+    '850', '940', '960',
+    
+    // Modele retrase / clasice notabile
+    '240', '740', '760', '780',
+    '480', '66', '164',
+    'Amazon', '122'
   ],
 
   // LEXUS - toate modelele disponibile
