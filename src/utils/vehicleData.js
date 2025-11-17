@@ -537,10 +537,45 @@ export const modele = {
 
   // NISSAN - toate modelele disponibile
   nissan: [
-    'Micra', 'Note', 'Sentra', 'Altima',
-    'Juke', 'Qashqai', 'X-Trail', 'Murano', 'Pathfinder',
+    // Compacte / Hatchback / Sedan
+    'Micra', 'March',
+    'Versa', 'Sunny', 'Almera',
+    'Pulsar',
+    'Sentra', 'Sylphy',
+    'Altima', 'Maxima', 'Teana',
+    
+    // SUV / Crossover / Off-road
+    'Juke', 'Qashqai', 'Rogue Sport',
+    'X-Trail', 'Rogue',
+    'Pathfinder', 'Murano',
+    'Armada', 'Patrol',
+    'Kicks',
+    
+    // Sport / Performanță
+    '370Z', 'Fairlady Z',
+    '350Z',
+    'GT-R', 'R35',
+    '200SX', 'Silvia',
+    '300ZX',
+    
+    // Electrice
     'Leaf', 'Ariya',
-    '370Z', 'GT-R'
+    
+    // Monovolume / Van
+    'NV200', 'NV300', 'Serena', 'Quest',
+    
+    // Pickup / Utilitare
+    'Navara', 'Frontier',
+    'Titan',
+    'NP300', 'D22', 'D40',
+    'e-NV200',
+    
+    // Hibride / PHEV
+    'Rogue e-Power', 'Note e-Power', 'Pathfinder e-Power',
+    
+    // Modele retrase / clasice notabile
+    'Bluebird', 'Cedric', 'Laurel', 'Stagea',
+    'Prairie', 'Terrano', 'Terrano II'
   ],
 
   // MAZDA - toate modelele disponibile
