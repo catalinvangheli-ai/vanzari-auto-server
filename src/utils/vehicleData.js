@@ -877,10 +877,33 @@ export const modele = {
 
   // JAGUAR - premium britanică
   jaguar: [
-    'XE', 'XF', 'XJ',
-    'E-Pace', 'F-Pace', 'I-Pace',
-    'F-Type',
-    'XK', 'XKR', 'S-Type'
+    // Modele actuale (2025) - Sedanuri & Berlina
+    'XE', 'XF',
+    
+    // SUV-uri actuale
+    'E-Pace', 'F-Pace',
+    
+    // Electrice
+    'I-Pace',
+    
+    // Modele sportive actuale sau recente
+    'F-Type', 'F-Type Coupé', 'F-Type Cabriolet',
+    'XKR-S', 'XKR',
+    
+    // Sedanuri și limuzine retrase
+    'XJ', 'XJ6', 'XJ8', 'XJR',
+    'S-Type', 'X-Type',
+    'Mark 2', 'Mark VII', 'Mark VIII', 'Mark IX',
+    '420', '420G',
+    
+    // Sport & GT Clasic
+    'E-Type',
+    'XK120', 'XK140', 'XK150',
+    'XK8', 'XK', 'XJS',
+    
+    // Supercar-uri și ediții rare
+    'XJ220', 'XJR-15',
+    'C-X75', 'D-Type', 'C-Type'
   ],
 
   // LAMBORGHINI - supercar italiană
