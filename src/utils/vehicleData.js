@@ -1144,9 +1144,44 @@ export const modele = {
 
   // CADILLAC - luxury americană
   cadillac: [
-    'CT4', 'CT5', 'CT6',
-    'XT4', 'XT5', 'XT6',
-    'Escalade', 'Lyriq'
+    // Sedan / Hatchback / Coupe
+    'Cadillac ATS',
+    'Cadillac CTS',
+    'Cadillac CT4',
+    'Cadillac CT5',
+    'Cadillac CT6',
+    'Cadillac XLR',
+    'Cadillac Eldorado',
+    'Cadillac DeVille',
+    'Cadillac Seville',
+    
+    // SUV / Crossover
+    'Cadillac XT4',
+    'Cadillac XT5',
+    'Cadillac XT6',
+    'Cadillac Escalade',
+    'Cadillac Escalade ESV',
+    
+    // Sport / Performanță
+    'Cadillac CT5-V',
+    'Cadillac CT5-V Blackwing',
+    'Cadillac CTS-V',
+    'Cadillac CTS-V Wagon',
+    'Cadillac V-Series',
+    
+    // Electrice & Hibride
+    'Cadillac Lyriq',
+    'Cadillac CT6 PHEV',
+    'Cadillac Escalade PHEV',
+    
+    // Modele retrase / clasice notabile
+    'Cadillac Series 62',
+    'Cadillac Series 60',
+    'Cadillac Series 70',
+    'Cadillac Fleetwood',
+    'Cadillac Brougham',
+    'Cadillac Cimarron',
+    'Cadillac Eldorado Biarritz'
   ],
 
   // CHEVROLET - americană mainstream
