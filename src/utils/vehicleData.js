@@ -314,11 +314,46 @@ export const modele = {
 
   // TOYOTA - toate modelele disponibile
   toyota: [
-    'Yaris', 'Corolla', 'Camry', 'Avalon',
-    'C-HR', 'RAV4', 'Highlander', 'Land Cruiser',
-    'Prius', 'Prius+', 'Mirai',
-    'Supra', 'GR Yaris', 'GR86',
-    'Proace', 'Hilux'
+    // Compacte / Hatchback / Sedan
+    'Aygo', 'Yaris', 'Yaris Cross',
+    'Corolla Hatchback', 'Corolla Sedan', 'Corolla Cross', 'Corolla Touring Sports', 'Corolla Wagon',
+    'Camry',
+    'Prius', 'Prius Plug-in',
+    'Mirai',
+    
+    // SUV / Crossover / Off-road
+    'C-HR',
+    'RAV4', 'RAV4 Prime',
+    'Harrier', 'Venza', 'Highlander',
+    'Fortuner', '4Runner',
+    'Land Cruiser', 'Land Cruiser Prado',
+    'Sequoia', 'FJ Cruiser',
+    
+    // Sport / Performanță
+    'GR Yaris', 'GR Supra', '86', 'GT86', 'GR86',
+    'Celica', 'MR2', 'MR-S', 'MR2 Spyder',
+    
+    // Monovolume / MPV
+    'Sienta', 'ProAce Verso',
+    'Alphard', 'Vellfire',
+    'Previa', 'Estima', 'Verso',
+    
+    // Pickup / Utilitare
+    'Hilux', 'Tacoma', 'Tundra',
+    'ProAce', 'Dyna', 'Hiace',
+    
+    // Electrice
+    'bZ4X', 'bZ3', 'Proace Electric',
+    
+    // Hibride / Plug-in Hybrid (PHEV)
+    'Prius Hybrid', 'Corolla Hybrid', 'Camry Hybrid',
+    'RAV4 Hybrid', 'Yaris Hybrid', 'Highlander Hybrid', 'Sienna Hybrid',
+    
+    // Modele retrase / clasice notabile
+    'Starlet', 'Carina', 'Corona', 'Crown',
+    'Supra Mk3', 'Supra Mk4', 'Supra',
+    'MR2 Mk1', 'MR2 Mk2', 'MR2 Mk3',
+    'Paseo', 'Tercel', 'Cressida', 'Avalon'
   ],
 
   // HONDA - toate modelele disponibile  
