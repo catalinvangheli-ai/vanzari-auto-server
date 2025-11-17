@@ -1164,8 +1164,25 @@ export const modele = {
 
   // AIXAM - microcar francez
   aixam: [
-    'City', 'Crossline', 'Coupe', 'GTO',
-    'e-City', 'e-Crossline'
+    // City / Mini-vehicule
+    'Aixam Minauto',
+    'Aixam City',
+    'Aixam City Premium',
+    'Aixam City Pack',
+    
+    // Crossover / Utility
+    'Aixam Crossline',
+    'Aixam Crossline Premium',
+    'Aixam Crossover',
+    
+    // Electrice
+    'Aixam e-City',
+    'Aixam e-Crossline',
+    'Aixam e-Crossover',
+    
+    // Modele retrase / clasice
+    'Aixam Scouty',
+    'Aixam Mega'
   ],
 
   // BENTLEY - luxury britanică
