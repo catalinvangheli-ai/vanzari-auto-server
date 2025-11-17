@@ -598,9 +598,23 @@ export const modele = {
 
   // SEAT - toate modelele disponibile
   seat: [
-    'Mii', 'Ibiza', 'Leon', 'Toledo',
-    'Arona', 'Ateca', 'Tarraco',
-    'Leon Cupra', 'Ateca Cupra'
+    // Compacte / Hatchback / Sedan
+    'Ibiza', 'Ibiza FR', 'Ibiza Cupra',
+    'Leon', 'Leon ST', 'Leon Estate', 'Leon Cupra', 'Leon Cupra R', 'Leon e-Hybrid',
+    'Toledo',
+    'Mii', 'Mii Electric',
+    
+    // SUV / Crossover
+    'Arona',
+    'Ateca', 'Ateca Cupra',
+    'Tarraco', 'Tarraco e-Hybrid',
+    
+    // Electrice & Hibride
+    'Cupra Born',
+    
+    // Modele retrase / clasice notabile
+    'Marbella', 'Fura', 'Ronda', 'Malaga',
+    'Alhambra', 'Cordoba'
   ],
 
   // HYUNDAI - toate modelele disponibile
