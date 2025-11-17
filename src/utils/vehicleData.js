@@ -1367,8 +1367,19 @@ export const modele = {
 
   // TESLA - vehicule electrice
   tesla: [
-    'Model S', 'Model 3', 'Model X', 'Model Y',
-    'Cybertruck', 'Roadster'
+    // Sedan / Hatchback
+    'Model S', 'Model S Plaid',
+    'Model 3', 'Model 3 Performance',
+    
+    // SUV / Crossover
+    'Model X', 'Model X Plaid',
+    'Model Y', 'Model Y Performance',
+    
+    // Pickup / Utilitare
+    'Cybertruck',
+    
+    // Electrice & High Performance
+    'Roadster', 'Roadster 2008', 'Roadster 2023'
   ],
 
   // ALTE MARCI - chinezești și mai puțin cunoscute
