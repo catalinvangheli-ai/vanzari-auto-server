@@ -35,6 +35,18 @@ const AdaugaAnunt = () => {
   // Numărul fix de poze pentru vânzări
   const maxPoze = 9;
 
+  // Funcție pentru a găsi modelele pentru marca selectată
+  const getModelsForBrand = (marcaValue) => {
+    if (!marcaValue) return [];
+    
+    // Căutăm cheia în modele (lowercase pentru match exact)
+    const brandKey = Object.keys(modele).find(
+      key => key.toLowerCase() === marcaValue.toLowerCase()
+    );
+    
+    return brandKey ? modele[brandKey] : [];
+  };
+
   // Funcție pentru încărcarea pozelor
   const handlePozaUpload = (e) => {
     const files = Array.from(e.target.files);
@@ -232,7 +244,7 @@ const AdaugaAnunt = () => {
               disabled={!marca}
             >
               <option value="">{translateText("Selectează modelul", currentLanguage)}</option>
-              {marca && modele[marca]?.map(model => (
+              {marca && getModelsForBrand(marca)?.map(model => (
                 <option key={model} value={model}>
                   {model}
                 </option>

@@ -48,7 +48,62 @@ export const marci = {
     { value: 'mini', label: 'MINI' },
     
     // Mărci românești și budget
-    { value: 'dacia', label: 'Dacia' }
+    { value: 'dacia', label: 'Dacia' },
+    
+    // Mărci premium și luxury
+    { value: 'bentley', label: 'Bentley' },
+    { value: 'ferrari', label: 'Ferrari' },
+    { value: 'lamborghini', label: 'Lamborghini' },
+    { value: 'maserati', label: 'Maserati' },
+    { value: 'mclaren', label: 'McLaren' },
+    { value: 'porsche', label: 'Porsche' },
+    { value: 'rolls royce', label: 'Rolls-Royce' },
+    { value: 'jaguar', label: 'Jaguar' },
+    { value: 'land rover', label: 'Land Rover' },
+    
+    // Mărci americane adiționale
+    { value: 'cadillac', label: 'Cadillac' },
+    { value: 'chevrolet', label: 'Chevrolet' },
+    { value: 'chrysler', label: 'Chrysler' },
+    { value: 'dodge', label: 'Dodge' },
+    
+    // Mărci franceze adiționale
+    { value: 'citroen', label: 'Citroën' },
+    { value: 'ds automobiles', label: 'DS Automobiles' },
+    
+    // Mărci spaniole
+    { value: 'cupra', label: 'Cupra' },
+    
+    // Mărci italiene adiționale
+    { value: 'lancia', label: 'Lancia' },
+    
+    // Mărci japoneze adiționale
+    { value: 'mitsubishi', label: 'Mitsubishi' },
+    { value: 'subaru', label: 'Subaru' },
+    { value: 'suzuki', label: 'Suzuki' },
+    
+    // Mărci coreene adiționale
+    { value: 'ssangyong', label: 'SsangYong' },
+    { value: 'daewoo', label: 'Daewoo' },
+    
+    // Mărci japoneze vintage
+    { value: 'daihatsu', label: 'Daihatsu' },
+    
+    // Mărci britanice adiționale
+    { value: 'rover', label: 'Rover' },
+    { value: 'mg', label: 'MG' },
+    
+    // Mărci svedeze adiționale
+    { value: 'saab', label: 'Saab' },
+    
+    // Mărci franceze microcars
+    { value: 'aixam', label: 'Aixam' },
+    
+    // Mărci electrice
+    { value: 'tesla', label: 'Tesla' },
+    
+    // Alte mărci (chinezești și mai puțin cunoscute)
+    { value: 'alte marci', label: 'Alte mărci' }
   ],
   
   'Motocicletă': [
@@ -480,6 +535,216 @@ export const modele = {
   'peugeot scooters': [
     'Django', 'Speedfight', 'Kisbee',
     'Metropolis', 'Belville'
+  ],
+
+  // AIXAM - microcar francez
+  aixam: [
+    'City', 'Crossline', 'Coupe', 'GTO',
+    'e-City', 'e-Crossline'
+  ],
+
+  // BENTLEY - luxury britanică
+  bentley: [
+    'Continental GT', 'Continental GTC', 'Flying Spur',
+    'Bentayga', 'Mulsanne', 'Bacalar', 'Mulliner'
+  ],
+
+  // CADILLAC - luxury americană
+  cadillac: [
+    'CT4', 'CT5', 'CT6',
+    'XT4', 'XT5', 'XT6',
+    'Escalade', 'Lyriq'
+  ],
+
+  // CHEVROLET - americană mainstream
+  chevrolet: [
+    'Spark', 'Aveo', 'Cruze', 'Malibu', 'Impala',
+    'Camaro', 'Corvette',
+    'Trax', 'Equinox', 'Traverse', 'Tahoe', 'Suburban',
+    'Silverado', 'Colorado'
+  ],
+
+  // CHRYSLER - americană
+  chrysler: [
+    '300', 'Pacifica', 'Voyager',
+    'Sebring', 'PT Cruiser'
+  ],
+
+  // CITROËN - franceză
+  citroen: [
+    'C1', 'C3', 'C3 Aircross', 'C4', 'C5 Aircross',
+    'Berlingo', 'SpaceTourer',
+    'ë-C4', 'Ami',
+    'C3 Pluriel', 'C4 Cactus', 'C4 Picasso', 'Grand C4 Picasso'
+  ],
+
+  // CUPRA - sportivă spaniolă (sub-brand SEAT)
+  cupra: [
+    'Born', 'Formentor', 'Leon', 'Ateca',
+    'Tavascan'
+  ],
+
+  // DAEWOO - coreeană (brand vintage)
+  daewoo: [
+    'Matiz', 'Kalos', 'Lanos', 'Nubira', 'Leganza',
+    'Tacuma', 'Rezzo'
+  ],
+
+  // DAIHATSU - japoneză (brand vintage)
+  daihatsu: [
+    'Cuore', 'Sirion', 'Terios', 'Materia',
+    'Copen', 'Move', 'YRV'
+  ],
+
+  // DODGE - americană sport
+  dodge: [
+    'Charger', 'Challenger', 'Durango',
+    'Ram 1500', 'Ram 2500',
+    'Viper', 'Journey', 'Caliber'
+  ],
+
+  // DS AUTOMOBILES - premium franceză
+  'ds automobiles': [
+    'DS 3', 'DS 3 Crossback', 'DS 4', 'DS 7 Crossback', 'DS 9',
+    'DS 3 E-Tense'
+  ],
+
+  // FERRARI - supercar italiană
+  ferrari: [
+    '488 GTB', '488 Pista', 'F8 Tributo',
+    '812 Superfast', '812 GTS',
+    'SF90 Stradale', 'SF90 Spider',
+    'Roma', 'Portofino', 'Portofino M',
+    '296 GTB', '296 GTS',
+    'Purosangue',
+    'LaFerrari', 'Enzo', 'F40', 'F50'
+  ],
+
+  // JAGUAR - premium britanică
+  jaguar: [
+    'XE', 'XF', 'XJ',
+    'E-Pace', 'F-Pace', 'I-Pace',
+    'F-Type',
+    'XK', 'XKR', 'S-Type'
+  ],
+
+  // LAMBORGHINI - supercar italiană
+  lamborghini: [
+    'Huracán', 'Huracán EVO', 'Huracán Tecnica',
+    'Aventador', 'Aventador SVJ', 'Aventador Ultimae',
+    'Urus', 'Urus Performante',
+    'Revuelto',
+    'Gallardo', 'Murciélago', 'Countach'
+  ],
+
+  // LANCIA - italiană
+  lancia: [
+    'Ypsilon', 'Delta', 'Thema',
+    'Musa', 'Phedra', 'Voyager'
+  ],
+
+  // LAND ROVER - SUV premium britanică
+  'land rover': [
+    'Defender', 'Defender 90', 'Defender 110', 'Defender 130',
+    'Discovery', 'Discovery Sport',
+    'Range Rover', 'Range Rover Sport', 'Range Rover Velar', 'Range Rover Evoque',
+    'Freelander'
+  ],
+
+  // MASERATI - luxury sportivă italiană
+  maserati: [
+    'Ghibli', 'Quattroporte', 'Levante',
+    'MC20', 'GranTurismo', 'GranCabrio',
+    'Grecale'
+  ],
+
+  // MCLAREN - supercar britanică
+  mclaren: [
+    '540C', '570S', '570GT', '600LT',
+    '720S', '720S Spider', '765LT',
+    'GT', 'Artura',
+    'P1', 'Senna', 'Speedtail', 'Elva'
+  ],
+
+  // MITSUBISHI - japoneză
+  mitsubishi: [
+    'Space Star', 'Mirage',
+    'ASX', 'Eclipse Cross', 'Outlander', 'Pajero',
+    'L200', 'Lancer', 'Lancer Evolution',
+    'i-MiEV'
+  ],
+
+  // MG - britanică (deținută de chinezi)
+  mg: [
+    'MG3', 'MG4 Electric', 'MG5 Electric',
+    'MG HS', 'MG ZS', 'MG Marvel R',
+    'MG TF', 'MG ZR', 'MG ZT'
+  ],
+
+  // PORSCHE - premium sportivă germană
+  porsche: [
+    '911', '911 Carrera', '911 Turbo', '911 GT3', '911 GT2 RS',
+    '718 Boxster', '718 Cayman',
+    'Cayenne', 'Cayenne Coupe',
+    'Macan',
+    'Panamera',
+    'Taycan', 'Taycan Cross Turismo',
+    'Carrera GT', '918 Spyder'
+  ],
+
+  // ROLLS-ROYCE - ultra-luxury britanică
+  'rolls royce': [
+    'Phantom', 'Ghost', 'Wraith', 'Dawn',
+    'Cullinan', 'Spectre'
+  ],
+
+  // ROVER - britanică (brand vintage)
+  rover: [
+    '25', '45', '75', '200', '400', '600', '800',
+    'Streetwise', 'CityRover'
+  ],
+
+  // SAAB - suedeză (brand vintage)
+  saab: [
+    '9-3', '9-5', '900', '9000',
+    '9-3 Convertible', '9-3 SportCombi'
+  ],
+
+  // SSANGYONG - coreeană SUV
+  ssangyong: [
+    'Tivoli', 'Korando', 'Rexton', 'Musso',
+    'XLV', 'Rodius'
+  ],
+
+  // SUBARU - japoneză AWD
+  subaru: [
+    'Impreza', 'Legacy', 'Outback',
+    'Forester', 'XV', 'Ascent',
+    'WRX', 'WRX STI', 'BRZ',
+    'Levorg', 'Solterra'
+  ],
+
+  // SUZUKI - pentru autoturisme
+  'suzuki': [
+    'Alto', 'Celerio', 'Swift', 'Baleno', 'Ignis',
+    'Vitara', 'S-Cross', 'Jimny',
+    'SX4', 'Splash', 'Kizashi'
+  ],
+
+  // TESLA - vehicule electrice
+  tesla: [
+    'Model S', 'Model 3', 'Model X', 'Model Y',
+    'Cybertruck', 'Roadster'
+  ],
+
+  // ALTE MARCI - chinezești și mai puțin cunoscute
+  'alte marci': [
+    'BYD', 'Geely', 'Great Wall', 'Haval', 'Chery', 'JAC',
+    'Lynk & Co', 'Nio', 'Xpeng', 'Li Auto', 'Hongqi',
+    'Aiways', 'Ora', 'Maxus', 'Forthing', 'Polestar',
+    'Genesis', 'Maybach', 'Acura', 'Scion', 'Saturn',
+    'Hummer', 'Pontiac', 'Buick', 'GMC', 'Ram',
+    'Isuzu', 'Proton', 'Tata', 'Mahindra'
   ]
 };
 
