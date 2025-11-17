@@ -1362,8 +1362,22 @@ export const modele = {
 
   // SAAB - suedeză (brand vintage)
   saab: [
-    '9-3', '9-5', '900', '9000',
-    '9-3 Convertible', '9-3 SportCombi'
+    // Compacte / Hatchback / Sedan - Clasice
+    '92', '93', '94', '95', '96',
+    '97', 'Sonett I', 'Sonett II', 'Sonett III',
+    '99', '99 Turbo',
+    '900', '900 Turbo',
+    '9000',
+    
+    // Modele moderne
+    '9-3', '9-3 Convertible', '9-3 SportCombi', '9-3 Aero', '9-3 EV',
+    '9-5', '9-5 Aero',
+    
+    // SUV / Crossover
+    '9-4X', '9-7X',
+    
+    // Concepte / Hibride
+    '9-X BioHybrid'
   ],
 
   // SSANGYONG - coreeană SUV
