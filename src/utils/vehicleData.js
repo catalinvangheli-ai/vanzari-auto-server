@@ -1194,8 +1194,23 @@ export const modele = {
 
   // CHRYSLER - americană
   chrysler: [
-    '300', 'Pacifica', 'Voyager',
-    'Sebring', 'PT Cruiser'
+    // Sedan / Hatchback
+    'Chrysler 300',
+    'Chrysler 300C',
+    'Chrysler 200',
+    
+    // SUV / Crossover / MPV
+    'Chrysler Pacifica',
+    'Chrysler Pacifica Hybrid',
+    'Chrysler Voyager',
+    'Chrysler Town & Country',
+    'Chrysler Aspen',
+    
+    // Modele retrase / clasice notabile
+    'Chrysler Imperial',
+    'Chrysler Sebring',
+    'Chrysler PT Cruiser',
+    'Chrysler Crossfire'
   ],
 
   // CITROËN - franceză (toate modelele)
