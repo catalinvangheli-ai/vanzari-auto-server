@@ -438,10 +438,32 @@ export const modele = {
 
   // OPEL - toate modelele disponibile
   opel: [
-    'Corsa', 'Astra', 'Insignia', 'Crossland', 'Mokka', 'Grandland',
-    'Combo Life', 'Zafira Life',
-    'Corsa-e', 'Mokka-e', 'Grandland X Hybrid',
-    'Adam', 'Karl'
+    // Compacte / Hatchback / Sedan
+    'Corsa', 'Corsa-e',
+    'Astra', 'Astra Sports Tourer',
+    'Insignia', 'Insignia Sports Tourer',
+    'Adam', 'Karl', 'Viva',
+    
+    // SUV / Crossover
+    'Mokka', 'Mokka-e',
+    'Crossland', 'Grandland', 'Grandland PHEV',
+    
+    // Sport / Performanță
+    'GT', 'Astra OPC', 'Corsa OPC',
+    
+    // Monovolume / MPV
+    'Zafira', 'Zafira Life', 'Meriva', 'Combo Life',
+    
+    // Pickup / Utilitare
+    'Combo', 'Movano', 'Vivaro',
+    
+    // Electrice & Hibride
+    'Ampera', 'Ampera-e', 'Grandland X Hybrid',
+    
+    // Modele retrase / clasice notabile
+    'Rekord', 'Kadett', 'Omega', 'Senator',
+    'Ascona', 'Monza', 'Calibra',
+    'Frontera', 'Tigra'
   ],
 
   // RENAULT - toate modelele disponibile
