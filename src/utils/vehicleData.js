@@ -512,9 +512,31 @@ export const modele = {
 
   // MAZDA - toate modelele disponibile
   mazda: [
-    'Mazda2', 'Mazda3', 'Mazda6',
-    'CX-3', 'CX-30', 'CX-5', 'CX-60', 'CX-9',
-    'MX-5', 'RX-8'
+    // Compacte & sedan - actuale
+    'Mazda2', 'Demio',
+    'Mazda3', 'Axela', 'Mazda3 Hatchback', 'Mazda3 Sedan', 'Mazda3 Fastback',
+    'Mazda6', 'Atenza', 'Mazda6 Sedan', 'Mazda6 Wagon',
+    
+    // SUV & Crossover - actuale
+    'CX-3', 'CX-30', 'CX-4', 'CX-5', 'CX-50',
+    'CX-60', 'CX-7', 'CX-8', 'CX-9',
+    
+    // Sport & roadster
+    'MX-5', 'Miata', 'MX-30', 'MX-6', 'MX-3',
+    'RX-7', 'RX-8',
+    
+    // Modele retrase / clasice
+    '121', '626', '929',
+    'Capella', 'Cosmo', 'Familia', 'Luce', 'Carol',
+    
+    // Pickup & utilitare
+    'B-Series', 'BT-50',
+    
+    // MPV & monovolum
+    'MPV', 'Premacy', 'Mazda5',
+    
+    // SUV retrase
+    'Tribute', 'Navajo'
   ],
 
   // VOLVO - toate modelele disponibile  
