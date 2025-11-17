@@ -1414,10 +1414,26 @@ export const modele = {
 
   // SUBARU - japoneză AWD
   subaru: [
-    'Impreza', 'Legacy', 'Outback',
-    'Forester', 'XV', 'Ascent',
-    'WRX', 'WRX STI', 'BRZ',
-    'Levorg', 'Solterra'
+    // Compacte / Hatchback / Sedan
+    'Impreza', 'Impreza WRX', 'Impreza WRX STI',
+    'WRX', 'WRX STI',
+    'BRZ',
+    
+    // SUV / Crossover / Off-road
+    'XV', 'Crosstrek', 'XV Hybrid', 'XV e-Boxer',
+    'Forester', 'Forester e-Boxer',
+    'Outback',
+    'Ascent',
+    'Tribeca',
+    
+    // Pickup / Utilitare
+    'Baja',
+    
+    // Electrice & Hibride
+    'Solterra', 'Crosstrek Hybrid',
+    
+    // Modele retrase / clasice notabile
+    '360', 'Leone', 'Alcyone', 'XT', 'Justy', 'Legacy', 'Levorg'
   ],
 
   // SUZUKI - pentru autoturisme
