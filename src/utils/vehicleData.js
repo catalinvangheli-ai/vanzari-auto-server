@@ -468,11 +468,36 @@ export const modele = {
 
   // RENAULT - toate modelele disponibile
   renault: [
-    'Twingo', 'Clio', 'Megane', 'Talisman',
-    'Captur', 'Kadjar', 'Koleos', 'Austral',
-    'Scenic', 'Espace', 'Grand Scenic',
-    'ZOE', 'Megane E-Tech', 'Arkana',
-    'Clio RS', 'Megane RS'
+    // Compacte / Hatchback / Sedan
+    'Twingo', 'Twingo Electric',
+    'Clio', 'Clio E-Tech', 'Clio RS',
+    'Zoe',
+    'Megane', 'Megane E-Tech', 'Megane Sedan', 'Megane RS',
+    'Fluence', 'Latitude', 'Talisman',
+    'Symbol', 'Thalia',
+    '9', '11',
+    
+    // SUV / Crossover
+    'Captur', 'Captur E-Tech',
+    'Arkana', 'Arkana E-Tech',
+    'Kadjar', 'Koleos', 'Koleos PHEV', 'Austral',
+    
+    // Sport / Performanță
+    'Alpine A110',
+    
+    // Monovolume / MPV
+    'Scenic', 'Grand Scenic', 'Espace',
+    'Kangoo', 'Kangoo ZE',
+    'Trafic', 'Trafic EV',
+    'Master', 'Master ZE',
+    
+    // Pickup / Utilitare
+    'Alaskan',
+    
+    // Modele retrase / clasice notabile
+    '4', '5', '6', '8', '10',
+    '12', '16', '18', '19', '20',
+    '21', '25', 'Fuego', '30'
   ],
 
   // PEUGEOT - toate modelele disponibile  
