@@ -972,10 +972,27 @@ export const modele = {
 
   // LAND ROVER - SUV premium britanică
   'land rover': [
+    // Defender - actual & variante
     'Defender', 'Defender 90', 'Defender 110', 'Defender 130',
+    'Defender Works V8',
+    
+    // Discovery - actual & generații
     'Discovery', 'Discovery Sport',
+    'Discovery 3', 'Discovery 4', 'LR3', 'LR4',
+    'Discovery Vision Concept',
+    
+    // Range Rover - actual & variante
     'Range Rover', 'Range Rover Sport', 'Range Rover Velar', 'Range Rover Evoque',
-    'Freelander'
+    'Range Rover SVAutobiography', 'Range Rover Sport SVR',
+    
+    // Range Rover - generații clasice
+    'Range Rover Classic', 'Range Rover P38', 'Range Rover L322', 'Range Rover L405',
+    
+    // Freelander
+    'Freelander',
+    
+    // Clasice & heritage
+    'Series I', 'Series II', 'Series III'
   ],
 
   // MASERATI - luxury sportivă italiană
