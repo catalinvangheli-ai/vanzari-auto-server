@@ -290,10 +290,41 @@ export const modele = {
 
   // HONDA - toate modelele disponibile  
   honda: [
-    'Jazz', 'Civic', 'Accord', 'Insight',
-    'HR-V', 'CR-V', 'Pilot',
-    'e:Ny1', 'ZR-V',
-    'Civic Type R', 'NSX'
+    // Modele mici & compacte
+    'Jazz', 'Fit', 'City', 'Civic', 'Insight',
+    'Airwave', 'Brio', 'Logo',
+    
+    // Modele sedan & berline
+    'Accord', 'Legend', 'Inspire', 'Grace',
+    'Amaze', 'Crider', 'Spirior',
+    'Clarity', 'Clarity Fuel Cell',
+    
+    // Modele SUV / Crossover
+    'CR-V', 'HR-V', 'Vezel', 'ZR-V',
+    'Pilot', 'Passport', 'Element',
+    'Crossroad', 'Avancier', 'UR-V', 'WR-V',
+    
+    // Modele sport
+    'NSX', 'S2000', 'CR-Z', 'Prelude',
+    'Integra', 'Integra Type-R',
+    'Beat', 'S660',
+    'Civic Type-R', 'CR-X',
+    
+    // MPV / Monovolume
+    'Odyssey', 'Odyssey EU', 'Odyssey USA',
+    'StepWGN', 'StepWagon',
+    'Freed', 'Elysion', 'Mobilio',
+    'Stream', 'FR-V', 'Shuttle',
+    
+    // Pick-up & utilitare
+    'Ridgeline', 'Acty Truck', 'Acty Van',
+    'Hobio', 'Vamos', 'Street',
+    
+    // Modele electrice & hibride
+    'e', 'e:NS1', 'e:NP1', 'e:Ny1',
+    'Clarity Electric', 'Clarity Plug-in',
+    'Insight Hybrid', 'Accord Hybrid',
+    'CR-V Hybrid', 'Civic Hybrid'
   ],
 
   // FORD - toate modelele disponibile
