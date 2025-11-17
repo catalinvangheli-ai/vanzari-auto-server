@@ -560,9 +560,34 @@ export const modele = {
 
   // DACIA - modelele disponibile
   dacia: [
-    'Sandero', 'Logan', 'Duster', 'Lodgy', 'Dokker',
-    'Spring', 'Jogger', 'Sandero Stepway',
-    'Logan MCV', 'Duster ECO-G', 'Bigster'
+    // Compacte / Hatchback / Sedan
+    'Dacia Logan',
+    'Dacia Logan MCV',
+    'Dacia Logan Stepway',
+    'Dacia Sandero',
+    'Dacia Sandero Stepway',
+    'Dacia Dokker',
+    
+    // SUV / Crossover
+    'Dacia Duster',
+    'Dacia Duster 4×4',
+    'Dacia Jogger',
+    'Dacia Jogger Stepway',
+    
+    // Pickup / Utilitare
+    'Dacia Dokker Van',
+    'Dacia Logan Van',
+    
+    // Electrice & Hibride
+    'Dacia Spring Electric',
+    'Dacia Jogger Hybrid',
+    
+    // Modele retrase / clasice notabile
+    'Dacia 1100', 'Dacia 1300',
+    'Dacia 2000',
+    'Dacia 1302', 'Dacia 1304',
+    'Dacia 1305',
+    'Dacia Nova'
   ],
 
   // SKODA - toate modelele disponibile
