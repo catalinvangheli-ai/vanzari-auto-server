@@ -1381,13 +1381,40 @@ export const modele = {
 
   // FERRARI - supercar italiană
   ferrari: [
-    '488 GTB', '488 Pista', 'F8 Tributo',
-    '812 Superfast', '812 GTS',
-    'SF90 Stradale', 'SF90 Spider',
-    'Roma', 'Portofino', 'Portofino M',
-    '296 GTB', '296 GTS',
-    'Purosangue',
-    'LaFerrari', 'Enzo', 'F40', 'F50'
+    // Sport / Coupe / GT
+    'Ferrari 488 GTB',
+    'Ferrari 488 Pista',
+    'Ferrari F8 Tributo',
+    'Ferrari F8 Spider',
+    'Ferrari 812 Superfast',
+    'Ferrari 812 GTS',
+    'Ferrari Portofino',
+    'Ferrari Portofino M',
+    'Ferrari Roma',
+    'Ferrari GTC4Lusso',
+    'Ferrari SF90 Stradale',
+    'Ferrari SF90 Spider',
+    'Ferrari 296 GTB',
+    'Ferrari 296 GTS',
+    
+    // Supercar / Hypercar
+    'Ferrari LaFerrari',
+    'Ferrari LaFerrari Aperta',
+    'Ferrari Enzo',
+    'Ferrari F40',
+    'Ferrari F50',
+    'Ferrari F60 America',
+    
+    // Modele clasice și retrase notabile
+    'Ferrari 250 GTO',
+    'Ferrari 250 GT',
+    'Ferrari 275 GTB',
+    'Ferrari 330 P4',
+    'Ferrari 365 GTB/4 Daytona',
+    'Ferrari Testarossa',
+    'Ferrari 512 TR',
+    'Ferrari 550 Maranello',
+    'Ferrari 575M Maranello'
   ],
 
   // JAGUAR - premium britanică
