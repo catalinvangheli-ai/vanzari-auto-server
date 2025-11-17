@@ -1338,9 +1338,31 @@ export const modele = {
 
   // SUZUKI - pentru autoturisme
   'suzuki': [
-    'Alto', 'Celerio', 'Swift', 'Baleno', 'Ignis',
-    'Vitara', 'S-Cross', 'Jimny',
-    'SX4', 'Splash', 'Kizashi'
+    // Compacte / Hatchback / Sedan
+    'Alto', 'Celerio',
+    'Swift', 'Swift Sport', 'Swift Hybrid',
+    'Baleno',
+    'Ignis', 'Ignis Hybrid',
+    'Splash',
+    
+    // SUV / Crossover / Off-road
+    'Vitara', 'Vitara Hybrid', 'Vitara Brezza',
+    'Grand Vitara',
+    'S-Cross', 'S-Cross Hybrid',
+    'XL7',
+    'Jimny', 'Jimny Sierra',
+    
+    // Pickup / Utilitare
+    'Carry', 'Super Carry',
+    
+    // Electrice & Hibride
+    'Across',
+    
+    // Modele retrase / clasice notabile
+    'SJ', 'Samurai', 'Sidekick',
+    'Esteem', 'Forenza',
+    'Baleno Sedan', 'Wagon R+',
+    'SX4', 'Kizashi'
   ],
 
   // TESLA - vehicule electrice
