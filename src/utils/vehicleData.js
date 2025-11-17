@@ -1034,10 +1034,37 @@ export const modele = {
 
   // MITSUBISHI - japoneză
   mitsubishi: [
-    'Space Star', 'Mirage',
-    'ASX', 'Eclipse Cross', 'Outlander', 'Pajero',
-    'L200', 'Lancer', 'Lancer Evolution',
-    'i-MiEV'
+    // Compacte & sedan - actuale
+    'Mirage', 'Space Star',
+    'Lancer', 'Lancer Evolution', 'Evo',
+    'Galant', 'Galant VR-4',
+    
+    // SUV & Crossover - actuale
+    'Outlander', 'Outlander PHEV',
+    'ASX', 'RVR', 'Outlander Sport',
+    'Eclipse Cross', 'Eclipse Cross PHEV',
+    
+    // SUV mare & off-road
+    'Pajero', 'Montero', 'Shogun',
+    'Pajero Sport', 'Montero Sport', 'Shogun Sport',
+    
+    // Pickup
+    'Triton', 'L200',
+    
+    // MPV & monovolum
+    'Delica', 'Grandis', 'Space Wagon', 'Space Gear',
+    
+    // Compacte retrase
+    'Colt', 'Carisma',
+    
+    // Sport & GT
+    'Eclipse', '3000GT', 'GTO',
+    
+    // Electric
+    'i-MiEV',
+    
+    // Modele retrase diverse
+    '380', 'Sigma', 'Challenger'
   ],
 
   // MG - britanică (deținută de chinezi)
