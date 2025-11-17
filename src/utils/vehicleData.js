@@ -1321,13 +1321,31 @@ export const modele = {
 
   // PORSCHE - premium sportivă germană
   porsche: [
-    '911', '911 Carrera', '911 Turbo', '911 GT3', '911 GT2 RS',
-    '718 Boxster', '718 Cayman',
-    'Cayenne', 'Cayenne Coupe',
-    'Macan',
-    'Panamera',
-    'Taycan', 'Taycan Cross Turismo',
-    'Carrera GT', '918 Spyder'
+    // Sport / Coupe - 911 Series
+    '911', '911 Carrera', '911 Carrera S', '911 Carrera 4', '911 Carrera 4S',
+    '911 Targa', '911 Turbo', '911 Turbo S',
+    '911 GT3', '911 GT3 RS', '911 GT2 RS', '911 GTS',
+    
+    // Sport / Coupe - 718 Series
+    '718 Cayman', '718 Cayman T', '718 Cayman GTS',
+    '718 Boxster', '718 Boxster T', '718 Boxster GTS',
+    
+    // SUV / Crossover
+    'Macan', 'Macan S', 'Macan GTS', 'Macan Turbo',
+    'Cayenne', 'Cayenne S', 'Cayenne GTS', 'Cayenne Turbo', 'Cayenne Turbo S E-Hybrid',
+    'Cayenne Coupe',
+    
+    // Electrice & Hybrid
+    'Taycan', 'Taycan 4S', 'Taycan Turbo', 'Taycan Turbo S',
+    'Taycan Cross Turismo',
+    'Panamera 4 E-Hybrid', 'Panamera 4S E-Hybrid', 'Panamera Turbo S E-Hybrid',
+    
+    // Monovolume / alte modele speciale
+    'Panamera', 'Panamera GTS', 'Panamera Turbo',
+    
+    // Modele retrase / clasice notabile
+    '356', '914', '924', '928', '944', '968',
+    'Carrera GT', '959', '918 Spyder'
   ],
 
   // ROLLS-ROYCE - ultra-luxury britanică
