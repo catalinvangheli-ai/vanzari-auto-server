@@ -541,10 +541,33 @@ export const modele = {
 
   // SKODA - toate modelele disponibile
   skoda: [
-    'Citigo', 'Fabia', 'Scala', 'Octavia', 'Superb',
-    'Kamiq', 'Karoq', 'Kodiaq',
-    'Enyaq iV',
-    'Octavia RS', 'Kodiaq RS'
+    // Compacte / Hatchback / Sedan
+    'Fabia', 'Fabia Combi',
+    'Scala',
+    'Rapid', 'Rapid Spaceback',
+    'Octavia', 'Octavia Combi', 'Octavia RS', 'Octavia iV',
+    'Superb', 'Superb Combi', 'Superb iV',
+    'Citigo',
+    
+    // SUV / Crossover
+    'Kamiq', 'Kamiq iV',
+    'Karoq', 'Karoq iV',
+    'Kodiaq', 'Kodiaq RS', 'Kodiaq iV',
+    
+    // Electrice
+    'Enyaq iV', 'Enyaq Coupé iV',
+    
+    // Monovolume / Van
+    'Roomster', 'Praktik',
+    
+    // Modele retrase / clasice notabile
+    '1000 MB',
+    '100', '110', '120',
+    '105', '125',
+    'Favorit',
+    'Felicia', 'Felicia 1994', 'Felicia 1959',
+    'Rapid 1935',
+    'Octavia 1959'
   ],
 
   // SEAT - toate modelele disponibile
