@@ -1,0 +1,106 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Stiluri globale pentru input-uri clare și vizibile */
+input, select, textarea {
+  color: #000000 !important; /* Text negru */
+  background-color: #ffffff !important; /* Fundal alb */
+}
+
+input::placeholder {
+  color: #6b7280 !important; /* Placeholder gri mediu */
+}
+
+textarea::placeholder {
+  color: #6b7280 !important; /* Placeholder gri mediu */
+}
+
+/* Asigură că opțiunile din select sunt vizibile */
+option {
+  color: #000000 !important;
+  background-color: #ffffff !important;
+}
+
+/* Stiluri pentru Google Translate Widget */
+#google_translate_element {
+  display: inline-block;
+}
+
+#google_translate_element .goog-te-combo {
+  background-color: white !important;
+  border: 1px solid #ccc !important;
+  border-radius: 4px !important;
+  padding: 4px 8px !important;
+  font-size: 12px !important;
+  color: #333 !important;
+  cursor: pointer !important;
+}
+
+#google_translate_element .goog-te-combo:hover {
+  border-color: #007bff !important;
+}
+
+/* Ascunde bara Google Translate de sus */
+.goog-te-banner-frame.skiptranslate {
+  display: none !important;
+}
+
+body {
+  top: 0px !important;
+}
+
+/* Ascunde scrollbar pentru galerii de poze */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari and Opera */
+}
+
+/* Stil pentru butonul de traducere */
+.goog-te-gadget-simple {
+  background-color: transparent !important;
+  border: none !important;
+  font-size: 12px !important;
+}
+
+.goog-te-gadget-simple .goog-te-menu-value {
+  color: white !important;
+  font-weight: bold !important;
+}
+
+.goog-te-gadget-simple .goog-te-menu-value:before {
+  content: "🌐 ";
+}
+
+/* Animații pentru dropdown-ul de limbă */
+.language-dropdown {
+  animation: slideDown 0.2s ease-out;
+  transform-origin: top;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scaleY(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+  }
+}
+
+/* Efect hover pentru itemii din dropdown */
+.language-item:hover {
+  background: linear-gradient(90deg, #dbeafe, #bfdbfe);
+  transform: translateX(2px);
+  transition: all 0.15s ease;
+}
+
+/* Shadow personalizat pentru dropdown */
+.language-dropdown {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15), 0 4px 10px rgba(0, 0, 0, 0.1);
+}

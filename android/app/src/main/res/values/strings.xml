@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">CarXSell</string>
+    <string name="title_activity_main">CarXSell</string>
+    <string name="package_name">com.carxsell.app</string>
+    <string name="custom_url_scheme">com.carxsell.app</string>
+</resources>

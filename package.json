@@ -1,0 +1,38 @@
+{
+  "dependencies": {
+    "@capacitor/android": "^7.4.3",
+    "@capacitor/app": "^7.1.0",
+    "@capacitor/cli": "^7.4.3",
+    "@capacitor/core": "^7.4.3",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "react-router-dom": "^7.9.1",
+    "react-scripts": "^5.0.1"
+  },
+  "name": "carxsell-app",
+  "version": "1.0.0",
+  "description": "Aplicație pentru vânzări și închirieri auto - React App",
+  "main": "postcss.config.js",
+  "scripts": {
+    "start": "set DISABLE_ESLINT_PLUGIN=true&& set ESLINT_NO_DEV_ERRORS=true&& set GENERATE_SOURCEMAP=false&& set BROWSER=none&& react-scripts start",
+    "start:browser": "start msedge --inprivate http://localhost:3000",
+    "build": "react-scripts build",
+    "server": "cd server && node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
