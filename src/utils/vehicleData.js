@@ -304,12 +304,38 @@ export const modele = {
 
   // VOLKSWAGEN - toate modelele disponibile
   volkswagen: [
-    'Polo', 'Golf', 'Jetta', 'Passat', 'Arteon', 'Phaeton',
-    'T-Cross', 'T-Roc', 'Tiguan', 'Touareg', 'Atlas',
-    'Up!', 'ID.3', 'ID.4', 'ID.5', 'ID.6', 'ID.7', 'ID.Buzz',
-    'Golf R', 'Tiguan R', 'Touareg R',
-    'Beetle', 'Scirocco', 'Eos', 'CC', 'Sharan', 'Touran',
-    'Caddy', 'Multivan', 'Crafter', 'Amarok'
+    // Compacte / Hatchback / Sedan
+    'Up!', 'e-Up!',
+    'Polo', 'Polo GTI', 'Polo Classic',
+    'Virtus',
+    'Golf', 'Golf GTI', 'Golf R', 'Golf Sportsvan', 'e-Golf',
+    'Jetta', 'Vento',
+    'Passat', 'Passat Variant', 'Passat GTE',
+    'Arteon', 'Arteon eHybrid',
+    
+    // SUV / Crossover
+    'T-Cross', 'T-Roc', 'Taigo',
+    'Tiguan', 'Tiguan Allspace', 'Tiguan eHybrid', 'Tiguan R',
+    'Touareg', 'Touareg R',
+    'Atlas',
+    
+    // Pickup / Utilitare
+    'Amarok',
+    'Caddy',
+    'Transporter', 'T6', 'T7',
+    'Multivan',
+    'Crafter',
+    
+    // Electrice & Hibride
+    'ID.3', 'ID.4', 'ID.4 GTX', 'ID.5', 'ID.6', 'ID.7',
+    'ID. Buzz', 'ID. Buzz Cargo',
+    
+    // Modele retrase / clasice notabile
+    'Beetle', 'Käfer', 'Beetle Cabrio',
+    'Karmann Ghia',
+    'Type 2', 'Transporter T1', 'Transporter T2', 'Transporter T3', 'Transporter T4', 'Transporter T5',
+    'Scirocco', 'Corrado',
+    'Phaeton', 'Eos', 'CC', 'Sharan', 'Touran'
   ],
 
   // TOYOTA - toate modelele disponibile
