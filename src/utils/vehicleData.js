@@ -570,12 +570,36 @@ export const modele = {
     'Sebring', 'PT Cruiser'
   ],
 
-  // CITROËN - franceză
+  // CITROËN - franceză (toate modelele)
   citroen: [
-    'C1', 'C3', 'C3 Aircross', 'C4', 'C5 Aircross',
-    'Berlingo', 'SpaceTourer',
-    'ë-C4', 'Ami',
-    'C3 Pluriel', 'C4 Cactus', 'C4 Picasso', 'Grand C4 Picasso'
+    // Modele de oraș (mici)
+    'C1', 'C2', 'C3', 'C3 Pluriel', 'C3 Picasso', 'C3 Aircross',
+    
+    // Modele compacte
+    'C4', 'C4 Cactus', 'C4 X', 'C4 Aircross',
+    
+    // Modele sedan / crossover
+    'C5', 'C5 X', 'C5 Aircross',
+    
+    // Modele monovolum / familiale
+    'Xsara Picasso', 'C4 Picasso', 'C4 Grand Picasso', 
+    'C4 SpaceTourer', 'Grand C4 SpaceTourer', 
+    'C8', 'Evasion', 'Synergie',
+    
+    // Modele sedan / premium
+    'C6', 'C4 Sedan', 'C-Elysée',
+    
+    // Modele utilitare și derivate
+    'Berlingo', 'Berlingo Multispace', 'Berlingo Combi',
+    'Jumpy', 'Dispatch', 'Jumper', 'Nemo',
+    
+    // Modele electrice (EV)
+    'ë-C4', 'ë-C3', 'ë-C4 X', 'Ami',
+    'ë-Berlingo', 'ë-Jumpy', 'ë-Jumper',
+    
+    // Modele clasice / vintage
+    '2CV', 'DS', 'SM', 'GS', 'GSA', 'CX', 'BX', 'XM',
+    'AX', 'Saxo', 'Visa', 'ZX'
   ],
 
   // CUPRA - sportivă spaniolă (sub-brand SEAT)
