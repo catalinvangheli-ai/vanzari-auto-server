@@ -1265,9 +1265,28 @@ export const modele = {
 
   // DODGE - americană sport
   dodge: [
-    'Charger', 'Challenger', 'Durango',
-    'Ram 1500', 'Ram 2500',
-    'Viper', 'Journey', 'Caliber'
+    // Sedan / Hatchback / Coupe
+    'Dodge Neon',
+    'Dodge Dart',
+    'Dodge Charger',
+    'Dodge Challenger',
+    
+    // SUV / Crossover
+    'Dodge Journey',
+    'Dodge Durango',
+    
+    // Pickup / Utilitare
+    'Dodge Ram',
+    'Dodge Dakota',
+    
+    // Sport / Performanță
+    'Dodge Viper',
+    'Dodge SRT Hellcat',
+    
+    // Modele retrase / clasice notabile
+    'Dodge Coronet',
+    'Dodge Polara',
+    'Dodge Magnum'
   ],
 
   // DS AUTOMOBILES - premium franceză
