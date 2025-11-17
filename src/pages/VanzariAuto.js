@@ -92,10 +92,10 @@ const VanzariAuto = () => {
   ];
 
   // Car brands - folosim vehicleData.js
-  const carBrands = marci.Autoturism.map(m => m.label).sort();
+  const carBrands = marci.Autoturism.sort((a, b) => a.label.localeCompare(b.label));
 
   // Motorcycle brands - folosim vehicleData.js
-  const motorcycleBrands = marci['Motocicletă'].map(m => m.label).sort();
+  const motorcycleBrands = marci['Motocicletă'].sort((a, b) => a.label.localeCompare(b.label));
 
   // Car models by brand - folosim vehicleData.js
   const getModelsForBrand = () => {
@@ -216,7 +216,7 @@ const VanzariAuto = () => {
           >
             <option value="">{translateText('Selecteaza marca', currentLanguage)}</option>
             {getBrandsForVehicleType().map(brand => (
-              <option key={brand} value={brand}>{brand}</option>
+              <option key={brand.value} value={brand.value}>{brand.label}</option>
             ))}
           </select>
         </div>
