@@ -166,11 +166,88 @@ export const modele = {
 
   // BMW - toate modelele disponibile  
   bmw: [
-    'Seria 1', 'Seria 2', 'Seria 3', 'Seria 4', 'Seria 5', 'Seria 6', 'Seria 7', 'Seria 8',
-    'X1', 'X2', 'X3', 'X4', 'X5', 'X6', 'X7',
-    'Z4', 'i3', 'i4', 'iX', 'iX3',
-    'M2', 'M3', 'M4', 'M5', 'M8',
-    'X3 M', 'X4 M', 'X5 M', 'X6 M'
+    // Seria 1 (compacte)
+    'Seria 1', '118i', '120i', '125i', '130i', 'M135i', 'M140i',
+    'Seria 1 E81', 'Seria 1 E82', 'Seria 1 E87', 'Seria 1 E88',
+    'Seria 1 F20', 'Seria 1 F21', 'Seria 1 F40',
+    
+    // Seria 2 (compacte și coupe)
+    'Seria 2', 'Seria 2 Coupé', 'Seria 2 Gran Coupé',
+    'Seria 2 Active Tourer', 'Seria 2 Gran Tourer',
+    '218i', '220i', '225i', '228i', 'M235i', 'M240i',
+    
+    // Seria 3 (modelul emblematic)
+    'Seria 3', '316i', '318i', '320i', '325i', '328i', '330i', '335i', '340i', 'M340i',
+    'Seria 3 E21', 'Seria 3 E30', 'Seria 3 E36', 'Seria 3 E46',
+    'Seria 3 E90', 'Seria 3 E91', 'Seria 3 E92', 'Seria 3 E93',
+    'Seria 3 F30', 'Seria 3 F31', 'Seria 3 F34',
+    'Seria 3 G20', 'Seria 3 G21',
+    
+    // Seria 4 (coupe, cabrio, gran coupe)
+    'Seria 4', 'Seria 4 Coupé', 'Seria 4 Cabrio', 'Seria 4 Gran Coupé',
+    '418i', '420i', '428i', '430i', '435i', '440i',
+    'Seria 4 F32', 'Seria 4 F33', 'Seria 4 F36',
+    'Seria 4 G22', 'Seria 4 G23', 'Seria 4 G26',
+    
+    // Seria 5 (business sedan)
+    'Seria 5', '520i', '523i', '525i', '528i', '530i', '535i', '540i', '545i', '550i', 'M550i',
+    'Seria 5 E12', 'Seria 5 E28', 'Seria 5 E34', 'Seria 5 E39',
+    'Seria 5 E60', 'Seria 5 E61',
+    'Seria 5 F10', 'Seria 5 F11',
+    'Seria 5 G30', 'Seria 5 G31', 'Seria 5 G60',
+    
+    // Seria 6 (coupe & gran coupe)
+    'Seria 6', 'Seria 6 Coupé', 'Seria 6 Gran Coupé', 'Seria 6 Cabrio',
+    '630i', '640i', '645i', '650i',
+    'Seria 6 E24', 'Seria 6 E63', 'Seria 6 E64',
+    'Seria 6 F06', 'Seria 6 F12', 'Seria 6 F13',
+    
+    // Seria 7 (limuzină de lux)
+    'Seria 7', '730i', '735i', '740i', '745i', '750i', '760i',
+    'Seria 7 E23', 'Seria 7 E32', 'Seria 7 E38',
+    'Seria 7 E65', 'Seria 7 E66',
+    'Seria 7 F01', 'Seria 7 F02',
+    'Seria 7 G11', 'Seria 7 G12', 'Seria 7 G70',
+    
+    // Seria 8 (super-lux & GT sportiv)
+    'Seria 8', 'Seria 8 Coupé', 'Seria 8 Gran Coupé', 'Seria 8 Cabrio',
+    '840i', '850i', 'M850i',
+    'Seria 8 E31', 'Seria 8 G14', 'Seria 8 G15', 'Seria 8 G16',
+    
+    // Gama SUV - Seria X
+    'X1', 'X2', 'X3', 'X4', 'X5', 'X6', 'X7', 'XM',
+    'X1 sDrive18i', 'X1 xDrive20i', 'X1 M35i',
+    'X2 sDrive18i', 'X2 xDrive20i', 'X2 M35i',
+    'X3 xDrive20i', 'X3 xDrive30i', 'X3 M40i',
+    'X4 xDrive20i', 'X4 xDrive30i', 'X4 M40i',
+    'X5 xDrive30i', 'X5 xDrive40i', 'X5 xDrive45e', 'X5 M50i',
+    'X6 xDrive30i', 'X6 xDrive40i', 'X6 M50i',
+    'X7 xDrive40i', 'X7 M50i', 'X7 M60i',
+    
+    // Modelele electrice BMW (Seria i)
+    'i3', 'i4', 'i5', 'i7', 'i8',
+    'iX', 'iX1', 'iX2', 'iX3',
+    'i4 eDrive35', 'i4 eDrive40', 'i4 M50',
+    'i5 eDrive40', 'i5 M60',
+    'i7 xDrive60', 'i7 M70',
+    
+    // Modele BMW M (complete M)
+    'M2', 'M3', 'M4', 'M5', 'M6', 'M8',
+    'M2 Competition', 'M2 CS',
+    'M3 Competition', 'M3 CS',
+    'M4 Competition', 'M4 CSL',
+    'M5 Competition', 'M5 CS',
+    'M8 Competition', 'M8 Gran Coupé',
+    'X3 M', 'X3 M Competition',
+    'X4 M', 'X4 M Competition',
+    'X5 M', 'X5 M Competition',
+    'X6 M', 'X6 M Competition',
+    'XM', 'XM Label Red',
+    
+    // Modele Roadster/Spider - Seria Z
+    'Z1', 'Z3', 'Z4', 'Z8',
+    'Z3 Roadster', 'Z3 Coupé',
+    'Z4 Roadster', 'Z4 M40i', 'Z4 sDrive20i', 'Z4 sDrive30i'
   ],
 
   // MERCEDES-BENZ - toate modelele disponibile
