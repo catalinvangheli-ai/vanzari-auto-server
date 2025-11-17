@@ -886,8 +886,21 @@ export const modele = {
 
   // JEEP - toate modelele disponibile
   jeep: [
-    'Renegade', 'Compass', 'Cherokee', 'Grand Cherokee',
-    'Wrangler', 'Gladiator', 'Avenger'
+    // SUV / Off-road / Crossover
+    'Wrangler', 'Wrangler Unlimited', 'Wrangler 4xe',
+    'Cherokee', 'Cherokee Trailhawk',
+    'Grand Cherokee', 'Grand Cherokee L', 'Grand Cherokee 4xe',
+    'Compass', 'Compass 4xe',
+    'Renegade', 'Renegade 4xe',
+    'Gladiator',
+    'Avenger',
+    
+    // Electrice & Hibride (concepte și viitoare)
+    'Recon', 'Magneto',
+    
+    // Modele retrase / clasice notabile
+    'Wagoneer', 'CJ', 'CJ5', 'CJ7',
+    'Liberty', 'Commander'
   ],
 
   // MINI - toate modelele disponibile
