@@ -465,10 +465,41 @@ export const modele = {
 
   // KIA - toate modelele disponibile
   kia: [
-    'Picanto', 'Rio', 'Ceed', 'Cerato', 'Stinger',
-    'Stonic', 'XCeed', 'Sportage', 'Sorento',
-    'EV6', 'Niro',
-    'Ceed GT', 'Stinger GT'
+    // SUV / Crossover actuale (2025)
+    'Sportage', 'Sorento', 'Seltos', 'Sonet', 'Telluride',
+    'EV9', 'EV3', 'EV5', 'EV6',
+    'Stonic', 'XCeed',
+    
+    // Compacte & Hatchback actuale
+    'Ceed', 'Ceed SW', 'Proceed', 'Rio', 'Picanto',
+    
+    // Sedan / Berlina actuale
+    'Stinger', 'K5', 'Optima', 'Forte', 'Cerato', 'Pegas',
+    
+    // Monovolum / Microvan actuale
+    'Carnival', 'Sedona', 'Carens', 'Ray',
+    
+    // Modele electrice (EV)
+    'EV3', 'EV4', 'EV5', 'EV6', 'EV9',
+    'Soul EV', 'Niro EV',
+    
+    // Hibride & plug-in hybrid
+    'Niro HEV', 'Niro PHEV',
+    'Sorento HEV', 'Sorento PHEV',
+    'Sportage HEV', 'Sportage PHEV',
+    'Ceed PHEV', 'XCeed PHEV',
+    
+    // Modele retrase - SUV-uri
+    'Borrego', 'Mohave', 'Soul',
+    
+    // Modele retrase - Hatchback & compacte
+    'Cee\'d', 'Venga', 'Sephia', 'Shuma', 'Spectra',
+    
+    // Modele retrase - Sedan / Berlina
+    'Magentis', 'Amanti', 'Opirus', 'Quoris', 'K900',
+    
+    // Modele sport / GT
+    'Ceed GT', 'Stinger GT', 'Proceed GT'
   ],
 
   // NISSAN - toate modelele disponibile
