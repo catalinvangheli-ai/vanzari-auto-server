@@ -418,10 +418,49 @@ export const modele = {
 
   // HYUNDAI - toate modelele disponibile
   hyundai: [
-    'i10', 'i20', 'i30', 'Elantra', 'Sonata',
-    'Bayon', 'Kona', 'Tucson', 'Santa Fe', 'Nexo',
-    'IONIQ 5', 'IONIQ 6',
-    'i30 N', 'Kona N'
+    // Modele mici & compacte
+    'i10', 'i20', 'i30', 'i30 Hatchback', 'i30 Wagon', 'i30 Fastback',
+    'Accent', 'Verna', 'Elantra', 'Avante',
+    'Getz', 'Atos', 'Atoz', 'Grand i10',
+    'HB20', 'Excel', 'Pony', 'Stellar',
+    
+    // Modele sedan / berline
+    'Sonata', 'Grandeur', 'Azera', 'Aslan',
+    'Ioniq', 'Ioniq Hybrid', 'Ioniq Plug-in',
+    'Xcent', 'Aura', 'Mistra', 'Lafesta',
+    'Dynasty',
+    
+    // Modele SUV / Crossover
+    'Tucson', 'Santa Fe', 'Kona', 'Kona Electric',
+    'Creta', 'ix25', 'Venue', 'Palisade',
+    'Bayon', 'Terracan', 'Galloper',
+    'Veracruz', 'ix55', 'ix35',
+    'Nexo',
+    
+    // Modele sport & performanță (Hyundai N)
+    'i20 N', 'i30 N', 'i30 Fastback N',
+    'Veloster N', 'Elantra N', 'Kona N',
+    
+    // MPV / Monovolume & familie
+    'Staria', 'H-1', 'H-200', 'Starex',
+    'Entourage', 'Matrix', 'Trajet',
+    'Santamo', 'Lavita',
+    
+    // Pickup & utilitare
+    'Santa Cruz', 'Porter', 'H-100',
+    'Mighty', 'HD Series',
+    
+    // Modele electrice (IONIQ Series + EV)
+    'IONIQ 5', 'IONIQ 6', 'IONIQ 7',
+    'Ioniq Electric',
+    
+    // Modele doar pentru Coreea
+    'Casper', 'Stargazer', 'Portico',
+    'Click', 'Tuscani', 'Equus',
+    
+    // Modele clasice / retrase
+    'Coupe', 'Tiburon', 'Scoupe',
+    'Lantra', 'S-Coupe', 'Marcia', 'Sonica'
   ],
 
   // KIA - toate modelele disponibile
