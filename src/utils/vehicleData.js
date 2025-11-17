@@ -252,12 +252,45 @@ export const modele = {
 
   // MERCEDES-BENZ - toate modelele disponibile
   mercedes: [
-    'Clasa A', 'Clasa B', 'Clasa C', 'Clasa E', 'Clasa S',
-    'CLA', 'CLS', 'GLA', 'GLB', 'GLC', 'GLE', 'GLS',
-    'G-Class', 'SL', 'SLC', 'AMG GT',
-    'EQA', 'EQB', 'EQC', 'EQE', 'EQS',
+    // Compacte / Hatchback / Sedan
+    'A-Class', 'A-Class W177', 'A-Class Sedan',
+    'B-Class',
+    'CLA-Class', 'CLA C118', 'CLA Shooting Brake',
+    'C-Class', 'C-Class W206', 'C-Class Estate', 'C-Class AMG',
+    'E-Class', 'E-Class W213', 'E-Class W214', 'E-Class Estate', 'E-Class All-Terrain',
+    'S-Class', 'S-Class W223', 'S-Class Maybach',
+    'CLS',
+    
+    // SUV / Crossover / Off-road
+    'GLA-Class', 'GLB-Class', 'GLC-Class', 'GLC Coupe',
+    'GLE-Class', 'GLE Coupe', 'GLS-Class',
+    'G-Class',
+    
+    // Sport / Performanță
+    'AMG GT', 'AMG GT 4-Door',
+    'C-Class AMG', 'E-Class AMG', 'GLC AMG', 'GLE AMG', 'S-Class AMG',
     'A 35 AMG', 'A 45 AMG', 'C 43 AMG', 'C 63 AMG',
-    'E 53 AMG', 'E 63 AMG', 'S 63 AMG', 'GLC 43 AMG', 'GLE 53 AMG'
+    'E 53 AMG', 'E 63 AMG', 'S 63 AMG', 'GLC 43 AMG', 'GLE 53 AMG',
+    
+    // Electrice (EQ Series)
+    'EQA', 'EQB', 'EQC', 'EQE', 'EQE SUV', 'EQS', 'EQS SUV', 'EQG',
+    'EQA 250e', 'EQB 350e', 'EQC 400 4MATIC',
+    
+    // Monovolume / MPV / Van
+    'V-Class', 'Vito', 'Sprinter',
+    
+    // Pickup / Utilitare
+    'X-Class', 'Vito Van', 'Sprinter Van',
+    
+    // Hibride și plug-in hybrid (PHEV)
+    'A-Class PHEV', 'B-Class PHEV', 'C-Class PHEV', 'E-Class PHEV', 'S-Class PHEV',
+    'GLA PHEV', 'GLB PHEV', 'GLC PHEV', 'GLE PHEV', 'GLS PHEV',
+    
+    // Modele retrase / clasice notabile
+    '190', 'W201', '300D', '124', '123', '600', 'W100', 'W140',
+    '300SL', 'Gullwing', '500E', 'E500',
+    'CLK-Class', 'SL-Class', 'SL R107', 'SL R129', 'SL R230', 'SL R231',
+    'SLC', 'SLK', 'R-Class'
   ],
 
   // SMART - toate modelele disponibile
