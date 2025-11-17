@@ -1151,10 +1151,45 @@ export const modele = {
 
   // CHEVROLET - americană mainstream
   chevrolet: [
-    'Spark', 'Aveo', 'Cruze', 'Malibu', 'Impala',
-    'Camaro', 'Corvette',
-    'Trax', 'Equinox', 'Traverse', 'Tahoe', 'Suburban',
-    'Silverado', 'Colorado'
+    // Compacte / Hatchback / Sedan
+    'Chevrolet Spark',
+    'Chevrolet Aveo', 'Chevrolet Sonic',
+    'Chevrolet Cruze',
+    'Chevrolet Malibu',
+    'Chevrolet Cavalier',
+    
+    // SUV / Crossover
+    'Chevrolet Trax',
+    'Chevrolet Tracker',
+    'Chevrolet Equinox',
+    'Chevrolet Blazer',
+    'Chevrolet Tahoe',
+    'Chevrolet Suburban',
+    'Chevrolet Traverse',
+    'Chevrolet Captiva',
+    
+    // Pickup / Utilitare
+    'Chevrolet Colorado',
+    'Chevrolet Silverado',
+    'Chevrolet S-10',
+    'Chevrolet Express',
+    'Chevrolet Astro',
+    
+    // Electrice & Hibride
+    'Chevrolet Bolt EV',
+    'Chevrolet Bolt EUV',
+    'Chevrolet Volt',
+    'Chevrolet Malibu Hybrid',
+    
+    // Modele retrase / clasice notabile
+    'Chevrolet Impala',
+    'Chevrolet Bel Air',
+    'Chevrolet Camaro',
+    'Chevrolet Corvette',
+    'Chevrolet Chevelle',
+    'Chevrolet Caprice',
+    'Chevrolet El Camino',
+    'Chevrolet TrailBlazer'
   ],
 
   // CHRYSLER - americană
