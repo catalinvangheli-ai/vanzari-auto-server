@@ -330,8 +330,22 @@ export const modele = {
 
   // ALFA ROMEO - toate modelele disponibile
   'alfa romeo': [
-    'MiTo', 'Giulietta', 'Giulia', 'Stelvio',
-    '4C', '8C', 'Tonale'
+    // Modele actuale (2020+)
+    'Giulia', 'Stelvio', 'Tonale', 'Junior',
+    
+    // Modele recente - Compacte / hatchback (2000-2020)
+    '147', 'MiTo', 'Giulietta',
+    
+    // Modele recente - Sedan / berline
+    '156', '159', '166',
+    
+    // Modele recente - Coupé / sportive
+    'GT', 'Brera', 'Spider', '4C', 
+    '8C Competizione', '8C Spider',
+    
+    // Modele din anii '80-'90
+    '33', '75', '90', '145', '146', '164', 
+    'SZ', 'RZ'
   ],
 
   // FIAT - toate modelele disponibile
