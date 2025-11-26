@@ -1,6 +1,10 @@
+
+// Încarcă variabilele din .env
+require('dotenv').config();
 // server/index.js
 
 const express = require('express');
+const app = express();
 const mongoose = require('mongoose');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
@@ -14,43 +18,6 @@ const { CloudinaryStorage } = require('multer-storage-cloudinary');
 // PostgreSQL imports
 const { CarSaleAd: CarSaleAdPG, CarRentalAd: CarRentalAdPG, testConnection, syncDatabase } = require('./models');
 
-// Global flag pentru PostgreSQL status
-let postgresqlReady = false;
-
-const app = express();
-
-// -------------------------
-// CLOUDINARY CONFIGURATION
-// -------------------------
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'db0htnrxf',
-  api_key: process.env.CLOUDINARY_API_KEY || '533557596816111',
-  api_secret: process.env.CLOUDINARY_API_SECRET || 'HXWkfZ1FStsuEqlhky1nUWwDJKA'
-});
-
-console.log('☁️ Cloudinary configured:', cloudinary.config().cloud_name);
-
-// Asigur că folderul uploads există (legacy fallback)
-const uploadsDir = path.join(__dirname, 'uploads');
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-  console.log('📁 Folder uploads creat');
-}
-
-// Middleware
-app.use(cors({
-  origin: '*', // Permite toate originile pentru testing
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: false // Schimbat în false pentru origine *
-}));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// Servire fișiere statice (politică de confidențialitate, etc.)
-app.use('/public', express.static(path.join(__dirname, 'public')));
-
-// Logging middleware
 app.use((req, res, next) => {
   console.log(`📥 ${req.method} ${req.url} de la ${req.ip}`);
   next();
@@ -112,47 +79,48 @@ async function connectToMongoDB() {
   }
 }
 
-// Pornește conexiunea MongoDB asincron
-connectToMongoDB().then(result => {
-  console.log(`📊 MongoDB connection result: ${result}`);
-});
 
-// -------------------------
-// POSTGRESQL INITIALIZATION
-// -------------------------
-console.log('🐘 Initializing PostgreSQL connection...');
-console.log('🔍 DATABASE_URL exists:', !!process.env.DATABASE_URL);
-console.log('🔍 NODE_ENV:', process.env.NODE_ENV);
+// Async IIFE pentru inițializări asincrone
+(async () => {
+  // Pornește conexiunea MongoDB asincron
+  const mongoResult = await connectToMongoDB();
+  console.log(`📊 MongoDB connection result: ${mongoResult}`);
 
-// Inițializează PostgreSQL
-async function initializePostgreSQL() {
-  try {
-    console.log('🔄 Testing PostgreSQL connection...');
-    const isConnected = await testConnection();
-    if (isConnected) {
-      console.log('✅ PostgreSQL connected, syncing database...');
-      await syncDatabase();
-      console.log('🚀 PostgreSQL initialized successfully!');
-      return true;
-    } else {
-      console.log('❌ PostgreSQL connection failed');
+  // -------------------------
+  // POSTGRESQL INITIALIZATION
+  // -------------------------
+  console.log('🐘 Initializing PostgreSQL connection...');
+  console.log('🔍 DATABASE_URL exists:', !!process.env.DATABASE_URL);
+  console.log('🔍 NODE_ENV:', process.env.NODE_ENV);
+
+  // Inițializează PostgreSQL
+  async function initializePostgreSQL() {
+    try {
+      console.log('🔄 Testing PostgreSQL connection...');
+      const isConnected = await testConnection();
+      if (isConnected) {
+        console.log('✅ PostgreSQL connected, syncing database...');
+        await syncDatabase();
+        console.log('🚀 PostgreSQL initialized successfully!');
+        return true;
+      } else {
+        console.log('❌ PostgreSQL connection failed');
+        return false;
+      }
+    } catch (error) {
+      console.error('❌ PostgreSQL initialization failed:', error.message);
+      console.error('🔍 Full error:', error);
       return false;
     }
-  } catch (error) {
-    console.error('❌ PostgreSQL initialization failed:', error.message);
-    console.error('🔍 Full error:', error);
-    return false;
   }
-}
 
-// Pornește PostgreSQL
-initializePostgreSQL().then(success => {
-  postgresqlReady = success;
-  console.log(`📊 PostgreSQL initialization result: ${success ? 'SUCCESS' : 'FAILED'}`);
-  if (!success) {
+  // Pornește PostgreSQL
+  postgresqlReady = await initializePostgreSQL();
+  console.log(`📊 PostgreSQL initialization result: ${postgresqlReady ? 'SUCCESS' : 'FAILED'}`);
+  if (!postgresqlReady) {
     console.log('⚠️ Server will run without PostgreSQL - usando MongoDB fallback');
   }
-});
+})();
   
 
 // -------------------------
@@ -793,8 +761,14 @@ app.post('/api/car-sales', authMiddleware, upload.array('poze', 10), async (req,
     console.log('👤 User găsit:', user?.fullName, user?.telefon);
     
     // NU bloca dacă user nu e găsit - folosește datele din req.body
+    // Normalizează marca la formatul cu prima literă mare, restul mici
+    let marcaNormalizata = req.body.marca;
+    if (marcaNormalizata && typeof marcaNormalizata === 'string') {
+      marcaNormalizata = marcaNormalizata.charAt(0).toUpperCase() + marcaNormalizata.slice(1).toLowerCase();
+    }
     const adData = {
       ...req.body,
+      marca: marcaNormalizata,
       userId: req.user.username,
       username: req.user.username,
       email: req.user.email,
@@ -859,41 +833,127 @@ app.post('/api/car-sales', authMiddleware, upload.array('poze', 10), async (req,
   }
 });
 
-// Vânzări auto - Listă toate anunturile (PostgreSQL cu MongoDB fallback)
+// Vânzări auto - Listă toate anunțurile
 app.get('/api/car-sales', async (req, res) => {
   try {
-    let ads, database;
-    
-    if (postgresqlReady) {
-      try {
-        console.log('📋 Încărcare anunțuri din PostgreSQL...');
-        ads = await CarSaleAdPG.findAll({ 
-          where: { isActive: true },
-          order: [['createdAt', 'DESC']]
-        });
-        database = 'PostgreSQL';
-        console.log(`📋 Găsite ${ads.length} anunțuri vânzare în PostgreSQL`);
-      } catch (pgError) {
-        console.error('❌ PostgreSQL GET failed, using MongoDB fallback:', pgError.message);
-        ads = await CarSaleAd.find({ isActive: true }).sort({ dateCreated: -1 });
-        database = 'MongoDB';
-        console.log(`📋 FALLBACK: Găsite ${ads.length} anunțuri vânzare în MongoDB`);
-      }
-    } else {
-      console.log('📋 Încărcare anunțuri din MongoDB (PostgreSQL not ready)...');
-      ads = await CarSaleAd.find({ isActive: true }).sort({ dateCreated: -1 });
-      database = 'MongoDB';
-      console.log(`📋 Găsite ${ads.length} anunțuri vânzare în MongoDB`);
+    console.log("🔎 Query primit:", req.query);
+
+    // Loghează valorile distincte pentru marca din baza de date MongoDB (doar pentru debug)
+    try {
+      const CarSaleAd = require('./models/CarSaleAd');
+      const distinctMarci = await CarSaleAd.distinct('marca');
+      console.log('🔍 Marci distincte în MongoDB:', distinctMarci);
+    } catch (e) {
+      console.warn('⚠️ Nu s-au putut extrage marcile distincte din MongoDB:', e.message);
     }
-    
-    res.json(ads); // Returnează direct array-ul pentru compatibilitate cu aplicația mobilă
+
+    const {
+      marca,
+      model,
+      pretMin,
+      pretMax,
+      anMin,
+      anMax,
+      combustibil,
+      transmisie
+    } = req.query;
+
+
+    const { Op } = require('sequelize');
+    const pgWhere = { isActive: true };
+    let mongoQuery = {};
+
+    // Filtrare după marcă (folosește exact valoarea din DB, de obicei lowercase)
+    let marcaFiltru = marca;
+    if (marcaFiltru && typeof marcaFiltru === 'string') {
+      marcaFiltru = marcaFiltru.toLowerCase();
+    }
+    // Loghează toate mărcile distincte din DB pentru debug
+    try {
+      const CarSaleAd = require('./models/CarSaleAd');
+      const allMarci = await CarSaleAd.distinct('marca');
+      console.log('🟨 DEBUG: Toate marcile din DB:', allMarci);
+    } catch (e) {}
+    console.log('🟨 DEBUG: marca primit din query:', marca, '| marcaFiltru folosit:', marcaFiltru);
+    if (marcaFiltru) {
+      pgWhere.marca = { [Op.iLike]: marcaFiltru };
+      mongoQuery.marca = marcaFiltru;
+    }
+    // Loghează query-ul complet și rezultatele brute pentru debug
+    console.log('🟨 DEBUG: mongoQuery folosit:', JSON.stringify(mongoQuery));
+    if (model) {
+      pgWhere.model = { [Op.iLike]: `%${model}%` };
+      mongoQuery.model = { $regex: new RegExp(`^${model}$`, 'i') };
+    }
+    if (combustibil) {
+      pgWhere.carburant = { [Op.iLike]: `%${combustibil}%` };
+      mongoQuery.carburant = { $regex: new RegExp(combustibil, 'i') };
+    }
+    if (transmisie) {
+      pgWhere.transmisie = { [Op.iLike]: `%${transmisie}%` };
+      mongoQuery.transmisie = { $regex: new RegExp(transmisie, 'i') };
+    }
+    if (pretMin || pretMax) {
+      pgWhere.pret = {};
+      mongoQuery.pret = {};
+      if (pretMin) {
+        pgWhere.pret[Op.gte] = Number(pretMin);
+        mongoQuery.pret.$gte = Number(pretMin);
+      }
+      if (pretMax) {
+        pgWhere.pret[Op.lte] = Number(pretMax);
+        mongoQuery.pret.$lte = Number(pretMax);
+      }
+    }
+    if (anMin || anMax) {
+      pgWhere.anFabricatie = {};
+      mongoQuery.anFabricatie = {};
+      if (anMin) {
+        pgWhere.anFabricatie[Op.gte] = Number(anMin);
+        mongoQuery.anFabricatie.$gte = Number(anMin);
+      }
+      if (anMax) {
+        pgWhere.anFabricatie[Op.lte] = Number(anMax);
+        mongoQuery.anFabricatie.$lte = Number(anMax);
+      }
+    }
+
+    // LOGGING: Filtru și SQL generat
+    console.log("🔧 Filtru final trimis la PostgreSQL:", JSON.stringify(pgWhere, null, 2));
+    console.log("🔧 Filtru final trimis la MongoDB:", JSON.stringify(mongoQuery, null, 2));
+
+    let ads = [];
+    if (postgresqlReady) {
+      // Loghează SQL-ul generat de Sequelize
+      ads = await CarSaleAdPG.findAll({
+        where: pgWhere,
+        order: [['createdAt', 'DESC']],
+        logging: (sql, timing) => {
+          console.log('🟦 SQL generat de Sequelize:', sql);
+          if (timing) console.log('⏱️ Query timing:', timing, 'ms');
+        }
+      });
+    } else {
+      // Fallback MongoDB cu query direct
+      const CarSaleAd = require('./models/CarSaleAd');
+      ads = await CarSaleAd.find(mongoQuery).sort({ dateCreated: -1 });
+      // Loghează primele 10 rezultate pentru debug
+      if (ads.length > 0) {
+        console.log('🟨 DEBUG: Primele 10 rezultate:', ads.slice(0, 10).map(ad => ({ marca: ad.marca, model: ad.model })));
+      }
+    }
+
+
+    console.log(`📋 Găsite ${ads.length} anunțuri după filtrare`);
+    if (ads.length > 0) {
+      console.log('🟨 DEBUG: Primele 5 rezultate - marci:', ads.slice(0, 5).map(ad => ad.marca));
+    }
+
+    res.json(ads);
+
   } catch (error) {
-    console.error('❌ Eroare la încărcarea anunturilor:', error);
-    res.status(500).json({ 
-      error: 'Eroare la încărcarea anunturilor: ' + error.message,
-      postgresqlReady: postgresqlReady,
-      success: false 
-    });
+    console.error("❌ Eroare /api/car-sales:", error);
+    res.status(500).json({ error: error.message });
   }
 });
 
