@@ -870,8 +870,9 @@ app.get('/api/car-sales', async (req, res) => {
     }
     // Loghează toate mărcile distincte din DB pentru debug
     try {
-      const CarSaleAd = require('./models/CarSaleAd');
-      const allMarci = await CarSaleAd.distinct('marca');
+      const mongoose = require('mongoose');
+      const CarSaleAdMongo = mongoose.model('CarSaleAd');
+      const allMarci = await CarSaleAdMongo.distinct('marca');
       console.log('🟨 DEBUG: Toate marcile din DB:', allMarci);
     } catch (e) {}
     console.log('🟨 DEBUG: marca primit din query:', marca, '| marcaFiltru folosit:', marcaFiltru);
@@ -935,8 +936,9 @@ app.get('/api/car-sales', async (req, res) => {
       });
     } else {
       // Fallback MongoDB cu query direct
-      const CarSaleAd = require('./models/CarSaleAd');
-      ads = await CarSaleAd.find(mongoQuery).sort({ dateCreated: -1 });
+      const mongoose = require('mongoose');
+      const CarSaleAdMongo = mongoose.model('CarSaleAd');
+      ads = await CarSaleAdMongo.find(mongoQuery).sort({ dateCreated: -1 });
       // Loghează primele 10 rezultate pentru debug
       if (ads.length > 0) {
         console.log('🟨 DEBUG: Primele 10 rezultate:', ads.slice(0, 10).map(ad => ({ marca: ad.marca, model: ad.model })));
