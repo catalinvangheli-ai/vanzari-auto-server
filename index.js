@@ -943,7 +943,7 @@ app.get('/api/car-sales', async (req, res) => {
 
 
     const { Op } = require('sequelize');
-    const pgWhere = { isActive: true };
+    const pgWhere = {}; // Temporar: NU filtrez după isActive pentru debug
     let mongoQuery = {};
 
     // Filtrare după marcă (folosește exact valoarea din DB, de obicei lowercase)
