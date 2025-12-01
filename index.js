@@ -491,13 +491,27 @@ app.post('/messages', authMiddleware, async (req, res) => {
     console.log('💬 POST /messages - User:', req.user.username, req.user.email);
     console.log('📝 Body:', req.body);
     
+    // Găsește destinatarul pentru a normaliza identificatorul
+    const toUser = await User.findOne({
+      $or: [{ email: req.body.to }, { username: req.body.to }]
+    });
+    
+    // Folosește username consistent pentru ambii utilizatori
+    const fromIdentifier = req.user.username;
+    const toIdentifier = toUser?.username || req.body.to;
+    
+    console.log('🔄 Normalizat:', { 
+      from: fromIdentifier, 
+      to: toIdentifier 
+    });
+    
     const message = new Message({
-      from: req.user.email || req.user.username,
-      to: req.body.to,
+      from: fromIdentifier,
+      to: toIdentifier,
       text: req.body.text,
       date: new Date(),
-      listingId: req.body.listingId || null,  // Salvează ID anunț dacă există
-      listingType: req.body.listingType || null // Salvează tip anunț
+      listingId: req.body.listingId || null,
+      listingType: req.body.listingType || null
     });
     
     await message.save();
@@ -509,33 +523,65 @@ app.post('/messages', authMiddleware, async (req, res) => {
   }
 });
 app.get('/messages/:user1/:user2', async (req, res) => {
-  const { user1, user2 } = req.params;
-  
-  // Verifică dacă user1/user2 sunt username-uri și convertește-le în email-uri
-  const user1Doc = await User.findOne({ 
-    $or: [{ email: user1 }, { username: user1 }] 
-  });
-  const user2Doc = await User.findOne({ 
-    $or: [{ email: user2 }, { username: user2 }] 
-  });
-  
-  const user1Email = user1Doc?.email || user1;
-  const user2Email = user2Doc?.email || user2;
-  
-  console.log('📧 Messages query:', { 
-    input: { user1, user2 },
-    emails: { user1Email, user2Email }
-  });
-  
-  const messages = await Message.find({
-    $or: [
-      { from: user1Email, to: user2Email },
-      { from: user2Email, to: user1Email }
-    ]
-  }).sort({ date: 1 });
-  
-  console.log('📨 Found messages:', messages.length);
-  res.json(messages);
+  try {
+    const { user1, user2 } = req.params;
+    const { listingId } = req.query; // Adaugă suport pentru filtrare după listing
+    
+    console.log('📧 GET /messages/:user1/:user2 - Params:', { user1, user2, listingId });
+    
+    // Găsește utilizatorii și convertește la email/username
+    const user1Doc = await User.findOne({ 
+      $or: [{ email: user1 }, { username: user1 }] 
+    });
+    const user2Doc = await User.findOne({ 
+      $or: [{ email: user2 }, { username: user2 }] 
+    });
+    
+    // Creează array cu toate variantele posibile (email + username)
+    const user1Identifiers = [
+      user1, 
+      user1Doc?.email, 
+      user1Doc?.username
+    ].filter(Boolean);
+    
+    const user2Identifiers = [
+      user2, 
+      user2Doc?.email, 
+      user2Doc?.username
+    ].filter(Boolean);
+    
+    console.log('🔍 User identifiers:', { 
+      user1Identifiers, 
+      user2Identifiers 
+    });
+    
+    // Query pentru a găsi mesaje între cei 2 utilizatori
+    const query = {
+      $or: [
+        { 
+          from: { $in: user1Identifiers }, 
+          to: { $in: user2Identifiers } 
+        },
+        { 
+          from: { $in: user2Identifiers }, 
+          to: { $in: user1Identifiers } 
+        }
+      ]
+    };
+    
+    // Filtrare opțională după listingId
+    if (listingId) {
+      query.listingId = listingId;
+    }
+    
+    const messages = await Message.find(query).sort({ date: 1 });
+    
+    console.log(`✅ Găsite ${messages.length} mesaje`);
+    res.json(messages);
+  } catch (error) {
+    console.error('❌ Eroare la încărcarea mesajelor:', error);
+    res.status(500).json({ error: error.message });
+  }
 });
 
 // Recenzii
@@ -1405,34 +1451,45 @@ app.delete('/api/car-rentals/:id', authMiddleware, async (req, res) => {
 // Conversații - Listă pentru utilizatorul logat
 app.get('/api/my-conversations', authMiddleware, async (req, res) => {
   try {
-    // Folosește email SAU username pentru a fi consistent cu POST /messages
-    const userIdentifier = req.user.email || req.user.username;
+    // Folosește username consistent
+    const userIdentifier = req.user.username;
     console.log('📋 GET /api/my-conversations - User:', userIdentifier);
+    
+    // Găsește utilizatorul pentru toate identificatorii posibili
+    const currentUser = await User.findOne({ username: userIdentifier });
+    const allIdentifiers = [
+      userIdentifier,
+      currentUser?.email
+    ].filter(Boolean);
+    
+    console.log('🔍 Căutare conversații pentru:', allIdentifiers);
     
     const conversations = await Message.aggregate([
       {
         $match: {
           $or: [
-            { from: userIdentifier },
-            { to: userIdentifier }
+            { from: { $in: allIdentifiers } },
+            { to: { $in: allIdentifiers } }
           ]
         }
       },
       {
-        $sort: { date: -1 } // Sortează descrescător pentru a lua ultimul mesaj
+        $sort: { date: -1 }
       },
       {
         $group: {
           _id: {
-            $cond: [
-              { $eq: ['$from', userIdentifier] },
-              '$to',
-              '$from'
-            ]
+            otherUser: {
+              $cond: [
+                { $in: ['$from', allIdentifiers] },
+                '$to',
+                '$from'
+              ]
+            },
+            listingId: '$listingId'
           },
           lastMessage: { $first: '$text' },
           lastDate: { $first: '$date' },
-          listingId: { $first: '$listingId' },
           listingType: { $first: '$listingType' },
           count: { $sum: 1 }
         }
@@ -1443,10 +1500,10 @@ app.get('/api/my-conversations', authMiddleware, async (req, res) => {
       {
         $project: {
           _id: 0,
-          otherUser: '$_id',
+          otherUser: '$_id.otherUser',
+          listingId: '$_id.listingId',
           lastMessage: 1,
           lastDate: 1,
-          listingId: 1,
           listingType: 1,
           count: 1
         }

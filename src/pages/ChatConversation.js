@@ -60,16 +60,21 @@ const ChatConversation = () => {
         ? `${API_BASE_URL}/messages/${username}/${targetUser}?listingId=${listingId}`
         : `${API_BASE_URL}/messages/${username}/${targetUser}`;
       
+      console.log('📨 Fetch messages from:', url);
+      
       const response = await fetch(url, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
 
       if (response.ok) {
         const data = await response.json();
+        console.log('✅ Messages received:', data.length);
         setMessages(data);
+      } else {
+        console.error('❌ Error fetching messages:', response.status);
       }
     } catch (error) {
-      console.error('Eroare încărcare mesaje:', error);
+      console.error('❌ Eroare încărcare mesaje:', error);
     }
   };
 
@@ -80,26 +85,36 @@ const ChatConversation = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
+      
+      const messageData = {
+        to: targetUser,
+        text: newMessage,
+        listingId: listingId || null,
+        listingType: listingDetails ? (listingDetails.pretInchiriere ? 'inchirieri' : 'vanzari') : null
+      };
+      
+      console.log('📤 Sending message:', messageData);
+      
       const response = await fetch(`${API_BASE_URL}/messages`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({
-          to: targetUser,
-          text: newMessage,
-          listingId: listingId || (listingDetails?._id) || null,
-          listingType: listingDetails?.pretInchiriere ? 'inchirieri' : 'vanzari'
-        })
+        body: JSON.stringify(messageData)
       });
 
       if (response.ok) {
+        console.log('✅ Message sent successfully');
         setNewMessage('');
         fetchMessages();
+      } else {
+        console.error('❌ Error sending message:', response.status);
+        const errorData = await response.json();
+        console.error('Error details:', errorData);
       }
     } catch (error) {
-      console.error('Eroare trimitere mesaj:', error);
+      console.error('❌ Eroare trimitere mesaj:', error);
     } finally {
       setLoading(false);
     }
@@ -168,9 +183,11 @@ const ChatConversation = () => {
         ) : (
           <div className="space-y-3">
             {messages.map((message, index) => {
-              const myEmail = email || user?.email;
-              const isMyMessage = message.from === username || message.from === myEmail;
+              // Compară username-ul curent cu cel din mesaj
+              const isMyMessage = message.from === username;
               const showName = index === 0 || messages[index - 1].from !== message.from;
+              
+              console.log('Message:', { from: message.from, username, isMyMessage });
               
               return (
                 <div key={index} className={`flex ${isMyMessage ? 'justify-end' : 'justify-start'}`}>
@@ -179,7 +196,7 @@ const ChatConversation = () => {
                       <div className={`text-xs font-medium mb-1 px-2 ${
                         isMyMessage ? 'text-blue-700' : 'text-gray-700'
                       }`}>
-                        {isMyMessage ? 'Tu' : targetUser}
+                        {isMyMessage ? 'Tu' : message.from}
                       </div>
                     )}
                     <div className={`px-4 py-3 rounded-2xl shadow ${

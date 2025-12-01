@@ -101,21 +101,16 @@ const AnuntDetaliu = () => {
       return;
     }
     
-    // Folosește email pentru chat în loc de username - cu mai multe fallback-uri
-    const contactEmail = anunt.email || anunt.userEmail;
+    // Folosește USERNAME pentru chat (consistent cu backend)
     const contactUsername = anunt.username || anunt.userId;
     const title = `${anunt.marca} ${anunt.model}`;
     
     console.log('🔍 Contact info:', { 
-      email: contactEmail, 
       username: contactUsername,
       anunt: anunt 
     });
     
-    // Încearcă mai întâi cu email, apoi cu username
-    if (contactEmail) {
-      navigate(`/chat?user=${contactEmail}&listing=${anunt._id || anunt.id}&title=${encodeURIComponent(title)}`);
-    } else if (contactUsername) {
+    if (contactUsername) {
       navigate(`/chat?user=${contactUsername}&listing=${anunt._id || anunt.id}&title=${encodeURIComponent(title)}`);
     } else {
       console.error('❌ Nu există date de contact:', anunt);
