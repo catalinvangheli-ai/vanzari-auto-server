@@ -21,6 +21,7 @@ const AdaugaAnunt = () => {
   const [telefon, setTelefon] = useState('');
   const [culoare, setCuloare] = useState('');
   const [putere, setPutere] = useState('');
+  const [capacitateCilindrica, setCapacitateCilindrica] = useState('');
   const [currentLanguage, setCurrentLanguage] = useState(getCurrentLanguage());
 
   useEffect(() => {
@@ -116,6 +117,7 @@ const AdaugaAnunt = () => {
       formData.append('carburant', combustibil);
       formData.append('transmisie', transmisie);
       formData.append('putere', putere ? parseInt(putere) : '');
+      formData.append('capacitateCilindrica', capacitateCilindrica ? parseInt(capacitateCilindrica) : '');
       formData.append('descriere', descrierePersonala);
       formData.append('locatie', locatie);
       formData.append('telefon', telefon);
@@ -152,6 +154,7 @@ const AdaugaAnunt = () => {
         setTelefon('');
         setCuloare('');
         setPutere('');
+        setCapacitateCilindrica('');
       } else {
         const errorText = await response.text();
         console.error('Eroare backend:', errorText);
@@ -363,6 +366,20 @@ const AdaugaAnunt = () => {
               onChange={(e) => setPutere(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               placeholder="ex: 150"
+            />
+          </div>
+
+          {/* Capacitate Cilindrică */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {translateText("Capacitate cilindrică (cmc)", currentLanguage)}
+            </label>
+            <input
+              type="number"
+              value={capacitateCilindrica}
+              onChange={(e) => setCapacitateCilindrica(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              placeholder="ex: 1600"
             />
           </div>
 

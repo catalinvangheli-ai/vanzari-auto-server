@@ -44,6 +44,14 @@ const CarRentalAd = sequelize.define('CarRentalAd', {
     type: DataTypes.STRING,
     allowNull: true
   },
+  putere: {
+    type: DataTypes.INTEGER,
+    allowNull: true
+  },
+  capacitateCilindrica: {
+    type: DataTypes.INTEGER,
+    allowNull: true
+  },
   descriere: {
     type: DataTypes.TEXT,
     allowNull: true

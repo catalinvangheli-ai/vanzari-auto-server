@@ -79,6 +79,10 @@ const VanzariAuto = () => {
     kilometers: '',
     fuel: '',
     transmission: '',
+    powerFrom: '',
+    powerTo: '',
+    engineFrom: '',
+    engineTo: '',
     sortBy: ''
   });
 
@@ -168,6 +172,10 @@ const VanzariAuto = () => {
     if (formData.yearTo) filters.anMax = formData.yearTo;
     if (formData.fuel) filters.combustibil = formData.fuel;
     if (formData.transmission) filters.transmisie = formData.transmission;
+    if (formData.powerFrom) filters.putereMin = formData.powerFrom;
+    if (formData.powerTo) filters.putereMax = formData.powerTo;
+    if (formData.engineFrom) filters.capacitateMin = formData.engineFrom;
+    if (formData.engineTo) filters.capacitateMax = formData.engineTo;
     
     // Verifică dacă există cel puțin un filtru
     if (Object.keys(filters).length === 0) {
@@ -343,6 +351,56 @@ const VanzariAuto = () => {
               <option key={transmission} value={transmission}>{transmission}</option>
             ))}
           </select>
+        </div>
+
+        {/* Power (HP) */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            {translateText('Putere (CP)', currentLanguage)}
+          </label>
+          <div className="grid grid-cols-2 gap-4">
+            <input
+              type="number"
+              name="powerFrom"
+              value={formData.powerFrom}
+              onChange={handleInputChange}
+              placeholder={translateText('De la', currentLanguage)}
+              className="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <input
+              type="number"
+              name="powerTo"
+              value={formData.powerTo}
+              onChange={handleInputChange}
+              placeholder={translateText('Până la', currentLanguage)}
+              className="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+        </div>
+
+        {/* Engine Capacity (cc) */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            {translateText('Capacitate cilindrică (cmc)', currentLanguage)}
+          </label>
+          <div className="grid grid-cols-2 gap-4">
+            <input
+              type="number"
+              name="engineFrom"
+              value={formData.engineFrom}
+              onChange={handleInputChange}
+              placeholder={translateText('De la', currentLanguage)}
+              className="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <input
+              type="number"
+              name="engineTo"
+              value={formData.engineTo}
+              onChange={handleInputChange}
+              placeholder={translateText('Până la', currentLanguage)}
+              className="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
         </div>
 
         {/* Sort By */}

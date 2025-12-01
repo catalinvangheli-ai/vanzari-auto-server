@@ -52,6 +52,10 @@ const CarSaleAd = sequelize.define('CarSaleAd', {
     type: DataTypes.INTEGER,
     allowNull: true
   },
+  capacitateCilindrica: {
+    type: DataTypes.INTEGER,
+    allowNull: true
+  },
   descriere: {
     type: DataTypes.TEXT,
     allowNull: true

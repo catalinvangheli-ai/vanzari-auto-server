@@ -204,6 +204,7 @@ const CarSaleAd = mongoose.model('CarSaleAd', new mongoose.Schema({
   carburant: String,
   transmisie: String,
   putere: Number,
+  capacitateCilindrica: Number,
   descriere: String,
   locatie: String,
   telefon: String,
@@ -223,6 +224,8 @@ const CarRentalAd = mongoose.model('CarRentalAd', new mongoose.Schema({
   culoare: String,
   carburant: String,
   transmisie: String,
+  putere: Number,
+  capacitateCilindrica: Number,
   descriere: String,
   locatie: String,
   telefon: String,
@@ -916,7 +919,11 @@ app.get('/api/car-sales', async (req, res) => {
       anMin,
       anMax,
       combustibil,
-      transmisie
+      transmisie,
+      putereMin,
+      putereMax,
+      capacitateMin,
+      capacitateMax
     } = req.query;
 
 
@@ -977,6 +984,30 @@ app.get('/api/car-sales', async (req, res) => {
       if (anMax) {
         pgWhere.anFabricatie[Op.lte] = Number(anMax);
         mongoQuery.anFabricatie.$lte = Number(anMax);
+      }
+    }
+    if (putereMin || putereMax) {
+      pgWhere.putere = {};
+      mongoQuery.putere = {};
+      if (putereMin) {
+        pgWhere.putere[Op.gte] = Number(putereMin);
+        mongoQuery.putere.$gte = Number(putereMin);
+      }
+      if (putereMax) {
+        pgWhere.putere[Op.lte] = Number(putereMax);
+        mongoQuery.putere.$lte = Number(putereMax);
+      }
+    }
+    if (capacitateMin || capacitateMax) {
+      pgWhere.capacitateCilindrica = {};
+      mongoQuery.capacitateCilindrica = {};
+      if (capacitateMin) {
+        pgWhere.capacitateCilindrica[Op.gte] = Number(capacitateMin);
+        mongoQuery.capacitateCilindrica.$gte = Number(capacitateMin);
+      }
+      if (capacitateMax) {
+        pgWhere.capacitateCilindrica[Op.lte] = Number(capacitateMax);
+        mongoQuery.capacitateCilindrica.$lte = Number(capacitateMax);
       }
     }
 

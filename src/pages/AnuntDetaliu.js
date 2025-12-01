@@ -281,6 +281,18 @@ const AnuntDetaliu = () => {
             <span className="text-gray-500 text-xs uppercase tracking-wide">Transmisie</span>
             <p className="font-semibold text-gray-900 mt-1">{anunt.transmisie}</p>
           </div>
+          {anunt.putere && (
+            <div className="bg-gray-50 p-3 rounded-lg">
+              <span className="text-gray-500 text-xs uppercase tracking-wide">Putere</span>
+              <p className="font-semibold text-gray-900 mt-1">{anunt.putere} CP</p>
+            </div>
+          )}
+          {anunt.capacitateCilindrica && (
+            <div className="bg-gray-50 p-3 rounded-lg">
+              <span className="text-gray-500 text-xs uppercase tracking-wide">Capacitate cilindrică</span>
+              <p className="font-semibold text-gray-900 mt-1">{anunt.capacitateCilindrica} cmc</p>
+            </div>
+          )}
           <div className="bg-gray-50 p-3 rounded-lg col-span-2">
             <span className="text-gray-500 text-xs uppercase tracking-wide">📍 Locație</span>
             <p className="font-semibold text-gray-900 mt-1">{anunt.locatie}</p>
