@@ -104,3 +104,22 @@ body {
 .language-dropdown {
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15), 0 4px 10px rgba(0, 0, 0, 0.1);
 }
+
+/* Safe area pentru butoanele de navigare Android */
+/* Asigură că elementele de jos nu se suprapun cu butoanele hardware */
+.safe-bottom {
+  padding-bottom: max(20px, env(safe-area-inset-bottom));
+  padding-bottom: max(20px, constant(safe-area-inset-bottom)); /* iOS 11.0-11.2 */
+}
+
+/* Pentru containere cu input-uri fixate jos (ex: chat) */
+.fixed-bottom-container {
+  padding-bottom: max(20px, env(safe-area-inset-bottom));
+  padding-bottom: max(20px, constant(safe-area-inset-bottom));
+}
+
+/* Pentru pagini întregi - padding suplimentar jos */
+.page-container {
+  padding-bottom: max(80px, calc(60px + env(safe-area-inset-bottom)));
+  padding-bottom: max(80px, calc(60px + constant(safe-area-inset-bottom)));
+}

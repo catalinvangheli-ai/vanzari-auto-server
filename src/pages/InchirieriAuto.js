@@ -323,7 +323,7 @@ const InchirieriAuto = () => {
   // Meniul principal
   if (view === 'menu') {
     return (
-      <div className="max-w-4xl mx-auto p-6">
+      <div className="max-w-4xl mx-auto p-6 page-container">
         <div className="bg-gray-700 rounded-lg shadow-lg p-8">
           <h1 className="text-3xl font-bold text-center mb-8 text-blue-200">
             {translateText('carRentals', currentLanguage)}
@@ -374,7 +374,7 @@ const InchirieriAuto = () => {
     const emptySlots = Array(maxPoze - poze.length).fill(null);
     
     return (
-      <div className="max-w-4xl mx-auto p-6">
+      <div className="max-w-4xl mx-auto p-6 page-container">
         <div className="bg-gray-700 rounded-lg shadow-lg p-8">
           <div className="flex items-center mb-8">
             <button 
@@ -464,7 +464,7 @@ const InchirieriAuto = () => {
     const emptySlots = Array(maxPoze - poze.length).fill(null);
     
     return (
-      <div className="max-w-4xl mx-auto p-6">
+      <div className="max-w-4xl mx-auto p-6 page-container">
         <div className="bg-gray-700 rounded-lg shadow-lg p-8">
           <div className="flex items-center mb-8">
             <button 
@@ -630,7 +630,7 @@ const InchirieriAuto = () => {
   // Rezultate căutare
   if (view === 'rezultate') {
     return (
-      <div className="max-w-6xl mx-auto p-6">
+      <div className="max-w-6xl mx-auto p-6 page-container">
         <div className="mb-6 flex items-center justify-between">
           <button
             onClick={() => setView('menu')}

@@ -223,7 +223,7 @@ const ChatConversation = () => {
       </div>
 
       {/* Form trimitere */}
-      <form onSubmit={sendMessage} className="p-3 bg-white border-t">
+      <form onSubmit={sendMessage} className="p-3 bg-white border-t safe-bottom">
         <div className="flex gap-2">
           <input
             type="text"

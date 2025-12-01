@@ -253,7 +253,7 @@ const Profil = () => {
 
   // Profil propriu (editabil)
   return (
-    <div className="p-4">
+    <div className="p-4 page-container">
       <h2 className="text-xl font-bold mb-4">Profilul meu</h2>
       {success && <p className="text-green-500">{success}</p>}
       {error && <p className="text-red-500">{error}</p>}
