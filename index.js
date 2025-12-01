@@ -18,6 +18,9 @@ const { CloudinaryStorage } = require('multer-storage-cloudinary');
 // PostgreSQL imports
 const { CarSaleAd: CarSaleAdPG, CarRentalAd: CarRentalAdPG, testConnection, syncDatabase } = require('./models');
 
+// Global database status flags
+let postgresqlReady = false;
+
 // -------------------------
 // CORS CONFIGURATION
 // -------------------------
