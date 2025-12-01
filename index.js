@@ -675,6 +675,8 @@ app.get('/health', (req, res) => {
   res.json({ 
     status: 'ok',
     mongodb: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected',
+    postgresql: postgresqlReady ? 'Connected' : 'Disconnected',
+    cloudinary: process.env.CLOUDINARY_CLOUD_NAME ? 'Configured' : 'Missing',
     timestamp: new Date().toISOString()
   });
 });
@@ -912,6 +914,8 @@ app.post('/api/car-sales', authMiddleware, upload.array('poze', 10), async (req,
 app.get('/api/car-sales', async (req, res) => {
   try {
     console.log("🔎 Query primit:", req.query);
+    console.log("🔍 postgresqlReady:", postgresqlReady);
+    console.log("🔍 MongoDB state:", mongoose.connection.readyState);
 
     // Loghează valorile distincte pentru marca din baza de date MongoDB (doar pentru debug)
     try {
