@@ -235,6 +235,17 @@ const CarRentalAd = mongoose.model('CarRentalAd', new mongoose.Schema({
 }));
 
 // -------------------------
+// CLOUDINARY CONFIGURATION
+// -------------------------
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
+console.log('☁️ Cloudinary configured:', process.env.CLOUDINARY_CLOUD_NAME ? '✅' : '❌ Missing credentials');
+
+// -------------------------
 // MULTER (upload poze) - CLOUDINARY STORAGE
 // -------------------------
 const cloudinaryStorage = new CloudinaryStorage({
