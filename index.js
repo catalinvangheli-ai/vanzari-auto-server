@@ -18,6 +18,21 @@ const { CloudinaryStorage } = require('multer-storage-cloudinary');
 // PostgreSQL imports
 const { CarSaleAd: CarSaleAdPG, CarRentalAd: CarRentalAdPG, testConnection, syncDatabase } = require('./models');
 
+// -------------------------
+// CORS CONFIGURATION
+// -------------------------
+// Permite toate originile pentru aplicația mobilă și web
+app.use(cors({
+  origin: '*', // Permite toate originile (necesar pentru aplicații mobile)
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: false
+}));
+
+// Parsing JSON și URL-encoded bodies
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+
 app.use((req, res, next) => {
   console.log(`📥 ${req.method} ${req.url} de la ${req.ip}`);
   next();
