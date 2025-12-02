@@ -274,7 +274,7 @@ const AnunturileMele = () => {
       const existingPoze = editPoze.filter(poza => poza.existing).map(poza => poza.url);
       formDataToSend.append('existingPoze', JSON.stringify(existingPoze));
 
-      const response = await fetch(`${API_BASE_URL}/api/${endpoint}/${editingAnunt._id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/${endpoint}/${editingAnunt.id || editingAnunt._id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -337,11 +337,11 @@ const AnunturileMele = () => {
     return (
       <div className="grid gap-6">
         {anunturi.map((anunt, index) => (
-          <div key={anunt._id} className="bg-white rounded-lg shadow-md p-6 border hover:shadow-lg transition-shadow">
+          <div key={anunt.id || anunt._id} className="bg-white rounded-lg shadow-md p-6 border hover:shadow-lg transition-shadow">
             <div className="flex justify-between items-start mb-4">
               <Link 
-                to={`/anunt/${type}/${anunt._id}`}
-                className="cursor-pointer hover:text-blue-600 flex-1"
+                to={`/anunt/${type}/${anunt.id || anunt._id}`}
+                className="cursor-pointer hover:text-blue-600 flex-1">
               >
                 <h3 className="text-xl font-semibold text-gray-800 hover:text-blue-600">
                   {anunt.marca} {anunt.model}
@@ -380,7 +380,7 @@ const AnunturileMele = () => {
               
               <div className="flex gap-2">
                 <button
-                  onClick={() => toggleStatus(anunt._id, type, anunt.status || 'activ')}
+                  onClick={() => toggleStatus(anunt.id || anunt._id, type, anunt.status || 'activ')}
                   className={`px-3 py-1 rounded text-sm font-medium ${
                     (anunt.status || 'activ') === 'activ'
                       ? 'bg-yellow-500 hover:bg-yellow-600 text-white'
@@ -398,9 +398,9 @@ const AnunturileMele = () => {
                 </button>
                 
                 <button
-                  onClick={() => deleteAnunt(anunt._id, type)}
-                  className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm font-medium"
-                >
+                  onClick={() => deleteAnunt(anunt.id || anunt._id, type)}
+                  className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm font-medium">
+                  Șterge
                   Șterge
                 </button>
               </div>
@@ -497,7 +497,7 @@ const AnunturileMele = () => {
                   Editează
                 </button>
                 <button
-                  onClick={() => toggleStatus(selectedAnunt._id, selectedAnunt.type, selectedAnunt.status || 'activ')}
+                  onClick={() => toggleStatus(selectedAnunt.id || selectedAnunt._id, selectedAnunt.type, selectedAnunt.status || 'activ')}
                   className={`px-4 py-2 rounded ${
                     (selectedAnunt.status || 'activ') === 'activ'
                       ? 'bg-yellow-500 hover:bg-yellow-600 text-white'
@@ -507,7 +507,7 @@ const AnunturileMele = () => {
                   {(selectedAnunt.status || 'activ') === 'activ' ? 'Dezactivează' : 'Activează'}
                 </button>
                 <button
-                  onClick={() => deleteAnunt(selectedAnunt._id, selectedAnunt.type)}
+                  onClick={() => deleteAnunt(selectedAnunt.id || selectedAnunt._id, selectedAnunt.type)}
                   className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
                 >
                   Șterge anunț

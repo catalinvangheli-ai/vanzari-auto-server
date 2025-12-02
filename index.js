@@ -1173,27 +1173,50 @@ app.put('/api/car-sales/:id', authMiddleware, async (req, res) => {
   try {
     console.log('🔄 PUT /api/car-sales/:id - Update anunt');
     console.log('📋 req.body:', req.body);
+    console.log('🔍 PostgreSQL ready:', postgresqlReady);
     
-    const ad = await CarSaleAd.findOne({ _id: req.params.id, userId: req.user.username });
-    if (!ad) {
-      return res.status(404).json({ error: 'Anuntul nu a fost găsit sau nu ai permisiunea să îl editezi' });
-    }
+    const updateData = { ...req.body };
     
     // Convertește status (string) în isActive (boolean)
-    const updateData = { ...req.body };
     if (updateData.status) {
       updateData.isActive = updateData.status === 'activ';
-      delete updateData.status; // Șterge câmpul status pentru că folosim isActive în DB
-      console.log('🔄 Status convertit:', updateData.status, '→ isActive:', updateData.isActive);
+      delete updateData.status;
+      console.log('🔄 Status convertit → isActive:', updateData.isActive);
     }
     
-    const updatedAd = await CarSaleAd.findByIdAndUpdate(
-      req.params.id, 
-      updateData,
-      { new: true } // Returnează documentul actualizat
-    );
+    let updatedAd;
     
-    console.log('✅ Anunt actualizat:', updatedAd._id, 'isActive:', updatedAd.isActive);
+    if (postgresqlReady) {
+      // PostgreSQL Update
+      const ad = await CarSaleAdPG.findOne({ 
+        where: { 
+          id: req.params.id, 
+          userId: req.user.username 
+        } 
+      });
+      
+      if (!ad) {
+        return res.status(404).json({ error: 'Anuntul nu a fost găsit sau nu ai permisiunea să îl editezi' });
+      }
+      
+      await ad.update(updateData);
+      updatedAd = ad;
+      console.log('✅ PostgreSQL: Anunt actualizat:', updatedAd.id, 'isActive:', updatedAd.isActive);
+    } else {
+      // MongoDB Fallback
+      const ad = await CarSaleAd.findOne({ _id: req.params.id, userId: req.user.username });
+      if (!ad) {
+        return res.status(404).json({ error: 'Anuntul nu a fost găsit sau nu ai permisiunea să îl editezi' });
+      }
+      
+      updatedAd = await CarSaleAd.findByIdAndUpdate(
+        req.params.id, 
+        updateData,
+        { new: true }
+      );
+      console.log('✅ MongoDB: Anunt actualizat:', updatedAd._id, 'isActive:', updatedAd.isActive);
+    }
+    
     res.json({ message: 'Anunt actualizat cu succes!', ad: updatedAd });
   } catch (error) {
     console.error('❌ Eroare PUT car-sales:', error);
@@ -1207,15 +1230,36 @@ app.delete('/api/car-sales/:id', authMiddleware, async (req, res) => {
     console.log('🗑️ DELETE /api/car-sales/:id - Ștergere anunt');
     console.log('📋 ID anunt:', req.params.id);
     console.log('👤 User:', req.user.username);
+    console.log('🔍 PostgreSQL ready:', postgresqlReady);
     
-    const ad = await CarSaleAd.findOne({ _id: req.params.id, userId: req.user.username });
-    if (!ad) {
-      console.log('❌ Anunt nu a fost gasit sau user fara permisiune');
-      return res.status(404).json({ error: 'Anuntul nu a fost găsit sau nu ai permisiunea să îl ștergi' });
+    if (postgresqlReady) {
+      // PostgreSQL Delete
+      const ad = await CarSaleAdPG.findOne({ 
+        where: { 
+          id: req.params.id, 
+          userId: req.user.username 
+        } 
+      });
+      
+      if (!ad) {
+        console.log('❌ PostgreSQL: Anunt nu a fost gasit sau user fara permisiune');
+        return res.status(404).json({ error: 'Anuntul nu a fost găsit sau nu ai permisiunea să îl ștergi' });
+      }
+      
+      await ad.destroy();
+      console.log('✅ PostgreSQL: Anunt șters cu succes:', req.params.id);
+    } else {
+      // MongoDB Fallback
+      const ad = await CarSaleAd.findOne({ _id: req.params.id, userId: req.user.username });
+      if (!ad) {
+        console.log('❌ MongoDB: Anunt nu a fost gasit sau user fara permisiune');
+        return res.status(404).json({ error: 'Anuntul nu a fost găsit sau nu ai permisiunea să îl ștergi' });
+      }
+      
+      await CarSaleAd.findByIdAndDelete(req.params.id);
+      console.log('✅ MongoDB: Anunt șters cu succes:', req.params.id);
     }
     
-    await CarSaleAd.findByIdAndDelete(req.params.id);
-    console.log('✅ Anunt șters cu succes:', req.params.id);
     res.json({ message: 'Anunt șters cu succes!' });
   } catch (error) {
     console.error('❌ Eroare DELETE car-sales:', error);
@@ -1447,27 +1491,50 @@ app.put('/api/car-rentals/:id', authMiddleware, async (req, res) => {
   try {
     console.log('🔄 PUT /api/car-rentals/:id - Update anunt');
     console.log('📋 req.body:', req.body);
+    console.log('🔍 PostgreSQL ready:', postgresqlReady);
     
-    const ad = await CarRentalAd.findOne({ _id: req.params.id, userId: req.user.username });
-    if (!ad) {
-      return res.status(404).json({ error: 'Anuntul nu a fost găsit sau nu ai permisiunea să îl editezi' });
-    }
+    const updateData = { ...req.body };
     
     // Convertește status (string) în isActive (boolean)
-    const updateData = { ...req.body };
     if (updateData.status) {
       updateData.isActive = updateData.status === 'activ';
       delete updateData.status;
-      console.log('🔄 Status convertit:', updateData.status, '→ isActive:', updateData.isActive);
+      console.log('🔄 Status convertit → isActive:', updateData.isActive);
     }
     
-    const updatedAd = await CarRentalAd.findByIdAndUpdate(
-      req.params.id,
-      updateData,
-      { new: true }
-    );
+    let updatedAd;
     
-    console.log('✅ Anunt actualizat:', updatedAd._id, 'isActive:', updatedAd.isActive);
+    if (postgresqlReady) {
+      // PostgreSQL Update
+      const ad = await CarRentalAdPG.findOne({ 
+        where: { 
+          id: req.params.id, 
+          userId: req.user.username 
+        } 
+      });
+      
+      if (!ad) {
+        return res.status(404).json({ error: 'Anuntul nu a fost găsit sau nu ai permisiunea să îl editezi' });
+      }
+      
+      await ad.update(updateData);
+      updatedAd = ad;
+      console.log('✅ PostgreSQL: Anunt actualizat:', updatedAd.id, 'isActive:', updatedAd.isActive);
+    } else {
+      // MongoDB Fallback
+      const ad = await CarRentalAd.findOne({ _id: req.params.id, userId: req.user.username });
+      if (!ad) {
+        return res.status(404).json({ error: 'Anuntul nu a fost găsit sau nu ai permisiunea să îl editezi' });
+      }
+      
+      updatedAd = await CarRentalAd.findByIdAndUpdate(
+        req.params.id,
+        updateData,
+        { new: true }
+      );
+      console.log('✅ MongoDB: Anunt actualizat:', updatedAd._id, 'isActive:', updatedAd.isActive);
+    }
+    
     res.json({ message: 'Anunt actualizat cu succes!', ad: updatedAd });
   } catch (error) {
     console.error('❌ Eroare PUT car-rentals:', error);
@@ -1481,15 +1548,36 @@ app.delete('/api/car-rentals/:id', authMiddleware, async (req, res) => {
     console.log('🗑️ DELETE /api/car-rentals/:id - Ștergere anunt');
     console.log('📋 ID anunt:', req.params.id);
     console.log('👤 User:', req.user.username);
+    console.log('🔍 PostgreSQL ready:', postgresqlReady);
     
-    const ad = await CarRentalAd.findOne({ _id: req.params.id, userId: req.user.username });
-    if (!ad) {
-      console.log('❌ Anunt nu a fost gasit sau user fara permisiune');
-      return res.status(404).json({ error: 'Anuntul nu a fost găsit sau nu ai permisiunea să îl ștergi' });
+    if (postgresqlReady) {
+      // PostgreSQL Delete
+      const ad = await CarRentalAdPG.findOne({ 
+        where: { 
+          id: req.params.id, 
+          userId: req.user.username 
+        } 
+      });
+      
+      if (!ad) {
+        console.log('❌ PostgreSQL: Anunt nu a fost gasit sau user fara permisiune');
+        return res.status(404).json({ error: 'Anuntul nu a fost găsit sau nu ai permisiunea să îl ștergi' });
+      }
+      
+      await ad.destroy();
+      console.log('✅ PostgreSQL: Anunt șters cu succes:', req.params.id);
+    } else {
+      // MongoDB Fallback
+      const ad = await CarRentalAd.findOne({ _id: req.params.id, userId: req.user.username });
+      if (!ad) {
+        console.log('❌ MongoDB: Anunt nu a fost gasit sau user fara permisiune');
+        return res.status(404).json({ error: 'Anuntul nu a fost găsit sau nu ai permisiunea să îl ștergi' });
+      }
+      
+      await CarRentalAd.findByIdAndDelete(req.params.id);
+      console.log('✅ MongoDB: Anunt șters cu succes:', req.params.id);
     }
     
-    await CarRentalAd.findByIdAndDelete(req.params.id);
-    console.log('✅ Anunt șters cu succes:', req.params.id);
     res.json({ message: 'Anunt șters cu succes!' });
   } catch (error) {
     console.error('❌ Eroare DELETE car-rentals:', error);
