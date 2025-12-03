@@ -125,7 +125,11 @@ const ChatConversation = () => {
   }
 
   return (
-    <div className="flex flex-col bg-gray-50" style={{ height: '100vh', maxHeight: '100vh' }}>
+    <div className="flex flex-col bg-gray-50" style={{ 
+      height: 'calc(100vh - 140px)', 
+      maxHeight: 'calc(100vh - 140px)',
+      minHeight: 'calc(100vh - 140px)'
+    }}>
       {/* Header */}
       <div className="flex items-center gap-3 p-4 bg-white border-b shadow-sm flex-shrink-0">
         <button
