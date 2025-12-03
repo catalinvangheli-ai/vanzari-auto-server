@@ -127,7 +127,7 @@ const ChatConversation = () => {
   return (
     <div className="flex flex-col h-screen bg-gray-50">
       {/* Header */}
-      <div className="flex items-center gap-3 p-4 bg-white border-b shadow-sm">
+      <div className="flex items-center gap-3 p-4 bg-white border-b shadow-sm flex-shrink-0">
         <button
           onClick={() => navigate('/chat')}
           className="text-blue-600 hover:text-blue-800 font-medium text-lg"
@@ -146,7 +146,7 @@ const ChatConversation = () => {
             const type = listingDetails.pretInchiriere ? 'inchirieri' : 'vanzari';
             navigate(`/anunt/${type}/${listingDetails._id || listingDetails.id}`);
           }}
-          className="m-3 p-3 bg-blue-50 border border-blue-200 rounded-lg cursor-pointer active:bg-blue-100 transition flex items-center gap-3 shadow-sm"
+          className="m-3 p-3 bg-blue-50 border border-blue-200 rounded-lg cursor-pointer active:bg-blue-100 transition flex items-center gap-3 shadow-sm flex-shrink-0"
         >
           {(listingDetails.photos?.[0] || listingDetails.poze?.[0]) && (
             <img 
@@ -172,8 +172,8 @@ const ChatConversation = () => {
         </div>
       )}
 
-      {/* Mesaje */}
-      <div className="flex-1 overflow-y-auto p-4">
+      {/* Mesaje - container scrollable */}
+      <div className="flex-1 overflow-y-auto p-4" style={{ minHeight: 0 }}>
         {messages.length === 0 ? (
           <div className="text-center text-gray-500 mt-12">
             <div className="text-6xl mb-4">💬</div>
@@ -222,8 +222,12 @@ const ChatConversation = () => {
         )}
       </div>
 
-      {/* Form trimitere */}
-      <form onSubmit={sendMessage} className="p-3 bg-white border-t safe-bottom">
+      {/* Form trimitere - fixed la bază cu padding sigur */}
+      <form 
+        onSubmit={sendMessage} 
+        className="p-3 bg-white border-t flex-shrink-0" 
+        style={{ paddingBottom: 'max(12px, calc(12px + env(safe-area-inset-bottom)))' }}
+      >
         <div className="flex gap-2">
           <input
             type="text"
