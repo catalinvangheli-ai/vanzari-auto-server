@@ -45,6 +45,11 @@ const simpleTranslations = {
     "Capacitate cilindrică (cmc)": "Capacitate cilindrică (cmc)",
     "Puterea motorului": "Puterea motorului",
     "Numărul de locuri": "Numărul de locuri",
+    "Poze vehicul": "Poze vehicul",
+    "Numărul maxim de poze atins": "Numărul maxim de poze atins",
+    "Apasă pentru a încărca poze sau trage pozele aici": "Apasă pentru a încărca poze sau trage pozele aici",
+    "Maximum": "Maximum",
+    "poze": "poze",
     "Culoarea": "Culoarea",
     
     // Pagina Home
@@ -268,6 +273,11 @@ const simpleTranslations = {
     "Capacitate cilindrică (cmc)": "Hengerűrtartalom (cm³)",
     "Puterea motorului": "Motorteljesítmény",
     "Numărul de locuri": "Ülések száma",
+    "Poze vehicul": "Jármű képek",
+    "Numărul maxim de poze atins": "Elérte a képek maximális számát",
+    "Apasă pentru a încărca poze sau trage pozele aici": "Kattintson a képek feltöltéséhez vagy húzza ide a képeket",
+    "Maximum": "Maximum",
+    "poze": "kép",
     "Culoarea": "Szín",
     
     // Pagina Home
@@ -491,6 +501,11 @@ const simpleTranslations = {
     "Capacitate cilindrică (cmc)": "Engine Displacement (cc)",
     "Puterea motorului": "Engine Power",
     "Numărul de locuri": "Number of Seats",
+    "Poze vehicul": "Vehicle Photos",
+    "Numărul maxim de poze atins": "Maximum number of photos reached",
+    "Apasă pentru a încărca poze sau trage pozele aici": "Click to upload photos or drag them here",
+    "Maximum": "Maximum",
+    "poze": "photos",
     "Culoarea": "Color",
     
     // Pagina Home
@@ -715,6 +730,11 @@ const simpleTranslations = {
     "Capacitate cilindrică (cmc)": "Cylindrée (cm³)",
     "Puterea motorului": "Puissance du moteur",
     "Numărul de locuri": "Nombre de places",
+    "Poze vehicul": "Photos du véhicule",
+    "Numărul maxim de poze atins": "Nombre maximum de photos atteint",
+    "Apasă pentru a încărca poze sau trage pozele aici": "Cliquez pour télécharger des photos ou faites-les glisser ici",
+    "Maximum": "Maximum",
+    "poze": "photos",
     "Culoarea": "Couleur",
     
     // Pagina Home
@@ -939,6 +959,11 @@ const simpleTranslations = {
     "Capacitate cilindrică (cmc)": "Hubraum (cm³)",
     "Puterea motorului": "Motorleistung",
     "Numărul de locuri": "Anzahl der Sitze",
+    "Poze vehicul": "Fahrzeugfotos",
+    "Numărul maxim de poze atins": "Maximale Anzahl an Fotos erreicht",
+    "Apasă pentru a încărca poze sau trage pozele aici": "Klicken Sie zum Hochladen von Fotos oder ziehen Sie sie hierher",
+    "Maximum": "Maximum",
+    "poze": "Fotos",
     "Culoarea": "Farbe",
     
     // Pagina Home
@@ -1162,6 +1187,11 @@ const simpleTranslations = {
     "Capacitate cilindrică (cmc)": "Cilindrada (cc)",
     "Puterea motorului": "Potencia del motor",
     "Numărul de locuri": "Número de asientos",
+    "Poze vehicul": "Fotos del vehículo",
+    "Numărul maxim de poze atins": "Número máximo de fotos alcanzado",
+    "Apasă pentru a încărca poze sau trage pozele aici": "Haga clic para cargar fotos o arrástrelas aquí",
+    "Maximum": "Máximo",
+    "poze": "fotos",
     "Culoarea": "Color",
     
     // Pagina Home
@@ -1385,6 +1415,11 @@ const simpleTranslations = {
     "Capacitate cilindrică (cmc)": "Cilindrata (cc)",
     "Puterea motorului": "Potenza del motore",
     "Numărul de locuri": "Numero di posti",
+    "Poze vehicul": "Foto del veicolo",
+    "Numărul maxim de poze atins": "Numero massimo di foto raggiunto",
+    "Apasă pentru a încărca poze sau trage pozele aici": "Fare clic per caricare foto o trascinarle qui",
+    "Maximum": "Massimo",
+    "poze": "foto",
     "Culoarea": "Colore",
     
     // Pagina Home

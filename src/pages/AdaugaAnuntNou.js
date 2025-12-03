@@ -424,7 +424,7 @@ const AdaugaAnunt = () => {
         {/* Secțiunea pentru încărcarea pozelor */}
         <div className="mt-6">
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Poze vehicul ({poze.length}/{maxPoze})
+            {translateText("Poze vehicul", currentLanguage)} ({poze.length}/{maxPoze})
           </label>
           <div className="space-y-4">
             {/* Upload zone */}
@@ -446,10 +446,10 @@ const AdaugaAnunt = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                 </svg>
                 <span className="text-sm text-gray-600 mb-1">
-                  {poze.length >= maxPoze ? 'Numărul maxim de poze atins' : 'Apasă pentru a încărca poze sau trage pozele aici'}
+                  {poze.length >= maxPoze ? translateText("Numărul maxim de poze atins", currentLanguage) : translateText("Apasă pentru a încărca poze sau trage pozele aici", currentLanguage)}
                 </span>
                 <span className="text-xs text-gray-500">
-                  Maximum {maxPoze} poze (JPG, PNG, GIF)
+                  {translateText("Maximum", currentLanguage)} {maxPoze} {translateText("poze", currentLanguage)} (JPG, PNG, GIF)
                 </span>
               </label>
             </div>
