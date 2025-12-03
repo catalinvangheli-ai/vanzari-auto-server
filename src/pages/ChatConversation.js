@@ -125,9 +125,10 @@ const ChatConversation = () => {
   }
 
   return (
-    <div className="fixed inset-0 flex flex-col bg-gray-50" style={{ 
-      top: '140px', // Înălțimea Navbar-ului
-      bottom: 0
+    <div className="flex flex-col bg-gray-50" style={{ 
+      height: '100dvh',
+      maxHeight: '100dvh',
+      position: 'relative'
     }}>
       {/* Header */}
       <div className="flex items-center gap-3 p-3 bg-white border-b shadow-sm flex-shrink-0">
