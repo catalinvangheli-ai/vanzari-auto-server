@@ -1,6 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import { translateText } from '../utils/simpleTranslator';
 import { API_BASE_URL } from '../config/api';
 import { fetchWithRetry } from '../utils/fetchWithRetry';
@@ -9,27 +10,11 @@ import { marci, modele } from '../utils/vehicleData';
 
 const VanzariAuto = () => {
   const { isAuthenticated } = useContext(AuthContext);
+  const { language: currentLanguage } = useLanguage();
   const [showResults, setShowResults] = useState(false);
-  const [currentLanguage, setCurrentLanguage] = useState('ro');
   const [anunturi, setAnunturi] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  
-  // Ascultă pentru schimbări de limbă
-  useEffect(() => {
-    const savedLanguage = localStorage.getItem('selectedLanguage') || 'ro';
-    setCurrentLanguage(savedLanguage);
-
-    const handleLanguageChange = (event) => {
-      setCurrentLanguage(event.detail);
-    };
-
-    window.addEventListener('languageChanged', handleLanguageChange);
-    
-    return () => {
-      window.removeEventListener('languageChanged', handleLanguageChange);
-    };
-  }, []);
 
   // NU încărcăm anunțuri automat - utilizatorul trebuie să caute
   // useEffect(() => {

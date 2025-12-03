@@ -1,6 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { AuthContext } from '../context/AuthContext';
-import { translateText, getCurrentLanguage } from '../utils/simpleTranslator';
+import { useLanguage } from '../context/LanguageContext';
+import { translateText } from '../utils/simpleTranslator';
 import { marci, modele } from '../utils/vehicleData';
 import { API_BASE_URL } from '../config/api';
 
@@ -22,16 +23,7 @@ const AdaugaAnunt = () => {
   const [culoare, setCuloare] = useState('');
   const [putere, setPutere] = useState('');
   const [capacitateCilindrica, setCapacitateCilindrica] = useState('');
-  const [currentLanguage, setCurrentLanguage] = useState(getCurrentLanguage());
-
-  useEffect(() => {
-    const handleLanguageChange = () => {
-      setCurrentLanguage(getCurrentLanguage());
-    };
-
-    window.addEventListener('languageChanged', handleLanguageChange);
-    return () => window.removeEventListener('languageChanged', handleLanguageChange);
-  }, []);
+  const { language: currentLanguage } = useLanguage();
 
   // Numărul fix de poze pentru vânzări
   const maxPoze = 9;
