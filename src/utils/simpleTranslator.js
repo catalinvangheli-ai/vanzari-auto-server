@@ -50,6 +50,8 @@ const simpleTranslations = {
     "Apasă pentru a încărca poze sau trage pozele aici": "Apasă pentru a încărca poze sau trage pozele aici",
     "Maximum": "Maximum",
     "poze": "poze",
+    "Confirmă anunțul": "Confirmă anunțul",
+    "Se salvează...": "Se salvează...",
     "Culoarea": "Culoarea",
     
     // Pagina Home
@@ -278,6 +280,8 @@ const simpleTranslations = {
     "Apasă pentru a încărca poze sau trage pozele aici": "Kattintson a képek feltöltéséhez vagy húzza ide a képeket",
     "Maximum": "Maximum",
     "poze": "kép",
+    "Confirmă anunțul": "Hirdetés megerősítése",
+    "Se salvează...": "Mentés...",
     "Culoarea": "Szín",
     
     // Pagina Home
@@ -506,6 +510,8 @@ const simpleTranslations = {
     "Apasă pentru a încărca poze sau trage pozele aici": "Click to upload photos or drag them here",
     "Maximum": "Maximum",
     "poze": "photos",
+    "Confirmă anunțul": "Confirm Listing",
+    "Se salvează...": "Saving...",
     "Culoarea": "Color",
     
     // Pagina Home
@@ -735,6 +741,8 @@ const simpleTranslations = {
     "Apasă pentru a încărca poze sau trage pozele aici": "Cliquez pour télécharger des photos ou faites-les glisser ici",
     "Maximum": "Maximum",
     "poze": "photos",
+    "Confirmă anunțul": "Confirmer l'annonce",
+    "Se salvează...": "Enregistrement...",
     "Culoarea": "Couleur",
     
     // Pagina Home
@@ -964,6 +972,8 @@ const simpleTranslations = {
     "Apasă pentru a încărca poze sau trage pozele aici": "Klicken Sie zum Hochladen von Fotos oder ziehen Sie sie hierher",
     "Maximum": "Maximum",
     "poze": "Fotos",
+    "Confirmă anunțul": "Anzeige bestätigen",
+    "Se salvează...": "Speichern...",
     "Culoarea": "Farbe",
     
     // Pagina Home
@@ -1192,6 +1202,8 @@ const simpleTranslations = {
     "Apasă pentru a încărca poze sau trage pozele aici": "Haga clic para cargar fotos o arrástrelas aquí",
     "Maximum": "Máximo",
     "poze": "fotos",
+    "Confirmă anunțul": "Confirmar anuncio",
+    "Se salvează...": "Guardando...",
     "Culoarea": "Color",
     
     // Pagina Home
@@ -1420,6 +1432,8 @@ const simpleTranslations = {
     "Apasă pentru a încărca poze sau trage pozele aici": "Fare clic per caricare foto o trascinarle qui",
     "Maximum": "Massimo",
     "poze": "foto",
+    "Confirmă anunțul": "Conferma annuncio",
+    "Se salvează...": "Salvataggio...",
     "Culoarea": "Colore",
     
     // Pagina Home
