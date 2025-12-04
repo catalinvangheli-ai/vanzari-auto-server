@@ -2,12 +2,16 @@ import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../config/api';
+import { Capacitor } from '@capacitor/core';
 
 // Componentă separată pentru conversația individuală (pentru mobil)
 const ChatConversation = () => {
   const { isAuthenticated, username, email, user } = useContext(AuthContext);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  
+  // Detectare platformă
+  const isNativeMobile = Capacitor.isNativePlatform();
   
   const targetUser = searchParams.get('user');
   const listingId = searchParams.get('listing');
@@ -128,8 +132,8 @@ const ChatConversation = () => {
     <div 
       className="flex flex-col bg-gray-50"
       style={{ 
-        height: 'calc(100vh - 64px)',
-        maxHeight: 'calc(100vh - 64px)',
+        height: isNativeMobile ? '100vh' : 'calc(100vh - 64px)',
+        maxHeight: isNativeMobile ? '100vh' : 'calc(100vh - 64px)',
         overflow: 'hidden'
       }}
     >
