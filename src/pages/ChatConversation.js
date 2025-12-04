@@ -191,7 +191,7 @@ const ChatConversation = () => {
           minHeight: 0,
           maxHeight: '100%',
           WebkitOverflowScrolling: 'touch',
-          paddingBottom: isNativeMobile ? '200px' : '20px'
+          paddingBottom: '180px'
         }}
       >
         {messages.length === 0 ? (
@@ -248,11 +248,12 @@ const ChatConversation = () => {
         className="bg-white border-t"
         style={{ 
           padding: '12px',
-          position: isNativeMobile ? 'fixed' : 'relative',
-          bottom: isNativeMobile ? '160px' : 'auto',
-          left: isNativeMobile ? 0 : 'auto',
-          right: isNativeMobile ? 0 : 'auto',
-          zIndex: isNativeMobile ? 1000 : 'auto'
+          position: 'fixed',
+          bottom: '140px',
+          left: 0,
+          right: 0,
+          zIndex: 1000,
+          boxShadow: '0 -2px 10px rgba(0,0,0,0.1)'
         }}
       >
         <div className="flex gap-2">
