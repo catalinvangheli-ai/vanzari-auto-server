@@ -246,7 +246,7 @@ const ChatConversation = () => {
         className="bg-white border-t flex-shrink-0" 
         style={{ 
           padding: '12px',
-          paddingBottom: '60px'
+          paddingBottom: isNativeMobile ? '100px' : '12px'
         }}
       >
         <div className="flex gap-2">
