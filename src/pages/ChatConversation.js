@@ -126,12 +126,9 @@ const ChatConversation = () => {
 
   return (
     <div 
-      className="flex flex-col bg-gray-50" 
+      className="flex flex-col bg-gray-50 fixed inset-0"
       style={{ 
-        height: 'calc(100vh - 64px)',
-        maxHeight: 'calc(100vh - 64px)',
-        overflow: 'hidden',
-        position: 'relative'
+        top: '64px'
       }}
     >
       {/* Header */}
@@ -241,8 +238,8 @@ const ChatConversation = () => {
         onSubmit={sendMessage} 
         className="bg-white border-t flex-shrink-0" 
         style={{ 
-          padding: '0.75rem',
-          paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom))'
+          padding: '12px',
+          paddingBottom: 'calc(12px + env(safe-area-inset-bottom, 20px))'
         }}
       >
         <div className="flex gap-2">
