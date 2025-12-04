@@ -132,8 +132,8 @@ const ChatConversation = () => {
     <div 
       className="flex flex-col bg-gray-50"
       style={{ 
-        height: isNativeMobile ? '100vh' : 'calc(100vh - 64px)',
-        maxHeight: isNativeMobile ? '100vh' : 'calc(100vh - 64px)',
+        height: isNativeMobile ? (listingDetails ? 'calc(100vh - 100px)' : '100vh') : 'calc(100vh - 64px)',
+        maxHeight: isNativeMobile ? (listingDetails ? 'calc(100vh - 100px)' : '100vh') : 'calc(100vh - 64px)',
         overflow: 'hidden',
         position: 'relative'
       }}
