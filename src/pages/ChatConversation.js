@@ -128,8 +128,9 @@ const ChatConversation = () => {
     <div 
       className="flex flex-col bg-gray-50"
       style={{ 
-        height: '100vh',
-        maxHeight: '100vh'
+        height: 'calc(100vh - 64px)',
+        maxHeight: 'calc(100vh - 64px)',
+        overflow: 'hidden'
       }}
     >
       {/* Header */}
@@ -241,7 +242,7 @@ const ChatConversation = () => {
         className="bg-white border-t flex-shrink-0" 
         style={{ 
           padding: '12px',
-          paddingBottom: 'max(12px, calc(env(safe-area-inset-bottom) + 8px))'
+          paddingBottom: '60px'
         }}
       >
         <div className="flex gap-2">
