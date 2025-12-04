@@ -132,8 +132,8 @@ const ChatConversation = () => {
     <div 
       className="flex flex-col bg-gray-50"
       style={{ 
-        height: isNativeMobile ? '100vh' : 'calc(100vh - 64px)',
-        maxHeight: isNativeMobile ? '100vh' : 'calc(100vh - 64px)',
+        height: isNativeMobile ? 'calc(100vh - 100px)' : 'calc(100vh - 64px)',
+        maxHeight: isNativeMobile ? 'calc(100vh - 100px)' : 'calc(100vh - 64px)',
         overflow: 'hidden'
       }}
     >
@@ -246,7 +246,7 @@ const ChatConversation = () => {
         className="bg-white border-t flex-shrink-0" 
         style={{ 
           padding: '12px',
-          paddingBottom: isNativeMobile ? '100px' : '12px'
+          paddingBottom: '12px'
         }}
       >
         <div className="flex gap-2">
