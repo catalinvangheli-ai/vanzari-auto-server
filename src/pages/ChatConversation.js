@@ -128,9 +128,10 @@ const ChatConversation = () => {
     <div 
       className="flex flex-col bg-gray-50" 
       style={{ 
-        height: '100vh',
-        maxHeight: '100vh',
-        overflow: 'hidden'
+        height: 'calc(100vh - 64px)',
+        maxHeight: 'calc(100vh - 64px)',
+        overflow: 'hidden',
+        position: 'relative'
       }}
     >
       {/* Header */}
