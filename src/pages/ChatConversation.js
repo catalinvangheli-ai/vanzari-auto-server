@@ -132,9 +132,10 @@ const ChatConversation = () => {
     <div 
       className="flex flex-col bg-gray-50"
       style={{ 
-        height: isNativeMobile ? 'calc(100vh - 100px)' : 'calc(100vh - 64px)',
-        maxHeight: isNativeMobile ? 'calc(100vh - 100px)' : 'calc(100vh - 64px)',
-        overflow: 'hidden'
+        height: isNativeMobile ? '100vh' : 'calc(100vh - 64px)',
+        maxHeight: isNativeMobile ? '100vh' : 'calc(100vh - 64px)',
+        overflow: 'hidden',
+        position: 'relative'
       }}
     >
       {/* Header */}
@@ -189,7 +190,8 @@ const ChatConversation = () => {
         style={{ 
           minHeight: 0,
           maxHeight: '100%',
-          WebkitOverflowScrolling: 'touch'
+          WebkitOverflowScrolling: 'touch',
+          paddingBottom: isNativeMobile ? '120px' : '20px'
         }}
       >
         {messages.length === 0 ? (
@@ -240,13 +242,17 @@ const ChatConversation = () => {
         )}
       </div>
 
-      {/* Form trimitere - FIX la bază, DEASUPRA butoanelor virtuale */}
+      {/* Form trimitere - FIXED pe mobil pentru a evita butoanele virtuale */}
       <form 
         onSubmit={sendMessage} 
-        className="bg-white border-t flex-shrink-0" 
+        className="bg-white border-t"
         style={{ 
           padding: '12px',
-          paddingBottom: '12px'
+          position: isNativeMobile ? 'fixed' : 'relative',
+          bottom: isNativeMobile ? '80px' : 'auto',
+          left: isNativeMobile ? 0 : 'auto',
+          right: isNativeMobile ? 0 : 'auto',
+          zIndex: isNativeMobile ? 1000 : 'auto'
         }}
       >
         <div className="flex gap-2">
