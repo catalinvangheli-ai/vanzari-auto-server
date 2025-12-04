@@ -125,7 +125,14 @@ const ChatConversation = () => {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
+    <div 
+      className="flex flex-col bg-gray-50" 
+      style={{ 
+        height: '100vh',
+        maxHeight: '100vh',
+        overflow: 'hidden'
+      }}
+    >
       {/* Header */}
       <div className="flex items-center gap-3 p-3 bg-white border-b shadow-sm flex-shrink-0">
         <button
@@ -146,7 +153,7 @@ const ChatConversation = () => {
             const type = listingDetails.pretInchiriere ? 'inchirieri' : 'vanzari';
             navigate(`/anunt/${type}/${listingDetails._id || listingDetails.id}`);
           }}
-          className="m-3 p-3 bg-blue-50 border border-blue-200 rounded-lg cursor-pointer active:bg-blue-100 transition flex items-center gap-3 shadow-sm flex-shrink-0"
+          className="mx-3 mt-3 mb-2 p-3 bg-blue-50 border border-blue-200 rounded-lg cursor-pointer active:bg-blue-100 transition flex items-center gap-3 shadow-sm flex-shrink-0"
         >
           {(listingDetails.photos?.[0] || listingDetails.poze?.[0]) && (
             <img 
@@ -172,8 +179,14 @@ const ChatConversation = () => {
         </div>
       )}
 
-      {/* Mesaje - container scrollable */}
-      <div className="flex-1 overflow-y-auto p-4" style={{ minHeight: 0 }}>
+      {/* Mesaje - DOAR această zonă scrollable */}
+      <div 
+        className="flex-1 overflow-y-auto px-4 py-3" 
+        style={{ 
+          minHeight: 0,
+          WebkitOverflowScrolling: 'touch'
+        }}
+      >
         {messages.length === 0 ? (
           <div className="text-center text-gray-500 mt-12">
             <div className="text-6xl mb-4">💬</div>
@@ -222,12 +235,13 @@ const ChatConversation = () => {
         )}
       </div>
 
-      {/* Form trimitere - fixed la bază cu padding sigur */}
+      {/* Form trimitere - FIX la bază, DEASUPRA butoanelor virtuale */}
       <form 
         onSubmit={sendMessage} 
-        className="p-3 bg-white border-t flex-shrink-0" 
+        className="bg-white border-t flex-shrink-0" 
         style={{ 
-          paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))'
+          padding: '0.75rem',
+          paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom))'
         }}
       >
         <div className="flex gap-2">
