@@ -126,9 +126,10 @@ const ChatConversation = () => {
 
   return (
     <div 
-      className="flex flex-col bg-gray-50 fixed inset-0"
+      className="flex flex-col bg-gray-50"
       style={{ 
-        top: '64px'
+        height: '100vh',
+        maxHeight: '100vh'
       }}
     >
       {/* Header */}
@@ -182,6 +183,7 @@ const ChatConversation = () => {
         className="flex-1 overflow-y-auto px-4 py-3" 
         style={{ 
           minHeight: 0,
+          maxHeight: '100%',
           WebkitOverflowScrolling: 'touch'
         }}
       >
@@ -239,7 +241,7 @@ const ChatConversation = () => {
         className="bg-white border-t flex-shrink-0" 
         style={{ 
           padding: '12px',
-          paddingBottom: 'calc(12px + env(safe-area-inset-bottom, 20px))'
+          paddingBottom: 'max(12px, calc(env(safe-area-inset-bottom) + 8px))'
         }}
       >
         <div className="flex gap-2">
