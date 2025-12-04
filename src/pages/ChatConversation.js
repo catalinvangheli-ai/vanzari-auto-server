@@ -191,7 +191,7 @@ const ChatConversation = () => {
           minHeight: 0,
           maxHeight: '100%',
           WebkitOverflowScrolling: 'touch',
-          paddingBottom: isNativeMobile ? '120px' : '20px'
+          paddingBottom: isNativeMobile ? '200px' : '20px'
         }}
       >
         {messages.length === 0 ? (
@@ -249,7 +249,7 @@ const ChatConversation = () => {
         style={{ 
           padding: '12px',
           position: isNativeMobile ? 'fixed' : 'relative',
-          bottom: isNativeMobile ? '80px' : 'auto',
+          bottom: isNativeMobile ? '160px' : 'auto',
           left: isNativeMobile ? 0 : 'auto',
           right: isNativeMobile ? 0 : 'auto',
           zIndex: isNativeMobile ? 1000 : 'auto'
