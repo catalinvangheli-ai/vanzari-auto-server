@@ -190,8 +190,7 @@ const ChatConversation = () => {
         style={{ 
           minHeight: 0,
           maxHeight: '100%',
-          WebkitOverflowScrolling: 'touch',
-          paddingBottom: '180px'
+          WebkitOverflowScrolling: 'touch'
         }}
       >
         {messages.length === 0 ? (
@@ -242,18 +241,15 @@ const ChatConversation = () => {
         )}
       </div>
 
-      {/* Form trimitere - FIXED pe mobil pentru a evita butoanele virtuale */}
+      {/* Form trimitere - FIXED la bază */}
       <form 
         onSubmit={sendMessage} 
         className="bg-white border-t"
         style={{ 
           padding: '12px',
-          position: 'fixed',
-          bottom: '140px',
-          left: 0,
-          right: 0,
-          zIndex: 1000,
-          boxShadow: '0 -2px 10px rgba(0,0,0,0.1)'
+          paddingBottom: '80px',
+          position: 'relative',
+          flexShrink: 0
         }}
       >
         <div className="flex gap-2">
