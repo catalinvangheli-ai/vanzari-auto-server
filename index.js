@@ -1935,6 +1935,16 @@ app.delete('/admin/ads/inchirieri/:id', adminMiddleware, async (req, res) => {
 });
 
 // -------------------------
+// SERVIRE REACT APP (SPA fallback)
+// -------------------------
+app.use(express.static(path.join(__dirname, 'build')));
+
+// Catch-all: toate rutele necunoscute returnează index.html (React Router)
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
+
+// -------------------------
 // PORNIRE SERVER
 // -------------------------
 
