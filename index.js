@@ -1940,7 +1940,7 @@ app.delete('/admin/ads/inchirieri/:id', adminMiddleware, async (req, res) => {
 app.use(express.static(path.join(__dirname, 'build')));
 
 // Catch-all: toate rutele necunoscute returnează index.html (React Router)
-app.get('*', (req, res) => {
+app.get('/{*path}', (req, res) => {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
