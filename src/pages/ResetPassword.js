@@ -83,7 +83,7 @@ const ResetPassword = () => {
       }
     } catch (networkError) {
       console.error('🔥 Eroare de rețea:', networkError);
-      setError('Nu se poate conecta la server. Verifică conexiunea la internet.');
+      setError(`Eroare: ${networkError.message} | URL: ${API_BASE_URL}/reset-password`);
     } finally {
       setLoading(false);
     }
