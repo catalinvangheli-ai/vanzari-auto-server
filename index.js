@@ -1821,11 +1821,13 @@ app.post('/admin/promote', async (req, res) => {
     if (!secret || secret !== process.env.ADMIN_SECRET) {
       return res.status(403).json({ error: 'Secret incorect' });
     }
-    const user = await User.findOne({ username });
+    const user = await User.findOne({
+      $or: [{ username }, { email: username?.trim().toLowerCase() }]
+    });
     if (!user) return res.status(404).json({ error: 'Utilizator negăsit' });
     user.isAdmin = true;
     await user.save();
-    res.json({ message: `Utilizatorul "${username}" este acum admin.` });
+    res.json({ message: `Utilizatorul "${user.username}" este acum admin.` });
   } catch (e) {
     res.status(500).json({ error: 'Eroare server' });
   }
