@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { useLanguage } from '../context/LanguageContext';
 
 function Navbar() {
-  const { isAuthenticated, logout } = useContext(AuthContext);
+  const { isAuthenticated, logout, user } = useContext(AuthContext);
   const { language, setLanguage, t } = useLanguage();
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
 
@@ -87,6 +87,11 @@ function Navbar() {
 
           {isAuthenticated ? (
             <>
+              {user?.isAdmin && (
+                <Link to="/admin" className={`${baseBtn} bg-red-700 text-white hover:bg-red-800`}>
+                  🛡️ Admin
+                </Link>
+              )}
               <Link to="/profil" className={`${baseBtn} bg-pink-500 text-white hover:bg-pink-600`}>
                 👤 {t('profile')}
               </Link>

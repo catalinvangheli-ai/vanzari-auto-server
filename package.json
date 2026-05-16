@@ -32,6 +32,7 @@
     "react-dom": "^19.1.1",
     "react-router-dom": "^7.9.1",
     "react-scripts": "^5.0.1",
+    "resend": "^6.12.3",
     "sequelize": "^6.37.7"
   },
   "keywords": [],
@@ -52,5 +53,8 @@
   "engines": {
     "node": "22.x",
     "npm": ">=10"
+  },
+  "devDependencies": {
+    "sharp": "^0.34.5"
   }
 }

@@ -31,11 +31,7 @@ const ResetPassword = () => {
       });
 
       if (response.ok) {
-        const data = await response.json();
-        console.log('✅ Token resetare primit:', data);
-        setResetToken(data.resetToken);
-        setSuccess('Token de resetare generat! (În producție ar fi trimis pe email)');
-        setStep('reset');
+        setSuccess('Am trimis un link de resetare pe email-ul tău. Verifică inbox-ul și folderul spam.');
       } else {
         const errorData = await response.json();
         setError(errorData.error || 'Eroare la cererea de resetare');
@@ -149,19 +145,6 @@ const ResetPassword = () => {
 
         {step === 'reset' && (
           <form className="mt-8 space-y-6" onSubmit={handleResetPassword}>
-            <div>
-              <input
-                type="text"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100"
-                placeholder="Token de resetare"
-                value={resetToken}
-                onChange={(e) => setResetToken(e.target.value)}
-                disabled={loading}
-              />
-              <p className="text-xs text-gray-500 mt-1">
-                Tokenul primit prin email (pentru dezvoltare este afișat automat)
-              </p>
-            </div>
             <div>
               <input
                 type="password"

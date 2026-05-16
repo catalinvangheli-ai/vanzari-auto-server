@@ -14,6 +14,10 @@ const path = require('path');
 const fs = require('fs');
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const { Resend } = require('resend');
+
+const JWT_SECRET = process.env.JWT_SECRET || 'secret';
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // PostgreSQL imports
 const { CarSaleAd: CarSaleAdPG, CarRentalAd: CarRentalAdPG, testConnection, syncDatabase } = require('./models');
@@ -50,51 +54,64 @@ console.log('NODE_ENV:', process.env.NODE_ENV);
 console.log('MONGODB_URI exists:', !!process.env.MONGODB_URI);
 console.log('Railway ENV vars:', Object.keys(process.env).filter(k => k.includes('RAILWAY')));
 
-// Funcție pentru a încerca conectarea MongoDB
+// Funcție pentru a încerca conectarea MongoDB (cu retry pentru clustere re-activate)
 async function connectToMongoDB() {
-  // Prima încercare: MongoDB Atlas
-  try {
-    console.log('🔄 Încercare conectare la MongoDB Atlas...');
-    console.log('🌐 Mongo Atlas URI (hidden password):', mongoAtlasUri.replace(/:[^@]+@/, ':***@'));
-    
-    await mongoose.connect(mongoAtlasUri, {
-      serverSelectionTimeoutMS: 15000, // Timeout redus pentru Atlas
-      socketTimeoutMS: 30000,
-      connectTimeoutMS: 15000,
-      maxPoolSize: 5,
-      bufferCommands: true,
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    
-    console.log("✅ SUCCES! Conectat la MongoDB Atlas");
-    console.log("🔌 Connection state:", mongoose.connection.readyState);
-    return 'atlas';
-  } catch (atlasErr) {
-    console.error("❌ EROARE MongoDB Atlas:", atlasErr.message);
-    console.error("🔍 Atlas Error details:", atlasErr.code, atlasErr.codeName);
-    
-    // A doua încercare: MongoDB local (doar pentru development)
-    if (process.env.NODE_ENV !== 'production') {
-      try {
-        console.log('🔄 Încercare conectare la MongoDB local...');
-        await mongoose.connect(mongoLocalUri, {
-          serverSelectionTimeoutMS: 5000,
-          bufferCommands: true,
-        });
-        
-        console.log("✅ SUCCES! Conectat la MongoDB local pentru testing");
-        return 'local';
-      } catch (localErr) {
-        console.error("❌ EROARE MongoDB local:", localErr.message);
+  const MAX_RETRIES = 5;
+  const RETRY_DELAY_MS = 10000; // 10 secunde între încercări
+
+  // Încearcă MongoDB Atlas cu retry (util când clusterul tocmai s-a re-activat)
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      console.log(`🔄 Încercare conectare la MongoDB Atlas (${attempt}/${MAX_RETRIES})...`);
+      console.log('🌐 Mongo Atlas URI (hidden password):', mongoAtlasUri.replace(/:[^@]+@/, ':***@'));
+
+      // Deconectează dacă există o conexiune anterioară eșuată
+      if (mongoose.connection.readyState !== 0) {
+        await mongoose.disconnect();
+      }
+
+      await mongoose.connect(mongoAtlasUri, {
+        serverSelectionTimeoutMS: 30000, // 30s - clusterele re-activate au nevoie de mai mult timp
+        socketTimeoutMS: 45000,
+        connectTimeoutMS: 30000,
+        maxPoolSize: 5,
+        bufferCommands: true,
+      });
+
+      console.log("✅ SUCCES! Conectat la MongoDB Atlas");
+      console.log("🔌 Connection state:", mongoose.connection.readyState);
+      return 'atlas';
+    } catch (atlasErr) {
+      console.error(`❌ EROARE MongoDB Atlas (încercarea ${attempt}):`, atlasErr.message);
+      console.error("🔍 Atlas Error details:", atlasErr.code, atlasErr.codeName);
+
+      if (attempt < MAX_RETRIES) {
+        console.log(`⏳ Aștept ${RETRY_DELAY_MS / 1000}s înainte de următoarea încercare...`);
+        await new Promise(resolve => setTimeout(resolve, RETRY_DELAY_MS));
       }
     }
-    
-    console.log("⚠️ ATENȚIE: Server va rula fără bază de date!");
-    console.log("🔧 Pentru a rezolva: Verifică MongoDB Atlas Network Access pentru Railway IP");
-    console.log("🌐 Railway region: europe-west4");
-    return 'none';
   }
+
+  console.error("❌ Toate încercările Atlas au eșuat.");
+
+  // Fallback: MongoDB local (doar pentru development)
+  if (process.env.NODE_ENV !== 'production') {
+    try {
+      console.log('🔄 Încercare conectare la MongoDB local...');
+      await mongoose.connect(mongoLocalUri, {
+        serverSelectionTimeoutMS: 5000,
+        bufferCommands: true,
+      });
+      console.log("✅ SUCCES! Conectat la MongoDB local pentru testing");
+      return 'local';
+    } catch (localErr) {
+      console.error("❌ EROARE MongoDB local:", localErr.message);
+    }
+  }
+
+  console.log("⚠️ ATENȚIE: Server va rula fără bază de date!");
+  console.log("🔧 Verifică: 1) Cluster Atlas rezumat  2) Network Access → 0.0.0.0/0  3) MONGODB_URI în Railway");
+  return 'none';
 }
 
 
@@ -152,7 +169,9 @@ const User = mongoose.model('User', new mongoose.Schema({
   role: String,
   skills: [String],
   photo: String,
-  telefon: String
+  telefon: String,
+  isAdmin: { type: Boolean, default: false },
+  isBanned: { type: Boolean, default: false }
 }));
 
 const Offer = mongoose.model('Offer', new mongoose.Schema({
@@ -213,7 +232,9 @@ const CarSaleAd = mongoose.model('CarSaleAd', new mongoose.Schema({
   telefon: String,
   photos: [String],
   dateCreated: { type: Date, default: Date.now },
-  isActive: { type: Boolean, default: true }
+  isActive: { type: Boolean, default: true },
+  expiresAt: { type: Date, default: () => new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) },
+  deletesAt: { type: Date, default: () => new Date(Date.now() + 60 * 24 * 60 * 60 * 1000) }
 }));
 
 // Model pentru anunturi auto închiriere
@@ -234,7 +255,9 @@ const CarRentalAd = mongoose.model('CarRentalAd', new mongoose.Schema({
   telefon: String,
   photos: [String],
   dateCreated: { type: Date, default: Date.now },
-  isActive: { type: Boolean, default: true }
+  isActive: { type: Boolean, default: true },
+  expiresAt: { type: Date, default: () => new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) },
+  deletesAt: { type: Date, default: () => new Date(Date.now() + 60 * 24 * 60 * 60 * 1000) }
 }));
 
 // -------------------------
@@ -273,7 +296,25 @@ function authMiddleware(req, res, next) {
   if (!auth) return res.sendStatus(401);
   const token = auth.split(' ')[1];
   try {
-    const payload = jwt.verify(token, 'secret');
+    const payload = jwt.verify(token, JWT_SECRET);
+    req.user = payload;
+    next();
+  } catch {
+    res.sendStatus(401);
+  }
+}
+
+// -------------------------
+// MIDDLEWARE ADMIN
+// -------------------------
+async function adminMiddleware(req, res, next) {
+  const auth = req.headers.authorization;
+  if (!auth) return res.sendStatus(401);
+  const token = auth.split(' ')[1];
+  try {
+    const payload = jwt.verify(token, JWT_SECRET);
+    const adminUser = await User.findOne({ username: payload.username });
+    if (!adminUser || !adminUser.isAdmin) return res.sendStatus(403);
     req.user = payload;
     next();
   } catch {
@@ -333,7 +374,7 @@ app.post('/register', async (req, res) => {
     });
     await user.save();
     
-    const token = jwt.sign({ username: user.username, email: user.email }, 'secret');
+    const token = jwt.sign({ username: user.username, email: user.email }, JWT_SECRET);
     res.status(201).json({ 
       token, 
       username: user.username,
@@ -373,12 +414,16 @@ app.post('/login', async (req, res) => {
     return res.status(401).json({ error: 'Email sau parolă incorecte' });
   }
 
+  if (user.isBanned) {
+    return res.status(403).json({ error: 'Contul tău a fost suspendat. Contactează administratorul.' });
+  }
+
   const valid = await bcrypt.compare(password, user.password);
   if (!valid) {
     return res.status(401).json({ error: 'Email sau parolă incorecte' });
   }
 
-  const token = jwt.sign({ username: user.username, email: user.email }, 'secret');
+  const token = jwt.sign({ username: user.username, email: user.email }, JWT_SECRET);
   res.json({ 
     token, 
     username: user.username,
@@ -399,29 +444,44 @@ app.post('/reset-password-request', async (req, res) => {
     const normalizedEmail = email.trim().toLowerCase();
 
     const user = await User.findOne({ email: normalizedEmail });
+    // Răspuns identic indiferent dacă emailul există sau nu (previne enumerarea conturilor)
     if (!user) {
-      return res.status(404).json({ error: 'Nu există un cont cu acest email' });
+      return res.json({ message: 'Dacă există un cont cu acest email, vei primi un link de resetare.' });
     }
 
-    // Generează un token temporar pentru resetare (valabil 1 oră)
+    // Generează token securizat pentru resetare (valabil 1 oră)
     const resetToken = jwt.sign(
       { username: user.username, purpose: 'reset-password' }, 
-      'secret', 
+      JWT_SECRET, 
       { expiresIn: '1h' }
     );
 
-  console.log(`🔑 Token resetare parolă pentru ${normalizedEmail}: ${resetToken}`);
-    
-    // În producție, ar trebui trimis pe email
-    // Pentru dezvoltare, returnează tokenul în răspuns
-    res.json({ 
-      message: 'Token de resetare generat', 
-      resetToken: resetToken,
-      info: 'În producție, acest token ar fi trimis pe email'
+    const appUrl = process.env.APP_URL || 'https://carxsell-production-9d359.up.railway.app';
+    const resetLink = `${appUrl}/reset-password?token=${resetToken}`;
+    const fromEmail = process.env.FROM_EMAIL || 'onboarding@resend.dev';
+
+    await resend.emails.send({
+      from: `CarXSell <${fromEmail}>`,
+      to: normalizedEmail,
+      subject: 'Resetare parolă CarXSell',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto;">
+          <h2 style="color: #2563eb;">Resetare parolă CarXSell</h2>
+          <p>Ai solicitat resetarea parolei pentru contul tău.</p>
+          <p>Apasă butonul de mai jos pentru a seta o parolă nouă. Linkul este valabil <strong>1 oră</strong>.</p>
+          <a href="${resetLink}" style="display:inline-block; background:#2563eb; color:#fff; padding:12px 24px; border-radius:6px; text-decoration:none; margin:16px 0;">Resetează parola</a>
+          <p style="color:#666; font-size:13px;">Dacă nu ai solicitat resetarea parolei, ignoră acest email. Parola ta nu va fi modificată.</p>
+          <hr style="border:none; border-top:1px solid #eee; margin-top:24px;">
+          <p style="color:#999; font-size:12px;">CarXSell — Vânzări și închirieri auto</p>
+        </div>
+      `
     });
+
+    console.log(`📧 Email resetare trimis la: ${normalizedEmail}`);
+    res.json({ message: 'Dacă există un cont cu acest email, vei primi un link de resetare.' });
   } catch (e) {
     console.error('Reset password request error:', e);
-    res.status(500).json({ error: 'Eroare server la cererea de resetare' });
+    res.status(500).json({ error: 'Eroare la trimiterea emailului. Încearcă din nou.' });
   }
 });
 
@@ -437,7 +497,7 @@ app.post('/reset-password', async (req, res) => {
     // Verifică tokenul
     let decoded;
     try {
-      decoded = jwt.verify(token, 'secret');
+      decoded = jwt.verify(token, JWT_SECRET);
     } catch (err) {
       return res.status(401).json({ error: 'Token invalid sau expirat' });
     }
@@ -846,6 +906,7 @@ app.post('/api/car-sales', authMiddleware, upload.array('poze', 10), async (req,
     if (marcaNormalizata && typeof marcaNormalizata === 'string') {
       marcaNormalizata = marcaNormalizata.charAt(0).toUpperCase() + marcaNormalizata.slice(1).toLowerCase();
     }
+    const now = new Date();
     const adData = {
       ...req.body,
       marca: marcaNormalizata,
@@ -855,8 +916,10 @@ app.post('/api/car-sales', authMiddleware, upload.array('poze', 10), async (req,
       userEmail: req.user.email,
       fullName: user?.fullName || req.body.fullName || req.user.username || 'User',
       telefon: req.body.telefon || user?.telefon || '',
-      createdAt: new Date(),
-      dataCrearii: new Date()
+      createdAt: now,
+      dataCrearii: now,
+      expiresAt: new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000),
+      deletesAt: new Date(now.getTime() + 60 * 24 * 60 * 60 * 1000)
     };
     
     // Adaugă URL-urile pozelor din Cloudinary
@@ -1182,6 +1245,13 @@ app.put('/api/car-sales/:id', authMiddleware, async (req, res) => {
       updateData.isActive = updateData.status === 'activ';
       delete updateData.status;
       console.log('🔄 Status convertit → isActive:', updateData.isActive);
+      // Dacă anunțul este reactivat, resetează termenele de expirare
+      if (updateData.isActive) {
+        const now = new Date();
+        updateData.expiresAt = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+        updateData.deletesAt = new Date(now.getTime() + 60 * 24 * 60 * 60 * 1000);
+        console.log('🔄 Termenele resetate - expiresAt:', updateData.expiresAt);
+      }
     }
     
     let updatedAd;
@@ -1280,6 +1350,7 @@ app.post('/api/car-rentals', authMiddleware, upload.array('poze'), async (req, r
     const user = await User.findOne({ username: req.user.username });
     console.log('👤 User găsit (rentals):', user?.fullName, user?.telefon);
     
+    const rentalNow = new Date();
     const adData = {
       ...req.body,
       userId: req.user.username, // User din JWT token
@@ -1288,7 +1359,9 @@ app.post('/api/car-rentals', authMiddleware, upload.array('poze'), async (req, r
       userEmail: req.user.email, // Email din JWT token (alias pentru compatibilitate)
       fullName: user?.fullName || req.body.fullName || req.user.username || 'User', // Nume complet
       telefon: req.body.telefon || user?.telefon || '', // Telefon
-      createdAt: new Date() // Data creării
+      createdAt: rentalNow, // Data creării
+      expiresAt: new Date(rentalNow.getTime() + 30 * 24 * 60 * 60 * 1000),
+      deletesAt: new Date(rentalNow.getTime() + 60 * 24 * 60 * 60 * 1000)
     };
     
     // Adaugă calea pozelor în DB - URL-uri Cloudinary
@@ -1500,6 +1573,13 @@ app.put('/api/car-rentals/:id', authMiddleware, async (req, res) => {
       updateData.isActive = updateData.status === 'activ';
       delete updateData.status;
       console.log('🔄 Status convertit → isActive:', updateData.isActive);
+      // Dacă anunțul este reactivat, resetează termenele de expirare
+      if (updateData.isActive) {
+        const now = new Date();
+        updateData.expiresAt = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+        updateData.deletesAt = new Date(now.getTime() + 60 * 24 * 60 * 60 * 1000);
+        console.log('🔄 Termenele resetate - expiresAt:', updateData.expiresAt);
+      }
     }
     
     let updatedAd;
@@ -1652,6 +1732,203 @@ app.get('/api/my-conversations', authMiddleware, async (req, res) => {
   } catch (error) {
     console.error('❌ Eroare la încărcarea conversațiilor:', error);
     res.status(500).json({ error: 'Eroare la încărcarea conversațiilor' });
+  }
+});
+
+// -------------------------
+// JOB CURĂȚARE AUTOMATĂ ANUNȚURI EXPIRATE
+// -------------------------
+
+async function runAdCleanupJob() {
+  console.log('🧹 [CLEANUP] Pornire job curățare anunțuri expirate...');
+  const now = new Date();
+  const { Op } = require('sequelize');
+
+  try {
+    // --- PostgreSQL ---
+    if (postgresqlReady) {
+      // 1. Dezactivează anunțurile de vânzare care au expirat (expiresAt <= now, isActive = true)
+      const [deactivatedSales] = await CarSaleAdPG.update(
+        { isActive: false },
+        { where: { isActive: true, expiresAt: { [Op.lte]: now } } }
+      );
+      if (deactivatedSales > 0) console.log(`🧹 [CLEANUP] Dezactivate ${deactivatedSales} anunțuri vânzare expirate (PostgreSQL)`);
+
+      // 2. Dezactivează anunțurile de închiriere care au expirat
+      const [deactivatedRentals] = await CarRentalAdPG.update(
+        { isActive: false },
+        { where: { isActive: true, expiresAt: { [Op.lte]: now } } }
+      );
+      if (deactivatedRentals > 0) console.log(`🧹 [CLEANUP] Dezactivate ${deactivatedRentals} anunțuri închiriere expirate (PostgreSQL)`);
+
+      // 3. Șterge definitiv anunțurile de vânzare unde deletesAt <= now
+      const deletedSales = await CarSaleAdPG.destroy(
+        { where: { deletesAt: { [Op.lte]: now } } }
+      );
+      if (deletedSales > 0) console.log(`🧹 [CLEANUP] Șterse definitiv ${deletedSales} anunțuri vânzare (PostgreSQL)`);
+
+      // 4. Șterge definitiv anunțurile de închiriere unde deletesAt <= now
+      const deletedRentals = await CarRentalAdPG.destroy(
+        { where: { deletesAt: { [Op.lte]: now } } }
+      );
+      if (deletedRentals > 0) console.log(`🧹 [CLEANUP] Șterse definitiv ${deletedRentals} anunțuri închiriere (PostgreSQL)`);
+    }
+
+    // --- MongoDB ---
+    if (mongoose.connection.readyState === 1) {
+      // 1. Dezactivează anunțuri vânzare expirate
+      const resSalesDeact = await CarSaleAd.updateMany(
+        { isActive: true, expiresAt: { $lte: now } },
+        { $set: { isActive: false } }
+      );
+      if (resSalesDeact.modifiedCount > 0) console.log(`🧹 [CLEANUP] Dezactivate ${resSalesDeact.modifiedCount} anunțuri vânzare expirate (MongoDB)`);
+
+      // 2. Dezactivează anunțuri închiriere expirate
+      const resRentalsDeact = await CarRentalAd.updateMany(
+        { isActive: true, expiresAt: { $lte: now } },
+        { $set: { isActive: false } }
+      );
+      if (resRentalsDeact.modifiedCount > 0) console.log(`🧹 [CLEANUP] Dezactivate ${resRentalsDeact.modifiedCount} anunțuri închiriere expirate (MongoDB)`);
+
+      // 3. Șterge definitiv anunțuri vânzare cu deletesAt <= now
+      const resSalesDel = await CarSaleAd.deleteMany({ deletesAt: { $lte: now } });
+      if (resSalesDel.deletedCount > 0) console.log(`🧹 [CLEANUP] Șterse definitiv ${resSalesDel.deletedCount} anunțuri vânzare (MongoDB)`);
+
+      // 4. Șterge definitiv anunțuri închiriere cu deletesAt <= now
+      const resRentalsDel = await CarRentalAd.deleteMany({ deletesAt: { $lte: now } });
+      if (resRentalsDel.deletedCount > 0) console.log(`🧹 [CLEANUP] Șterse definitiv ${resRentalsDel.deletedCount} anunțuri închiriere (MongoDB)`);
+    }
+
+    console.log('🧹 [CLEANUP] Job finalizat.');
+  } catch (err) {
+    console.error('❌ [CLEANUP] Eroare în job-ul de curățare:', err.message);
+  }
+}
+
+// Rulează la fiecare 6 ore (6 * 60 * 60 * 1000 ms)
+setInterval(runAdCleanupJob, 6 * 60 * 60 * 1000);
+// Rulează și la 5 minute după pornirea serverului (pentru a prinde anunțuri deja expirate)
+setTimeout(runAdCleanupJob, 5 * 60 * 1000);
+
+// -------------------------
+// RUTE ADMIN
+// -------------------------
+
+// Promovare cont la admin (setup inițial - necesită ADMIN_SECRET din .env)
+app.post('/admin/promote', async (req, res) => {
+  try {
+    const { username, secret } = req.body;
+    if (!secret || secret !== process.env.ADMIN_SECRET) {
+      return res.status(403).json({ error: 'Secret incorect' });
+    }
+    const user = await User.findOne({ username });
+    if (!user) return res.status(404).json({ error: 'Utilizator negăsit' });
+    user.isAdmin = true;
+    await user.save();
+    res.json({ message: `Utilizatorul "${username}" este acum admin.` });
+  } catch (e) {
+    res.status(500).json({ error: 'Eroare server' });
+  }
+});
+
+// Admin - lista utilizatori
+app.get('/admin/users', adminMiddleware, async (req, res) => {
+  try {
+    const users = await User.find({}, 'username email fullName isAdmin isBanned telefon role');
+    res.json(users);
+  } catch (e) {
+    res.status(500).json({ error: 'Eroare la încărcarea utilizatorilor' });
+  }
+});
+
+// Admin - ștergere utilizator
+app.delete('/admin/users/:username', adminMiddleware, async (req, res) => {
+  try {
+    const { username } = req.params;
+    if (username === req.user.username) {
+      return res.status(400).json({ error: 'Nu poți șterge propriul cont de admin' });
+    }
+    await User.findOneAndDelete({ username });
+    res.json({ message: 'Utilizator șters' });
+  } catch (e) {
+    res.status(500).json({ error: 'Eroare la ștergere' });
+  }
+});
+
+// Admin - ban/unban utilizator
+app.put('/admin/users/:username/ban', adminMiddleware, async (req, res) => {
+  try {
+    const { username } = req.params;
+    if (username === req.user.username) {
+      return res.status(400).json({ error: 'Nu poți suspenda propriul cont' });
+    }
+    const user = await User.findOne({ username });
+    if (!user) return res.status(404).json({ error: 'Utilizator negăsit' });
+    user.isBanned = req.body.ban === true;
+    await user.save();
+    res.json({ message: `Utilizator ${user.isBanned ? 'suspendat' : 'reactivat'}`, isBanned: user.isBanned });
+  } catch (e) {
+    res.status(500).json({ error: 'Eroare server' });
+  }
+});
+
+// Admin - lista anunțuri vânzări
+app.get('/admin/ads/vanzari', adminMiddleware, async (req, res) => {
+  try {
+    if (postgresqlReady) {
+      const ads = await CarSaleAdPG.findAll({ order: [['createdAt', 'DESC']] });
+      return res.json(ads);
+    }
+    const ads = await CarSaleAd.find({}).sort({ _id: -1 }).limit(500);
+    res.json(ads);
+  } catch (e) {
+    res.status(500).json({ error: 'Eroare la încărcarea anunțurilor' });
+  }
+});
+
+// Admin - ștergere anunț vânzare
+app.delete('/admin/ads/vanzari/:id', adminMiddleware, async (req, res) => {
+  try {
+    if (postgresqlReady) {
+      const ad = await CarSaleAdPG.findOne({ where: { id: req.params.id } });
+      if (!ad) return res.status(404).json({ error: 'Anunț negăsit' });
+      await ad.destroy();
+    } else {
+      await CarSaleAd.findByIdAndDelete(req.params.id);
+    }
+    res.json({ message: 'Anunț șters' });
+  } catch (e) {
+    res.status(500).json({ error: 'Eroare la ștergere' });
+  }
+});
+
+// Admin - lista anunțuri închirieri
+app.get('/admin/ads/inchirieri', adminMiddleware, async (req, res) => {
+  try {
+    if (postgresqlReady) {
+      const ads = await CarRentalAdPG.findAll({ order: [['createdAt', 'DESC']] });
+      return res.json(ads);
+    }
+    const ads = await CarRentalAd.find({}).sort({ _id: -1 }).limit(500);
+    res.json(ads);
+  } catch (e) {
+    res.status(500).json({ error: 'Eroare la încărcarea anunțurilor' });
+  }
+});
+
+// Admin - ștergere anunț închiriere
+app.delete('/admin/ads/inchirieri/:id', adminMiddleware, async (req, res) => {
+  try {
+    if (postgresqlReady) {
+      const ad = await CarRentalAdPG.findOne({ where: { id: req.params.id } });
+      if (!ad) return res.status(404).json({ error: 'Anunț negăsit' });
+      await ad.destroy();
+    } else {
+      await CarRentalAd.findByIdAndDelete(req.params.id);
+    }
+    res.json({ message: 'Anunț șters' });
+  } catch (e) {
+    res.status(500).json({ error: 'Eroare la ștergere' });
   }
 });
 
