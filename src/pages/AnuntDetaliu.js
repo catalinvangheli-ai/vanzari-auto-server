@@ -16,6 +16,7 @@ const AnuntDetaliu = () => {
   const [error, setError] = useState(null);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [showFullscreen, setShowFullscreen] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
 
   // Handler pentru butonul back al Android-ului - DOAR pe platformă nativă
   useEffect(() => {
@@ -118,6 +119,48 @@ const AnuntDetaliu = () => {
     }
   };
 
+  const handleShare = async () => {
+    // Construiește întotdeauna URL-ul cu domeniul de producție,
+    // nu window.location.href (care returnează https://localhost pe Android nativ)
+    const baseUrl = process.env.REACT_APP_API_BASE_URL
+      ? process.env.REACT_APP_API_BASE_URL.replace(/\/+$/, '')
+      : (typeof window !== 'undefined' && window.location.hostname !== 'localhost'
+          ? window.location.origin
+          : 'https://carxsell-production-9d359.up.railway.app');
+    // Folosește /open/ - pagina smart de redirect care deschide app sau Play Store
+    const shareUrl = `${baseUrl}/open/${type}/${id}`;
+    const shareTitle = `${anunt.marca} ${anunt.model} - CarXSell`;
+    const shareText = `${anunt.marca} ${anunt.model} (${anunt.anFabricatie || anunt.an}) - ${anunt.pret || anunt.pretPeZi}€\n\nVezi anunțul pe CarXSell:`;
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: shareTitle,
+          text: shareText,
+          url: shareUrl,
+        });
+      } else {
+        await navigator.clipboard.writeText(shareUrl);
+        setLinkCopied(true);
+        setTimeout(() => setLinkCopied(false), 2500);
+      }
+    } catch (err) {
+      // Fallback: try clipboard copy even if share failed
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        setLinkCopied(true);
+        setTimeout(() => setLinkCopied(false), 2500);
+      } catch {
+        // Last resort: prompt
+        window.prompt('Copiază link-ul:', shareUrl);
+      }
+    }
+  };
+
+  // Detectează dacă rulează în browser mobil (nu în aplicația nativă)
+  const isNativeApp = Boolean(window?.Capacitor?.isNativePlatform?.());
+  const isMobileBrowser = !isNativeApp && /Android|iPhone|iPad/i.test(navigator.userAgent);
+  const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.carxsell.app';
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -160,8 +203,30 @@ const AnuntDetaliu = () => {
 
   return (
     <div className="bg-gray-50 min-h-screen">
-      {/* Spațiu pentru status bar (50px) */}
-      <div className="h-12 bg-black"></div>
+
+      {/* Banner "Descarcă aplicația" - vizibil doar în browser mobil, nu în app nativ */}
+      {isMobileBrowser && (
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white px-4 py-3 flex items-center justify-between gap-3 sticky top-0 z-50 shadow-lg">
+          <div className="flex items-center gap-3 min-w-0">
+            <span className="text-2xl flex-shrink-0">🚗</span>
+            <div className="min-w-0">
+              <p className="font-bold text-sm leading-tight">CarXSell App</p>
+              <p className="text-blue-200 text-xs truncate">Experiență mai bună în aplicație</p>
+            </div>
+          </div>
+          <a
+            href={PLAY_STORE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-shrink-0 bg-white text-blue-700 font-bold text-xs px-3 py-2 rounded-full hover:bg-blue-50 transition-colors whitespace-nowrap"
+          >
+            ▶ Descarcă
+          </a>
+        </div>
+      )}
+
+      {/* Spațiu pentru status bar (50px) - doar în app nativ */}
+      {isNativeApp && <div className="h-12 bg-black"></div>}
       
       {/* Galeria de poze - 40% din ecran */}
       <div className="relative bg-black" style={{ height: '40vh' }}>
@@ -187,6 +252,21 @@ const AnuntDetaliu = () => {
         >
           ←
         </button>
+
+        {/* Buton share - poziționat lângă butonul înapoi */}
+        <button
+          onClick={handleShare}
+          className="absolute left-20 bg-black/60 backdrop-blur-sm text-white rounded-full w-12 h-12 flex items-center justify-center z-10 hover:bg-black/80 transition-colors text-lg"
+          style={{ top: '60px' }}
+          title="Distribuie anunțul"
+        >
+          {linkCopied ? '✅' : '🔗'}
+        </button>
+        {linkCopied && (
+          <div className="absolute left-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold z-10 shadow-lg" style={{ top: '80px' }}>
+            Link copiat!
+          </div>
+        )}
 
         {/* Indicatori număr poze */}
         {imagesToShow.length > 1 && (
@@ -356,6 +436,23 @@ const AnuntDetaliu = () => {
           >
             <span className="text-2xl mr-2">💬</span>
             Trimite mesaj
+          </button>
+
+          <button
+            onClick={handleShare}
+            className="w-full bg-gradient-to-r from-gray-100 to-gray-200 hover:from-gray-200 hover:to-gray-300 text-gray-800 py-3 rounded-xl font-semibold text-base shadow transition-all flex items-center justify-center gap-2"
+          >
+            {linkCopied ? (
+              <>
+                <span className="text-lg">✅</span>
+                Link copiat în clipboard!
+              </>
+            ) : (
+              <>
+                <span className="text-lg">🔗</span>
+                Distribuie anunțul
+              </>
+            )}
           </button>
         </div>
 

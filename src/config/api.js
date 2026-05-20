@@ -1,22 +1,38 @@
-// Configurare pentru URL-ul backend-ului
-// Pentru dezvoltare locală (browser): http://localhost:3001
-// Pentru aplicația Android: folosește serverul Railway în cloud
+const normalizeBaseUrl = (value) => value.replace(/\/+$/, '');
 
-const isDevelopment = false; // Folosește Railway pentru production
+const envApiBaseUrl = normalizeBaseUrl((process.env.REACT_APP_API_BASE_URL || '').trim());
+const isBrowser = typeof window !== 'undefined';
+const isDevelopment = process.env.NODE_ENV === 'development';
+const browserHostname = isBrowser ? window.location.hostname : '';
+const browserOrigin = isBrowser ? window.location.origin : '';
+const isHttpOrigin = /^https?:\/\//i.test(browserOrigin);
+const sameOriginApiBaseUrl = isHttpOrigin ? normalizeBaseUrl(browserOrigin) : '';
+const isNativeRuntime = isBrowser ? Boolean(window.Capacitor?.isNativePlatform?.()) : false;
+const shouldUseSameOrigin = !isDevelopment && isHttpOrigin && !['localhost', '127.0.0.1'].includes(browserHostname);
 
-// URL-ul serverului - Railway pentru production
-export const API_BASE_URL = isDevelopment 
-  ? 'http://localhost:3001' 
-  : 'https://web-production-9d359.up.railway.app';
+export const API_BASE_URL = envApiBaseUrl || (isDevelopment ? 'http://localhost:3001' : shouldUseSameOrigin ? sameOriginApiBaseUrl : '');
 
-console.log('🌐 API Base URL:', API_BASE_URL);
+if (!API_BASE_URL) {
+  console.error('❌ API_BASE_URL lipsește. Configurează REACT_APP_API_BASE_URL pentru build-urile mobile sau folosește hosting pe același domeniu pentru web.');
+}
+
+if (isNativeRuntime && !envApiBaseUrl) {
+  console.error('❌ Aplicația rulează nativ, dar REACT_APP_API_BASE_URL nu este setat. Request-urile către backend vor eșua.');
+}
+
+console.log('🌐 API Base URL:', API_BASE_URL || '(same-origin sau lipsă configurare)');
 console.log('🏠 Is Development:', isDevelopment);
-console.log('🔍 Window location:', window.location.hostname);
-console.log('📱 User Agent:', navigator.userAgent);
+console.log('🔍 Window location:', isBrowser ? browserHostname : 'n/a');
+console.log('📱 User Agent:', typeof navigator !== 'undefined' ? navigator.userAgent : 'n/a');
 
 // Helper pentru debug network
 export const testConnection = async () => {
   try {
+    if (!API_BASE_URL) {
+      console.error('❌ Nu pot testa conexiunea fără API_BASE_URL configurat');
+      return false;
+    }
+
     console.log('🧪 Testing connection to:', API_BASE_URL);
     const response = await fetch(`${API_BASE_URL}/health`, {
       method: 'GET',

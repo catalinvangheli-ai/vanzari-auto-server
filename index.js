@@ -744,6 +744,21 @@ app.get('/health', (req, res) => {
   });
 });
 
+// Android App Links verification - permite deep links din browser spre aplicație
+app.get('/.well-known/assetlinks.json', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.json([{
+    relation: ['delegate_permission/common.handle_all_urls'],
+    target: {
+      namespace: 'android_app',
+      package_name: 'com.carxsell.app',
+      sha256_cert_fingerprints: [
+        '27:C6:4A:05:8D:4F:17:55:9D:96:2F:E3:BB:47:BE:FC:71:8D:33:9B:18:CB:4E:B2:DD:01:0D:9D:F7:B8:14:43'
+      ]
+    }
+  }]);
+});
+
 // Test MongoDB connection
 app.get('/test-db', async (req, res) => {
   try {
@@ -1938,6 +1953,81 @@ app.delete('/admin/ads/inchirieri/:id', adminMiddleware, async (req, res) => {
 // SERVIRE REACT APP (SPA fallback)
 // -------------------------
 app.use(express.static(path.join(__dirname, 'build')));
+
+// Pagina smart redirect pentru share link-uri
+// Deschide aplicația CarXSell dacă e instalată, altfel duce la Play Store
+app.get('/open/:type/:id', (req, res) => {
+  const { type, id } = req.params;
+  const appId = 'com.carxsell.app';
+  const playStoreUrl = `https://play.google.com/store/apps/details?id=${appId}`;
+  const webUrl = `https://carxsell-production-9d359.up.railway.app/anunt/${type}/${id}`;
+  const intentUrl = `intent://anunt/${type}/${id}#Intent;scheme=carxsell;package=${appId};S.browser_fallback_url=${encodeURIComponent(playStoreUrl)};end`;
+
+  res.setHeader('Content-Type', 'text/html; charset=utf-8');
+  res.send(`<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CarXSell - Deschide anunțul</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f4ff; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+    .card { background: white; border-radius: 20px; padding: 32px 24px; max-width: 360px; width: 100%; box-shadow: 0 8px 32px rgba(0,0,0,0.12); text-align: center; }
+    .logo { font-size: 48px; margin-bottom: 16px; }
+    h1 { font-size: 22px; font-weight: 800; color: #1e293b; margin-bottom: 8px; }
+    p { color: #64748b; font-size: 14px; margin-bottom: 24px; line-height: 1.5; }
+    .btn { display: block; width: 100%; padding: 14px 20px; border-radius: 12px; font-weight: 700; font-size: 16px; text-decoration: none; margin-bottom: 12px; }
+    .btn-primary { background: linear-gradient(135deg, #3b82f6, #6366f1); color: white; }
+    .btn-store { background: #1e293b; color: white; }
+    .btn-web { background: #f1f5f9; color: #475569; font-size: 14px; padding: 10px; }
+    .spinner { display: inline-block; width: 18px; height: 18px; border: 3px solid rgba(255,255,255,0.4); border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: middle; margin-right: 8px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">🚗</div>
+    <h1>CarXSell</h1>
+    <p id="msg">Se deschide aplicația CarXSell...</p>
+    <a id="btnApp" href="${intentUrl}" class="btn btn-primary">
+      <span class="spinner" id="spin"></span>
+      Deschide în CarXSell
+    </a>
+    <a href="${playStoreUrl}" class="btn btn-store" target="_blank" rel="noopener" id="btnStore" style="display:none">
+      ▶ Descarcă din Play Store
+    </a>
+    <a href="${webUrl}" class="btn btn-web" id="btnWeb">
+      Continuă în browser →
+    </a>
+  </div>
+  <script>
+    var isAndroid = /Android/i.test(navigator.userAgent);
+    var intentUrl = '${intentUrl}';
+    var playStoreUrl = '${playStoreUrl}';
+
+    if (isAndroid) {
+      // Pe Android: redirect automat la intent URL
+      // Chrome va deschide app-ul dacă e instalat, sau va urma browser_fallback_url (Play Store)
+      window.location.href = intentUrl;
+
+      // Backup: dacă după 2.5s suntem încă pe pagină, app-ul nu e instalat → Play Store
+      setTimeout(function() {
+        document.getElementById('spin').style.display = 'none';
+        document.getElementById('msg').textContent = 'Aplicația nu este instalată.';
+        document.getElementById('btnStore').style.display = 'block';
+      }, 2500);
+    } else {
+      // Pe iOS/Desktop: arată buton web direct
+      document.getElementById('spin').style.display = 'none';
+      document.getElementById('msg').textContent = 'Disponibil pe Android.';
+      document.getElementById('btnApp').style.display = 'none';
+      document.getElementById('btnStore').style.display = 'block';
+    }
+  </script>
+</body>
+</html>`);
+});
 
 // Catch-all: toate rutele necunoscute returnează index.html (React Router)
 app.get('/{*path}', (req, res) => {

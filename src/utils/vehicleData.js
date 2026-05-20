@@ -116,20 +116,86 @@ export const marci = {
     { value: 'ktm', label: 'KTM' },
     { value: 'aprilia', label: 'Aprilia' },
     { value: 'triumph', label: 'Triumph' },
-    { value: 'harley-davidson', label: 'Harley-Davidson' }
+    { value: 'harley-davidson', label: 'Harley-Davidson' },
+    { value: 'royal-enfield', label: 'Royal Enfield' },
+    { value: 'benelli', label: 'Benelli' },
+    { value: 'cfmoto', label: 'CFMoto' },
+    { value: 'zontes', label: 'Zontes' },
+    { value: 'husqvarna', label: 'Husqvarna' },
+    { value: 'gas-gas', label: 'GasGas' },
+    { value: 'moto-guzzi', label: 'Moto Guzzi' },
+    { value: 'mv-agusta', label: 'MV Agusta' },
+    { value: 'norton', label: 'Norton' },
+    { value: 'alta-marca', label: '— Altă marcă —' }
   ],
   
   'Autoutilitară': [
     { value: 'ford', label: 'Ford' },
     { value: 'mercedes', label: 'Mercedes-Benz' },
     { value: 'volkswagen', label: 'Volkswagen' },
-    { value: 'iveco', label: 'Iveco' },
+    { value: 'renault', label: 'Renault' },
+    { value: 'peugeot', label: 'Peugeot' },
+    { value: 'citroen', label: 'Citroën' },
+    { value: 'fiat', label: 'Fiat' },
+    { value: 'opel', label: 'Opel' },
+    { value: 'nissan', label: 'Nissan' },
+    { value: 'toyota', label: 'Toyota' },
+    { value: 'mitsubishi', label: 'Mitsubishi' },
+    { value: 'isuzu', label: 'Isuzu' },
+    { value: 'iveco-van', label: 'Iveco' },
+    { value: 'man-van', label: 'MAN' },
+    { value: 'mercedes-sprinter', label: 'Mercedes-Benz Sprinter' },
+    { value: 'vw-transporter', label: 'Volkswagen Transporter' },
+    { value: 'vw-crafter', label: 'Volkswagen Crafter' },
+    { value: 'ford-transit', label: 'Ford Transit' },
+    { value: 'peugeot-boxer', label: 'Peugeot Boxer' },
+    { value: 'citroen-jumper', label: 'Citroën Jumper' },
+    { value: 'fiat-ducato', label: 'Fiat Ducato' },
+    { value: 'renault-master', label: 'Renault Master' },
+    { value: 'opel-movano', label: 'Opel Movano' },
+    { value: 'nissan-nv', label: 'Nissan NV' },
+    { value: 'toyota-hiace', label: 'Toyota HiAce' },
+    { value: 'hyundai-van', label: 'Hyundai' },
+    { value: 'kia-van', label: 'Kia' },
+    { value: 'maxus', label: 'Maxus' },
+    { value: 'dfsk', label: 'DFSK' },
+    { value: 'alta-marca', label: '— Altă marcă —' }
+  ],
+  
+  'Camion': [
     { value: 'man', label: 'MAN' },
+    { value: 'mercedes', label: 'Mercedes-Benz' },
     { value: 'scania', label: 'Scania' },
     { value: 'volvo', label: 'Volvo Trucks' },
     { value: 'daf', label: 'DAF' },
+    { value: 'iveco', label: 'Iveco' },
     { value: 'renault', label: 'Renault Trucks' },
-    { value: 'isuzu', label: 'Isuzu' }
+    { value: 'ford', label: 'Ford Trucks' },
+    { value: 'isuzu', label: 'Isuzu' },
+    { value: 'mitsubishi', label: 'Mitsubishi Fuso' },
+    { value: 'actros', label: 'Mercedes-Benz Actros' },
+    { value: 'atego', label: 'Mercedes-Benz Atego' },
+    { value: 'evobus', label: 'Setra' },
+    { value: 'daf-xf', label: 'DAF XF' },
+    { value: 'daf-cf', label: 'DAF CF' },
+    { value: 'daf-lf', label: 'DAF LF' },
+    { value: 'volvo-fh', label: 'Volvo FH' },
+    { value: 'volvo-fm', label: 'Volvo FM' },
+    { value: 'volvo-fl', label: 'Volvo FL' },
+    { value: 'scania-r', label: 'Scania R-Series' },
+    { value: 'scania-s', label: 'Scania S-Series' },
+    { value: 'man-tgx', label: 'MAN TGX' },
+    { value: 'man-tgs', label: 'MAN TGS' },
+    { value: 'man-tgm', label: 'MAN TGM' },
+    { value: 'man-tgl', label: 'MAN TGL' },
+    { value: 'tata', label: 'Tata' },
+    { value: 'ashok', label: 'Ashok Leyland' },
+    { value: 'hino', label: 'Hino' },
+    { value: 'dongfeng', label: 'Dongfeng' },
+    { value: 'foton', label: 'Foton' },
+    { value: 'sinotruk', label: 'Sinotruk' },
+    { value: 'shacman', label: 'Shacman' },
+    { value: 'alta-marca', label: '— Altă marcă —' }
   ],
   
   'Rulotă': [
@@ -138,19 +204,67 @@ export const marci = {
     { value: 'dethleffs', label: 'Dethleffs' },
     { value: 'fendt', label: 'Fendt' },
     { value: 'adria', label: 'Adria' },
-    { value: 'hymer', label: 'Hymer' },
+    { value: 'tabbert', label: 'Tabbert' },
     { value: 'burstner', label: 'Bürstner' },
-    { value: 'weinsberg', label: 'Weinsberg' }
+    { value: 'weinsberg', label: 'Weinsberg' },
+    { value: 'caravelair', label: 'Caravelair' },
+    { value: 'sterckeman', label: 'Sterckeman' },
+    { value: 'abi', label: 'ABI' },
+    { value: 'eriba', label: 'Eriba' },
+    { value: 'polar', label: 'Polar' },
+    { value: 'swift', label: 'Swift' },
+    { value: 'bailey', label: 'Bailey' },
+    { value: 'coachman', label: 'Coachman' },
+    { value: 'alta-marca', label: '— Altă marcă —' }
   ],
   
-  Scuter: [
+  'Autorulotă': [
+    { value: 'hymer', label: 'Hymer' },
+    { value: 'burstner', label: 'Bürstner' },
+    { value: 'dethleffs', label: 'Dethleffs' },
+    { value: 'knaus', label: 'Knaus' },
+    { value: 'weinsberg', label: 'Weinsberg' },
+    { value: 'adria', label: 'Adria' },
+    { value: 'hobby', label: 'Hobby' },
+    { value: 'fendt', label: 'Fendt' },
+    { value: 'rapido', label: 'Rapido' },
+    { value: 'pilote', label: 'Pilote' },
+    { value: 'challenger', label: 'Challenger' },
+    { value: 'mclouis', label: 'McLouis' },
+    { value: 'carado', label: 'Carado' },
+    { value: 'sunlight', label: 'Sunlight' },
+    { value: 'laika', label: 'Laika' },
+    { value: 'carthago', label: 'Carthago' },
+    { value: 'chausson', label: 'Chausson' },
+    { value: 'alta-marca', label: '— Altă marcă —' }
+  ],
+  
+  'Scuter': [
     { value: 'yamaha', label: 'Yamaha' },
     { value: 'honda', label: 'Honda' },
     { value: 'piaggio', label: 'Piaggio' },
+    { value: 'vespa', label: 'Vespa' },
     { value: 'sym', label: 'SYM' },
     { value: 'kymco', label: 'KYMCO' },
     { value: 'aprilia', label: 'Aprilia' },
-    { value: 'peugeot', label: 'Peugeot Scooters' }
+    { value: 'peugeot', label: 'Peugeot Scooters' },
+    { value: 'suzuki', label: 'Suzuki' },
+    { value: 'benelli-sc', label: 'Benelli' },
+    { value: 'cfmoto-sc', label: 'CFMoto' },
+    { value: 'keeway', label: 'Keeway' },
+    { value: 'znen', label: 'Znen' },
+    { value: 'alta-marca', label: '— Altă marcă —' }
+  ],
+  
+  'Trotineta': [
+    { value: 'xiaomi', label: 'Xiaomi' },
+    { value: 'segway', label: 'Segway-Ninebot' },
+    { value: 'kaabo', label: 'Kaabo' },
+    { value: 'dualtron', label: 'Dualtron' },
+    { value: 'inokim', label: 'Inokim' },
+    { value: 'e-twow', label: 'E-TWOW' },
+    { value: 'ninebot', label: 'Ninebot' },
+    { value: 'razor', label: 'Razor' }
   ]
 };
 
@@ -264,6 +378,7 @@ export const modele = {
     // SUV / Crossover / Off-road
     'GLA-Class', 'GLB-Class', 'GLC-Class', 'GLC Coupe',
     'GLE-Class', 'GLE Coupe', 'GLS-Class',
+    'GLK-Class', 'GLK 200 CDI', 'GLK 220 CDI', 'GLK 250 CDI', 'GLK 350 CDI', 'GLK 300 4MATIC', 'GLK 350 4MATIC',
     'G-Class',
     
     // Sport / Performanță
@@ -1708,6 +1823,197 @@ export const modele = {
     'Genesis', 'Maybach', 'Acura', 'Scion', 'Saturn',
     'Hummer', 'Pontiac', 'Buick', 'GMC', 'Ram',
     'Isuzu', 'Proton', 'Tata', 'Mahindra'
+  ],
+
+  // AUTORULOTE - RAPIDO
+  rapido: [
+    'Serie i', 'Serie V', 'Serie M', 'Serie C',
+    'Serie 8F', '896F', '855F', '866F'
+  ],
+
+  // PILOTE - AUTORULOTE
+  pilote: [
+    'Galaxy', 'Pacific', 'Aventura', 'Reference',
+    'Essentiel', 'P-Line'
+  ],
+
+  // CHALLENGER - AUTORULOTE
+  challenger: [
+    'Genesis', 'Graphite', 'Mageo', 'X-Edition',
+    'Vany', 'Compact'
+  ],
+
+  // MCLOUIS - AUTORULOTE
+  mclouis: [
+    'Fusion', 'Menfys', 'Glamys', 'MC4',
+    'Lagan', 'Sovereign'
+  ],
+
+  // TABBERT - RULOTE
+  tabbert: [
+    'Cellini', 'Puccini', 'Rossini', 'Vivaldi',
+    'Da Vinci', 'Comtesse'
+  ],
+
+  // CARAVELAIR - RULOTE
+  caravelair: [
+    'Antares', 'Alba', 'Titanium', 'Allegra',
+    'Bahia', 'Artica'
+  ],
+
+  // STERCKEMAN - RULOTE
+  sterckeman: [
+    'Evolution', 'Alize', 'Easy', 'Starlett',
+    'Evolutio', 'Concept'
+  ],
+
+  // VESPA - SCUTERE
+  vespa: [
+    'Primavera', 'Sprint', 'GTS', 'GTS Super',
+    'GTV', 'Elettrica', 'LX', 'S'
+  ],
+
+  // FORD TRUCKS - CAMIOANE
+  'ford trucks': [
+    'Cargo', 'F-Max', 'Ecotorq', 'Transit Truck'
+  ],
+
+  // MITSUBISHI FUSO - CAMIOANE
+  'mitsubishi fuso': [
+    'Canter', 'Fighter', 'Super Great', 'Rosa'
+  ],
+
+  // CAMIOANE EXTINSE
+  'tata': [
+    'Prima', 'Signa', 'Ultra', 'LPT 1618', 'LPT 2521', 'LPT 3723'
+  ],
+  'hino': [
+    '300 Series', '500 Series', '700 Series', 'Ranger', 'Profia'
+  ],
+  'dongfeng': [
+    'DFL', 'Kinland', 'Tianlong', 'Liuqi', 'Captain'
+  ],
+  'foton': [
+    'Auman EST', 'Auman GTL', 'Aumark', 'Forland', 'View'
+  ],
+  'sinotruk': [
+    'HOWO A7', 'HOWO T7H', 'SITRAK C7H', 'Steyr', 'Hohan'
+  ],
+  'shacman': [
+    'X3000', 'X5000', 'F3000', 'L3000', 'M3000', 'H3000'
+  ],
+
+  // AUTOUTILITARE EXTINSE
+  'iveco-van': [
+    'Daily Van', 'Daily Minibus', 'Daily Chassis Cab',
+    'Daily 4x4', 'Daily Hi-Matic'
+  ],
+  'man-van': [
+    'TGE', 'TGE 4x4', 'TGE Long', 'TGE Combi'
+  ],
+  'ford-transit': [
+    'Transit Custom', 'Transit Van', 'Transit Minibus',
+    'Transit Chassis Cab', 'Transit Connect', 'Transit Courier'
+  ],
+  'vw-transporter': [
+    'Transporter T5', 'Transporter T6', 'Transporter T6.1',
+    'Multivan', 'Caravelle', 'California'
+  ],
+  'vw-crafter': [
+    'Crafter Van', 'Crafter Bus', 'Crafter Chassis Cab',
+    'Crafter 4x4', 'Grand California'
+  ],
+  'peugeot-boxer': [
+    'Boxer Van', 'Boxer Bus', 'Boxer Chassis Cab',
+    'Boxer Heavy', 'Boxer L1H1', 'Boxer L2H2', 'Boxer L3H2'
+  ],
+  'citroen-jumper': [
+    'Jumper Van', 'Jumper Bus', 'Jumper Chassis Cab',
+    'Jumper L1H1', 'Jumper L2H2', 'Jumper L3H2'
+  ],
+  'fiat-ducato': [
+    'Ducato Van', 'Ducato Minibus', 'Ducato Chassis Cab',
+    'Ducato L1H1', 'Ducato L2H2', 'Ducato L3H3', 'e-Ducato'
+  ],
+  'renault-master': [
+    'Master Van', 'Master Bus', 'Master Chassis Cab',
+    'Master L1H1', 'Master L2H2', 'Master L3H2', 'Master Red Edition'
+  ],
+  'opel-movano': [
+    'Movano Van', 'Movano Bus', 'Movano Chassis Cab',
+    'Movano L1H1', 'Movano L2H2', 'Movano L3H2'
+  ],
+  'nissan-nv': [
+    'NV200', 'NV250', 'NV300', 'NV400', 'Primastar', 'Interstar'
+  ],
+  'toyota-hiace': [
+    'HiAce Van', 'HiAce Bus', 'HiAce Long', 'HiAce Commuter', 'ProAce'
+  ],
+  'hyundai-van': [
+    'H100', 'H350', 'iLoad', 'Staria', 'Starex'
+  ],
+  'kia-van': [
+    'K2500', 'K2700', 'K3000', 'Bongo', 'Carnival (Cargo)'
+  ],
+  'maxus': [
+    'V90', 'V80', 'Deliver 9', 'EV80', 'T60', 'G10'
+  ],
+  'dfsk': [
+    'Glory Van', 'Super Van', 'C31', 'C35', 'C37'
+  ],
+
+  // ALTA MARCA - text liber
+  'alta-marca': [],
+
+  // TROTINETE - XIAOMI
+  xiaomi: [
+    'Mi Electric Scooter', 'Mi Electric Scooter Pro 2',
+    'Mi Electric Scooter 3', 'Mi Electric Scooter 4',
+    '1S', '3 Lite', 'Pro 4', '4 Pro'
+  ],
+
+  // SEGWAY-NINEBOT - TROTINETE
+  segway: [
+    'Ninebot Max G30', 'Ninebot Max G30LP', 'Ninebot E22E',
+    'Ninebot E45E', 'Ninebot F30', 'Ninebot F40',
+    'Ninebot G30D', 'Ninebot KickScooter Air T15'
+  ],
+
+  // KAABO - TROTINETE
+  kaabo: [
+    'Mantis', 'Mantis Pro', 'Wolf Warrior',
+    'Skywalker', 'Mantis King GT'
+  ],
+
+  // DUALTRON - TROTINETE
+  dualtron: [
+    'Thunder 2', 'Ultra 2', 'Victor', 'Storm',
+    'Spider', 'Eagle Pro', 'Mini'
+  ],
+
+  // INOKIM - TROTINETE
+  inokim: [
+    'OXO', 'OX', 'Quick 4', 'Light 2',
+    'Mini 2', 'Mini Plus'
+  ],
+
+  // E-TWOW - TROTINETE
+  'e-twow': [
+    'GT', 'Booster V', 'S2 Master', 'GT SL',
+    'Booster Plus', 'Monster'
+  ],
+
+  // NINEBOT - TROTINETE
+  ninebot: [
+    'Max G30', 'ES2', 'ES4', 'E22', 'E25',
+    'F20', 'F30', 'F40'
+  ],
+
+  // RAZOR - TROTINETE
+  razor: [
+    'E300', 'E200', 'E100', 'E90',
+    'Power Core E90', 'Power Core E100',
+    'Icon', 'Ecosmart Metro'
   ]
 };
 

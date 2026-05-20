@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { LanguageProvider } from './context/LanguageContext';
 import Navbar from './components/Navbar';
@@ -16,14 +16,58 @@ import ChatConversation from './pages/ChatConversation';
 import AnuntDetaliu from './pages/AnuntDetaliu';
 import ResetPassword from './pages/ResetPassword';
 import Admin from './pages/Admin';
+import { App as CapacitorApp } from '@capacitor/app';
+import { useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import './index.css';
+
+// Redirect /open/:type/:id → /anunt/:type/:id (fallback când backend-ul nu e încă deploy-at)
+function OpenRedirect() {
+  const { type, id } = useParams();
+  return <Navigate to={`/anunt/${type}/${id}`} replace />;
+}
 
 function AppContent() {
   const location = useLocation();
+  const navigate = useNavigate();
   const { authLoading } = useAuth();
   
   // Ascunde Navbar pe pagina de detalii anunț
   const hideNavbar = location.pathname.startsWith('/anunt/');
+
+  // Deep link handler: când app-ul e deschis printr-un URL extern (App Links sau schema custom)
+  useEffect(() => {
+    const handleAppUrlOpen = (event) => {
+      const url = event.url;
+      if (!url) return;
+      try {
+        const parsed = new URL(url);
+        let path;
+        if (parsed.protocol === 'carxsell:') {
+          // Schema custom: carxsell://anunt/vanzari/ID
+          // parsed.hostname = 'anunt', parsed.pathname = '/vanzari/ID'
+          path = '/' + parsed.hostname + parsed.pathname + parsed.search + parsed.hash;
+        } else {
+          // HTTPS App Link: https://carxsell-production-.../anunt/vanzari/ID
+          path = parsed.pathname + parsed.search + parsed.hash;
+        }
+        if (path && path !== '/') {
+          navigate(path, { replace: true });
+        }
+      } catch (e) {
+        console.error('Deep link URL invalid:', e);
+      }
+    };
+
+    let listenerHandle;
+    CapacitorApp.addListener('appUrlOpen', handleAppUrlOpen).then(handle => {
+      listenerHandle = handle;
+    });
+
+    return () => {
+      listenerHandle?.remove();
+    };
+  }, [navigate]);
 
   if (authLoading) {
     return (
@@ -53,6 +97,7 @@ function AppContent() {
           <Route path="/profil" element={<Profil />} />
           <Route path="/profil/:username" element={<Profil />} />
           <Route path="/anunt/:type/:id" element={<AnuntDetaliu />} />
+          <Route path="/open/:type/:id" element={<OpenRedirect />} />
           <Route path="/chat" element={<Chat />} />
           <Route path="/chat-conversation" element={<ChatConversation />} />
           <Route path="/admin" element={<Admin />} />

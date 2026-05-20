@@ -24,6 +24,24 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
+            <!-- Deep Links: App Links verificate (necesită assetlinks.json deploiat) -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="https"
+                    android:host="carxsell-production-9d359.up.railway.app" />
+            </intent-filter>
+
+            <!-- Deep Links: Schema custom carxsell:// - funcționează imediat fără verificare -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="carxsell" />
+            </intent-filter>
+
         </activity>
 
         <provider

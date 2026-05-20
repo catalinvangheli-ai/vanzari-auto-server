@@ -3,42 +3,28 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import CarCard from '../components/CarCard';
+import { API_BASE_URL } from '../config/api';
 
 const Home = () => {
   const { t } = useLanguage();
   const [featuredCars, setFeaturedCars] = useState([]);
+  const [loadingCars, setLoadingCars] = useState(true);
 
   useEffect(() => {
-    const mockCars = [
-      {
-        id: 1,
-        brand: 'BMW',
-        model: 'Seria 5',
-        year: 2023,
-        price: 45000,
-        image: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=500',
-        featured: true
-      },
-      {
-        id: 2,
-        brand: 'Mercedes-Benz',
-        model: 'C-Class',
-        year: 2023,
-        price: 42000,
-        image: 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=500',
-        featured: true
-      },
-      {
-        id: 3,
-        brand: 'Audi',
-        model: 'A4',
-        year: 2022,
-        price: 38000,
-        image: 'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=500',
-        featured: true
+    const fetchNewestCars = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/car-sales`);
+        if (response.ok) {
+          const data = await response.json();
+          setFeaturedCars(data.slice(0, 6));
+        }
+      } catch (err) {
+        console.error('Eroare la încărcarea anunțurilor recente:', err);
+      } finally {
+        setLoadingCars(false);
       }
-    ];
-    setFeaturedCars(mockCars);
+    };
+    fetchNewestCars();
   }, []);
 
   return (
@@ -112,7 +98,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Featured Cars Section */}
+      {/* Anunțuri Recente Section */}
       <section className="py-8 sm:py-12 md:py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row justify-between items-center mb-6 sm:mb-8 md:mb-12 gap-4">
@@ -126,11 +112,24 @@ const Home = () => {
               {t('viewAll')} →
             </Link>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
-            {featuredCars.map((car) => (
-              <CarCard key={car.id} car={car} />
-            ))}
-          </div>
+          {loadingCars ? (
+            <div className="flex justify-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            </div>
+          ) : featuredCars.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
+              {featuredCars.map((car) => (
+                <CarCard key={car._id || car.id} car={car} type="vanzari" />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12 text-gray-500">
+              <p className="text-lg">Nu există anunțuri disponibile momentan.</p>
+              <Link to="/adauga-anunt" className="mt-4 inline-block text-blue-600 hover:text-blue-700 font-semibold">
+                Adaugă primul anunț →
+              </Link>
+            </div>
+          )}
         </div>
       </section>
 
